@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="puck">
+    <serverData>
+      <paths name="guillimin">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/gs/scratch/sejacob/densecub" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="helios">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/scratch/suu-621-aa/ANOMALY/densecub" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="puck">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/usr/local/data/sejacob/ANOMALY/densecub" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
