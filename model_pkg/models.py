@@ -5012,9 +5012,9 @@ class Conv_autoencoder_nostream:
             f, (ax1, ax2) = plt.subplots(2, 1)
 
             if (self.gs):
-                ax1.imshow(input_cuboid[:,:,i].reshape(self.size_y, self.size_x))
+                ax1.imshow(input_cuboid[:,:,i].reshape(self.size_y, self.size_x),cmap='gist_gray')
             else:
-                ax1.imshow(input_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels])
+                ax1.imshow(input_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels],cmap='gist_gray')
 
             ax1.set_title('Input Cuboid')
             ax1.set_axis_off()
@@ -5259,21 +5259,21 @@ class Conv_autoencoder_nostream_nocl:
         # MODEL CREATION
         inp = Input(shape=(size_y, size_x, n_channels*n_timesteps))
         x1 = GaussianNoise(0.05)(inp)
-        x1 = Conv2D(128, (3, 3), padding='same')(x1)
+        x1 = Conv2D(256, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.5)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
         x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 16x16
 
         x1 = GaussianNoise(0.03)(x1)
-        x1 = Conv2D(256, (3, 3), padding='same')(x1)
+        x1 = Conv2D(512, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.5)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
         x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 8x8
 
         x1 = GaussianNoise(0.02)(x1)
-        x1 = Conv2D(512, (3, 3), padding='same')(x1)
+        x1 = Conv2D(1024, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.5)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
@@ -5285,12 +5285,12 @@ class Conv_autoencoder_nostream_nocl:
         x1 = LeakyReLU(alpha=0.2)(x1)
         encoder = BatchNormalization()(x1)
 
-        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * 512)
+        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * 2048)
         dec2 = LeakyReLU(alpha=0.2)
-        dec3 = Reshape((size_x / 8, size_y / 8, 512))
+        dec3 = Reshape((size_x / 8, size_y / 8, 2048))
 
         dec4 = UpSampling2D(size=(2, 2))
-        dec5 = Conv2D(256, (3, 3), padding='same')
+        dec5 = Conv2D(1024, (3, 3), padding='same')
         dec6 = LeakyReLU(alpha=0.2)
         dec7 = BatchNormalization()  # 8x8
 
@@ -5455,9 +5455,9 @@ class Conv_autoencoder_nostream_nocl:
             f, (ax1, ax2) = plt.subplots(2, 1)
 
             if (self.gs):
-                ax1.imshow(input_cuboid[:,:,i].reshape(self.size_y, self.size_x))
+                ax1.imshow(input_cuboid[:,:,i].reshape(self.size_y, self.size_x),cmap='gist_gray')
             else:
-                ax1.imshow(input_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels])
+                ax1.imshow(input_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels],cmap='gist_gray')
 
             ax1.set_title('Input Cuboid')
             ax1.set_axis_off()
@@ -5465,9 +5465,9 @@ class Conv_autoencoder_nostream_nocl:
             idx = (-i - 1) if self.reverse else i
 
             if (self.gs):
-                ax2.imshow(output_cuboid[:,:,idx].reshape(self.size_y, self.size_x))
+                ax2.imshow(output_cuboid[:,:,idx].reshape(self.size_y, self.size_x),cmap='gist_gray')
             else:
-                ax2.imshow(output_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels])
+                ax2.imshow(output_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels],cmap='gist_gray')
             ax2.set_title('Output Cuboid')
             ax2.set_axis_off()
 

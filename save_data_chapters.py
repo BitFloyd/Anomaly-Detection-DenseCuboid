@@ -41,7 +41,7 @@ strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
 tstrides = int(metric['-tstrd'])
 lstm = bool(int(metric['-lstm']))
-
+filename = 'chapters_tstrd_'+str(tstrides)+'_gs_'+str(gs)+'_lstm_'+str(lstm)+'.txt'
 if(lstm):
     ts = 'first'
     mainfol = 'chapter_store_lstm'
@@ -54,9 +54,11 @@ else:
 if(gs):
     folder = os.path.join(mainfol, 'data_store_greyscale_' + str(tstrides))
     if(tstrides==2 or tstrides==4):
-        tv = 6e-9
+        tv = 1.5e-8
+        print "VARIANCE THRESHOLD IS:", tv
     elif (tstrides==8):
-        tv = 8.16e-9
+        tv = 1.5e-8
+        print "VARIANCE THRESHOLD IS:", tv
 
 else:
     folder = os.path.join(mainfol, 'data_store_' + str(tstrides))
@@ -124,6 +126,8 @@ while True:
     print "LENGTH OF VIDEO ARRAY"
     print len(flat_list_cubs)
 
+    length = len(flat_list_cubs)
+
     if(len(flat_list_cubs))==0:
         print "EMPTY ARRAY"
         sys.exit()
@@ -137,6 +141,9 @@ while True:
 
 
     print "SAVING CHAPTER ID:",str(chapter_id[0])
+    f = open(filename,'a+')
+    f.write('chapter_id: '+str(chapter_id[0])+'=> '+str(length)+'\n')
+    f.close()
 
     np.save(os.path.join(folder,'chapter_'+str(chapter_id[0])+'.npy'),x)
 

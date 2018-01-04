@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="" />
+    <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/generate_motion_stats.py" afterPath="$PROJECT_DIR$/generate_motion_stats.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_data_chapters.py" afterPath="$PROJECT_DIR$/save_data_chapters.py" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,25 +22,21 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="conv_ac_test.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/conv_ac_test.py">
+      <file leaf-file-name="save_data_chapters.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="93" column="46" lean-forward="true" selection-start-line="93" selection-start-column="46" selection-end-line="93" selection-end-column="46" />
-              <folding>
-                <element signature="e#343#824#0" expanded="false" />
-                <element signature="e#867#1217#0" expanded="false" />
-                <element signature="e#1229#1610#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="1446">
+              <caret line="108" column="0" lean-forward="true" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="save_data_chapters.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
+      <file leaf-file-name="generate_motion_stats.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/generate_motion_stats.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1620">
-              <caret line="141" column="0" lean-forward="true" selection-start-line="141" selection-start-column="0" selection-end-line="141" selection-end-column="0" />
+            <state relative-caret-position="636">
+              <caret line="160" column="0" lean-forward="true" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -60,6 +62,9 @@
       <find>prin</find>
       <find>Res</find>
     </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -87,12 +92,12 @@
         <option value="$PROJECT_DIR$/conv_autoencoder_nostream.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/batch_fns.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
-        <option value="$PROJECT_DIR$/generate_motion_stats.py" />
         <option value="$PROJECT_DIR$/conv_lstm_nostream_chapters.py" />
         <option value="$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py" />
         <option value="$PROJECT_DIR$/conv_ac_test.py" />
         <option value="$PROJECT_DIR$/model_pkg/models.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
+        <option value="$PROJECT_DIR$/generate_motion_stats.py" />
       </list>
     </option>
   </component>
@@ -103,11 +108,12 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1599" />
-    <option name="y" value="-11" />
-    <option name="width" value="1922" />
-    <option name="height" value="1092" />
+    <option name="x" value="1600" />
+    <option name="y" value="-4" />
+    <option name="width" value="1920" />
+    <option name="height" value="1084" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -123,18 +129,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="densecub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-          </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="densecub" />
@@ -148,7 +145,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -379,27 +375,26 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1599" y="-11" width="1922" height="1092" extended-state="6" />
-    <editor active="true" />
+    <frame x="1600" y="-4" width="1920" height="1084" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1515768" sideWeight="0.50208336" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1180061" sideWeight="0.49791667" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3865717" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2889115" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3865717" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1078125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1515625" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39975095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.07865169" sideWeight="0.49791667" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960325" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960325" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -631,13 +626,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/generate_motion_stats.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2033">
-          <caret line="144" column="0" lean-forward="true" selection-start-line="144" selection-start-column="0" selection-end-line="144" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conv_lstm_nostream_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="738">
@@ -645,21 +633,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="95" column="26" lean-forward="true" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
-          <folding>
-            <element signature="e#343#824#0" expanded="false" />
-            <element signature="e#867#1217#0" expanded="false" />
-            <element signature="e#1229#1610#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/functionals_pkg/batch_fns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
+        <state relative-caret-position="362">
           <caret line="68" column="54" lean-forward="true" selection-start-line="68" selection-start-column="54" selection-end-line="68" selection-end-column="54" />
           <folding />
         </state>
@@ -667,8 +643,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1998">
-          <caret line="5234" column="8" lean-forward="false" selection-start-line="5234" selection-start-column="8" selection-end-line="5234" selection-end-column="8" />
+        <state relative-caret-position="816">
+          <caret line="5228" column="37" lean-forward="false" selection-start-line="5228" selection-start-column="37" selection-end-line="5228" selection-end-column="37" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#1177#3085#0" expanded="false" />
@@ -707,51 +683,73 @@
             <element signature="e#168210#168765#0" expanded="false" />
             <element signature="e#168859#169396#0" expanded="false" />
             <element signature="e#169446#169626#0" expanded="false" />
-            <element signature="e#169665#189868#0" expanded="false" />
+            <element signature="e#169665#189902#0" expanded="false" />
+            <element signature="e#170071#176011#0" expanded="false" />
             <element signature="e#176052#176229#0" expanded="false" />
             <element signature="e#176401#180348#0" expanded="false" />
             <element signature="e#180400#180505#0" expanded="false" />
             <element signature="e#180568#180871#0" expanded="false" />
             <element signature="e#180921#181074#0" expanded="false" />
-            <element signature="e#181133#182507#0" expanded="false" />
-            <element signature="e#182563#183439#0" expanded="false" />
-            <element signature="e#183477#183749#0" expanded="false" />
-            <element signature="e#183807#184091#0" expanded="false" />
-            <element signature="e#184179#184731#0" expanded="false" />
-            <element signature="e#184819#186127#0" expanded="false" />
-            <element signature="e#186217#187581#0" expanded="false" />
-            <element signature="e#187634#188298#0" expanded="false" />
-            <element signature="e#188369#188934#0" expanded="false" />
-            <element signature="e#189031#189629#0" expanded="false" />
-            <element signature="e#189680#189868#0" expanded="false" />
-            <element signature="e#195767#195944#0" expanded="false" />
-            <element signature="e#196023#197020#0" expanded="false" />
-            <element signature="e#197070#197223#0" expanded="false" />
-            <element signature="e#197282#198639#0" expanded="false" />
-            <element signature="e#198695#199571#0" expanded="false" />
-            <element signature="e#199609#199881#0" expanded="false" />
-            <element signature="e#199939#200223#0" expanded="false" />
+            <element signature="e#181133#182541#0" expanded="false" />
+            <element signature="e#182597#183473#0" expanded="false" />
+            <element signature="e#183511#183783#0" expanded="false" />
+            <element signature="e#183841#184125#0" expanded="false" />
+            <element signature="e#184213#184765#0" expanded="false" />
+            <element signature="e#184853#186161#0" expanded="false" />
+            <element signature="e#186251#187615#0" expanded="false" />
+            <element signature="e#187668#188332#0" expanded="false" />
+            <element signature="e#188403#188968#0" expanded="false" />
+            <element signature="e#189065#189663#0" expanded="false" />
+            <element signature="e#189714#189902#0" expanded="false" />
+            <element signature="e#189946#200329#0" expanded="false" />
+            <element signature="e#195805#195982#0" expanded="false" />
+            <element signature="e#196061#197058#0" expanded="false" />
+            <element signature="e#197108#197261#0" expanded="false" />
+            <element signature="e#197320#198745#0" expanded="false" />
+            <element signature="e#198801#199677#0" expanded="false" />
+            <element signature="e#199715#199987#0" expanded="false" />
+            <element signature="e#200045#200329#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generate_motion_stats.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="636">
+          <caret line="160" column="0" lean-forward="true" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="474">
+          <caret line="89" column="0" lean-forward="false" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
+          <folding>
+            <element signature="e#343#824#0" expanded="false" />
+            <element signature="e#867#1217#0" expanded="false" />
+            <element signature="e#1229#1610#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conv_ac_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="888">
+          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+          <folding>
+            <element signature="e#343#824#0" expanded="false" />
+            <element signature="e#867#1217#0" expanded="false" />
+            <element signature="e#1229#1610#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1620">
-          <caret line="141" column="0" lean-forward="true" selection-start-line="141" selection-start-column="0" selection-end-line="141" selection-end-column="0" />
+        <state relative-caret-position="1446">
+          <caret line="108" column="0" lean-forward="true" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conv_ac_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="93" column="46" lean-forward="true" selection-start-line="93" selection-start-column="46" selection-end-line="93" selection-end-column="46" />
-          <folding>
-            <element signature="e#343#824#0" expanded="false" />
-            <element signature="e#867#1217#0" expanded="false" />
-            <element signature="e#1229#1610#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>

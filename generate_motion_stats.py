@@ -96,6 +96,31 @@ print "END_OF_DATA"
 #Flatten the list
 flat_list_mot_hist = [item for sublist in list_mot_hist for item in sublist]
 
+max_variance = max(flat_list_mot_hist)
+min_variance = min(flat_list_mot_hist)
+mean_variance = np.mean(flat_list_mot_hist)
+std_variance = np.std(flat_list_mot_hist)
+
+print "########################"
+print "MAX VARIANCE:"
+print max_variance
+print "########################"
+
+print "########################"
+print "MIN VARIANCE:"
+print min_variance
+print "########################"
+
+print "########################"
+print "MEAN VARIANCE:"
+print mean_variance
+print "########################"
+
+print "########################"
+print "STD VARIANCE:"
+print std_variance
+print "########################"
+
 print "########################"
 print "HISTOGRAM"
 print "########################"
