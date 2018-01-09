@@ -45,12 +45,40 @@ def kmeans_on_batch(model,batch,batch_size):
 
     return True
 
-def get_variances(cuboids_batch,ts_pos=0):
+def detect_motion(cuboid,ts_pos=0,gs=0):
+
+    motion_sum = 0
+    list_frames = []
+    list_diff = []
+
+    if(ts_pos==0):
+        #lstm regime
+        for i in range(0,cuboid.shape[ts_pos]):
+            list_frames.append(cuboid[i])
+
+    else:
+        #conv regime
+        if(gs==1):
+            for i in range(0,cuboid.shape[ts_pos]):
+                list_frames.append(np.expand_dims(cuboid[:,:,i],axis=-1))
+
+        else:
+            for i in range(0,cuboid.shape[ts_pos],3):
+                list_frames.append(cuboid[:,:,i:i+3])
+
+    #list_frames contains a list of frames. list_frames should have n_timesteps frames in it.
+
+    for i in range(0,len(list_frames)-1):
+        list_diff.append(np.mean(np.any(np.abs(list_frames[i]-list_frames[i+1]),axis=2)))
+
+    return np.mean(list_diff)
+
+def get_variances(cuboids_batch,ts_pos=0,gs=0):
 
     list_mot_hist=[]
-
     for j in cuboids_batch:
-        sum_variances = np.mean(np.var(j,axis=ts_pos))
+        # sum_variances = np.mean(np.var(j,axis=ts_pos))
+        sum_variances = detect_motion(j,ts_pos,gs)
         list_mot_hist.append(sum_variances)
 
     return np.array(list_mot_hist)
@@ -63,16 +91,16 @@ def get_next_relevant_cuboids(vstream,gs=False):
 
     return cuboids_batch
 
-def get_batch_with_motion(batch,thresh_variance,ts_pos=0):
+def get_batch_with_motion(batch,thresh_variance,ts_pos=0,gs=0):
 
-    variances = get_variances(batch,ts_pos)
+    variances = get_variances(batch,ts_pos,gs)
     return batch[np.where(variances>=thresh_variance)]
 
 def process_a_batch(model,vstream,thresh_variance,mini_batch_size,train=True,gs=False,ts_pos=0):
 
     cuboids_batch = get_next_relevant_cuboids(vstream,gs)
     cuboids_batch = norm_batch(cuboids_batch)
-    cuboids_batch = get_batch_with_motion(cuboids_batch,thresh_variance,ts_pos)
+    cuboids_batch = get_batch_with_motion(cuboids_batch,thresh_variance,ts_pos,gs)
     train_on_batch(model,cuboids_batch,mini_batch_size,train)
 
 def process_k_means_a_batch(model,vstream,thresh_variance,mini_batch_size,ts_pos=0):
@@ -96,8 +124,11 @@ def do_recon(model,vstream,thresh_variance,num_recons,ts_pos=0):
 def return_relevant_cubs(vstream,thresh_variance,gs=False,ts_pos=0):
 
     cuboids_batch = get_next_relevant_cuboids(vstream,gs)
-    cuboids_batch = norm_batch(cuboids_batch)
-    cuboids_batch = get_batch_with_motion(cuboids_batch,thresh_variance,ts_pos)
+
+    if(gs==0):
+        cuboids_batch = norm_batch(cuboids_batch)
+
+    cuboids_batch = get_batch_with_motion(cuboids_batch,thresh_variance,ts_pos,gs)
 
     return cuboids_batch
 

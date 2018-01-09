@@ -44,20 +44,25 @@ lstm = bool(int(metric['-lstm']))
 filename = 'chapters_tstrd_'+str(tstrides)+'_gs_'+str(gs)+'_lstm_'+str(lstm)+'.txt'
 if(lstm):
     ts = 'first'
+    ts_pos = 0
     mainfol = 'chapter_store_lstm'
 
 else:
     ts = 'last'
+    ts_pos = -1
     mainfol = 'chapter_store_conv'
 
 
 if(gs):
     folder = os.path.join(mainfol, 'data_store_greyscale_' + str(tstrides))
-    if(tstrides==2 or tstrides==4):
-        tv = 1.5e-8
+    if(tstrides==2):
+        tv = 0.02
+        print "VARIANCE THRESHOLD IS:", tv
+    elif(tstrides==4):
+        tv = 0.05
         print "VARIANCE THRESHOLD IS:", tv
     elif (tstrides==8):
-        tv = 1.5e-8
+        tv = 0.05
         print "VARIANCE THRESHOLD IS:", tv
 
 else:
@@ -106,12 +111,11 @@ vstream.set_seek_to_video(video_id[0])
 print "SEEK IS NOW:", vstream.seek
 
 
-
 while True:
 
     list_cubatch = []
     for k in tqdm(range(0,100)):
-        cubatch = bf.return_relevant_cubs(vstream,thresh_variance=tv,gs=True)
+        cubatch = bf.return_relevant_cubs(vstream,thresh_variance=tv,gs=gs,ts_pos=ts_pos)
         list_cubatch.append(cubatch.tolist())
 
         if(vstream.seek+1 == len(vstream.seek_dict.values())):

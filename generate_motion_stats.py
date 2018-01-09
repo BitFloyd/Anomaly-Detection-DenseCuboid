@@ -84,8 +84,11 @@ list_mot_hist=[]
 print "START_OF_DATA"
 for k in tqdm(range(0, len(vstream.seek_dict))):
     cubatch = bf.get_next_relevant_cuboids(vstream, gs=gs)
-    cubatch = bf.norm_batch(cubatch)
-    variances = bf.get_variances(cubatch,ax)
+
+    if(gs==0):
+        cubatch = bf.norm_batch(cubatch)
+
+    variances = bf.get_variances(cubatch,ax,gs)
     list_mot_hist.append(variances.tolist())
 
     del cubatch
@@ -125,7 +128,7 @@ print "########################"
 print "HISTOGRAM"
 print "########################"
 
-hist,bins = np.histogram(flat_list_mot_hist,bins=100,normed=True)
+hist,bins = np.histogram(flat_list_mot_hist,bins=100)
 width = 0.7 * (bins[1] - bins[0])
 center = (bins[:-1] + bins[1:]) / 2
 print "########################"
@@ -156,8 +159,11 @@ print "START_OF_DATA"
 while any(v==0 for v in center_gif_done):
 
     cubatch = bf.get_next_relevant_cuboids(vstream, gs=gs)
-    cubatch = bf.norm_batch(cubatch)
-    variances = bf.get_variances(cubatch,ax)
+
+    if(gs==0):
+        cubatch = bf.norm_batch(cubatch)
+
+    variances = bf.get_variances(cubatch,ax,gs)
 
     for idx,j in enumerate(variances):
         for k in range(0,len(center)-1):

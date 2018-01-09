@@ -6,7 +6,7 @@ from sys import argv
 import functionals_pkg.config as cfg
 import os
 import socket
-
+import sys
 
 
 lamda = cfg.lamda
@@ -73,23 +73,77 @@ if(nic==0):
     nic=n_chapters
     suffix='tstrd_'+str(tstrides)+'_recon_only_h_units'+str(h_units)+'_'+str(loss)
 
+if(gs):
+    suffix += '_greyscale_'
+else:
+    suffix += '_color_'
+
 print "############################"
 print "SET UP MODEL"
 print "############################"
 
-# Get MODEL
-model_store = 'models/conv_autoencoder_chapters_'+suffix
 
-ae_model = models.Conv_autoencoder_nostream_nocl(model_store=model_store,loss=loss,h_units=h_units,n_timesteps=5,n_channels=nc,
+
+if('-large' in metric.keys()):
+    large = bool(int(metric['-large']))
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "MODEL SIZE LARGE? :" , large
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+else:
+    large = False
+
+
+suffix += '_large_'+str(large)
+
+if('-model' in metric.keys()):
+    if str(metric['-model']) == 'bn':
+        suffix += '_' + str(metric['-model'])
+        # Get MODEL
+        model_store = 'models/conv_autoencoder_chapters_' + suffix
+        ae_model = models.Conv_autoencoder_nostream_nocl(model_store=model_store, loss=loss, h_units=h_units,
+                                                              n_timesteps=5, n_channels=nc,
+                                                              batch_size=batch_size, n_clusters=10, lr_model=1e-5,
+                                                              lamda=lamda,
+                                                              n_gpus=n_gpus, gs=gs, notrain=False, data_folder=folder,
+                                                              reverse=False, large=large)
+
+    elif str(metric['-model']) == 'nobn':
+        suffix += '_' + str(metric['-model'])
+        # Get MODEL
+        model_store = 'models/conv_autoencoder_chapters_' + suffix
+        ae_model = models.Conv_autoencoder_nostream_nocl_nobn(model_store=model_store, loss=loss, h_units=h_units,
+                                                              n_timesteps=5, n_channels=nc,
+                                                              batch_size=batch_size, n_clusters=10, lr_model=1e-5,
+                                                              lamda=lamda,
+                                                              n_gpus=n_gpus, gs=gs, notrain=False, data_folder=folder,
+                                                              reverse=False, large=large)
+
+
+    else :
+        print "INVALID -MODEL PARAM, either use bn or nobn"
+        sys.exit()
+else:
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "USING NO BATCH-NORM MODEL"
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    suffix += '_' + 'nobn'
+    # Get MODEL
+    model_store = 'models/conv_autoencoder_chapters_' + suffix
+    ae_model = models.Conv_autoencoder_nostream_nocl_nobn(model_store=model_store,loss=loss,h_units=h_units,n_timesteps=5,n_channels=nc,
                                                  batch_size=batch_size,n_clusters=10, lr_model=1e-5,lamda=lamda,
-                                                 n_gpus=n_gpus,gs=gs,notrain=False,data_folder=folder,reverse=False)
+                                                 n_gpus=n_gpus,gs=gs,notrain=False,data_folder=folder,reverse=False,large=large)
+
 
 print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
+if(ntrain>0):
+    for _ in range(0,ntrain):
+        ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic)
 
-for _ in range(0,ntrain):
-    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic)
+else:
+    ae_model.fit_model_ae(verbose=1)
 
 ae_model.generate_loss_graph('loss_graph.png')
 
