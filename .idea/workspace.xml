@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
+      <change type="MOVED" beforePath="$PROJECT_DIR$/conv_lstm.py" afterPath="$PROJECT_DIR$/conv_lstm_test.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conv_ac_test.py" afterPath="$PROJECT_DIR$/conv_ac_test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/batch_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/batch_fns.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/generate_motion_stats.py" afterPath="$PROJECT_DIR$/generate_motion_stats.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_data_chapters.py" afterPath="$PROJECT_DIR$/save_data_chapters.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,29 +24,30 @@
       <file leaf-file-name="conv_ac_test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/conv_ac_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="63" column="85" lean-forward="true" selection-start-line="63" selection-start-column="85" selection-end-line="63" selection-end-column="85" />
+            <state relative-caret-position="252">
+              <caret line="14" column="25" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="152" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="save_data_chapters.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
+      <file leaf-file-name="conv_lstm_test.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/conv_lstm_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-282">
-              <caret line="106" column="45" lean-forward="true" selection-start-line="106" selection-start-column="45" selection-end-line="106" selection-end-column="45" />
+            <state relative-caret-position="414">
+              <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="5606" column="17" lean-forward="false" selection-start-line="5606" selection-start-column="17" selection-end-line="5606" selection-end-column="17" />
+            <state relative-caret-position="673">
+              <caret line="6218" column="47" lean-forward="false" selection-start-line="6218" selection-start-column="47" selection-end-line="6218" selection-end-column="47" />
               <folding>
+                <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#1177#3085#0" expanded="false" />
                 <element signature="e#3166#4982#0" expanded="false" />
                 <element signature="e#5025#6519#0" expanded="false" />
@@ -105,7 +104,7 @@
                 <element signature="e#188403#188968#0" expanded="false" />
                 <element signature="e#189065#189663#0" expanded="false" />
                 <element signature="e#189714#189902#0" expanded="false" />
-                <element signature="e#190325#196136#0" expanded="false" />
+                <element signature="e#189946#201525#0" expanded="false" />
                 <element signature="e#196177#196354#0" expanded="false" />
                 <element signature="e#196433#197430#0" expanded="false" />
                 <element signature="e#197477#198190#0" expanded="false" />
@@ -114,6 +113,7 @@
                 <element signature="e#199997#200873#0" expanded="false" />
                 <element signature="e#200911#201183#0" expanded="false" />
                 <element signature="e#201241#201525#0" expanded="false" />
+                <element signature="e#201574#213157#0" expanded="false" />
                 <element signature="e#207362#207539#0" expanded="false" />
                 <element signature="e#207618#208615#0" expanded="false" />
                 <element signature="e#209872#210025#0" expanded="false" />
@@ -121,6 +121,24 @@
                 <element signature="e#211629#212505#0" expanded="false" />
                 <element signature="e#212543#212815#0" expanded="false" />
                 <element signature="e#212873#213157#0" expanded="false" />
+                <element signature="e#213207#224499#0" expanded="false" />
+                <element signature="e#219497#219674#0" expanded="false" />
+                <element signature="e#219753#220750#0" expanded="false" />
+                <element signature="e#220797#221510#0" expanded="false" />
+                <element signature="e#221560#221713#0" expanded="false" />
+                <element signature="e#221772#223010#0" expanded="false" />
+                <element signature="e#223066#223847#0" expanded="false" />
+                <element signature="e#223885#224157#0" expanded="false" />
+                <element signature="e#224215#224499#0" expanded="false" />
+                <element signature="e#224554#235480#0" expanded="false" />
+                <element signature="e#230478#230655#0" expanded="false" />
+                <element signature="e#230734#231731#0" expanded="false" />
+                <element signature="e#231778#232491#0" expanded="false" />
+                <element signature="e#232541#232694#0" expanded="false" />
+                <element signature="e#232753#233991#0" expanded="false" />
+                <element signature="e#234047#234828#0" expanded="false" />
+                <element signature="e#234866#235138#0" expanded="false" />
+                <element signature="e#235196#235480#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -145,6 +163,7 @@
       <find>channels</find>
       <find>prin</find>
       <find>Res</find>
+      <find>conv</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -171,7 +190,6 @@
         <option value="$PROJECT_DIR$/artif_data_test.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/feature_fns.py" />
         <option value="$PROJECT_DIR$/get_cuboid_stream.py" />
-        <option value="$PROJECT_DIR$/conv_lstm.py" />
         <option value="$PROJECT_DIR$/conv_lstm_nostream.py" />
         <option value="$PROJECT_DIR$/conv_autoencoder_nostream.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
@@ -180,8 +198,10 @@
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/generate_motion_stats.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/batch_fns.py" />
-        <option value="$PROJECT_DIR$/model_pkg/models.py" />
         <option value="$PROJECT_DIR$/conv_ac_test.py" />
+        <option value="$PROJECT_DIR$/conv_lstm.py" />
+        <option value="$PROJECT_DIR$/model_pkg/models.py" />
+        <option value="$PROJECT_DIR$/conv_lstm_test.py" />
       </list>
     </option>
   </component>
@@ -213,7 +233,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -227,8 +246,37 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="densecub" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="densecub" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model_pkg" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="densecub" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="densecub" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="functionals_pkg" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -463,7 +511,14 @@
       <option name="project" value="LOCAL" />
       <updated>1515094377266</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fix data norm, add convolutional_test">
+      <created>1515522767099</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1515522767099</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -471,17 +526,17 @@
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1515768" sideWeight="0.50208336" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14576963" sideWeight="0.49791667" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2889115" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14576963" sideWeight="0.49791667" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27319062" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2889115" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18645833" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15520833" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39975095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39975095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -525,7 +580,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix generate_motion_stats" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix generate_motion_stats" />
+    <MESSAGE value="fix data norm, add convolutional_test" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix data norm, add convolutional_test" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -679,13 +735,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cifar_km_assign_cl_test.py" />
-    <entry file="file://$PROJECT_DIR$/conv_lstm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="123" column="0" lean-forward="true" selection-start-line="123" selection-start-column="0" selection-end-line="123" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharm2017.1/system/remote_sources/-1342635288/53804424/keras/layers/core.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
@@ -740,9 +789,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="637">
           <caret line="123" column="68" lean-forward="false" selection-start-line="123" selection-start-column="68" selection-end-line="123" selection-end-column="68" />
-          <folding>
-            <element signature="e#3756#3985#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -750,31 +796,30 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-11">
           <caret line="82" column="0" lean-forward="true" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conv_ac_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="63" column="85" lean-forward="true" selection-start-line="63" selection-start-column="85" selection-end-line="63" selection-end-column="85" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-282">
-          <caret line="106" column="45" lean-forward="true" selection-start-line="106" selection-start-column="45" selection-end-line="106" selection-end-column="45" />
+        <state relative-caret-position="18">
+          <caret line="106" column="45" lean-forward="false" selection-start-line="106" selection-start-column="45" selection-end-line="106" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conv_ac_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="14" column="25" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="152" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="5606" column="17" lean-forward="false" selection-start-line="5606" selection-start-column="17" selection-end-line="5606" selection-end-column="17" />
+        <state relative-caret-position="673">
+          <caret line="6218" column="47" lean-forward="false" selection-start-line="6218" selection-start-column="47" selection-end-line="6218" selection-end-column="47" />
           <folding>
+            <element signature="e#0#18#0" expanded="true" />
             <element signature="e#1177#3085#0" expanded="false" />
             <element signature="e#3166#4982#0" expanded="false" />
             <element signature="e#5025#6519#0" expanded="false" />
@@ -831,7 +876,7 @@
             <element signature="e#188403#188968#0" expanded="false" />
             <element signature="e#189065#189663#0" expanded="false" />
             <element signature="e#189714#189902#0" expanded="false" />
-            <element signature="e#190325#196136#0" expanded="false" />
+            <element signature="e#189946#201525#0" expanded="false" />
             <element signature="e#196177#196354#0" expanded="false" />
             <element signature="e#196433#197430#0" expanded="false" />
             <element signature="e#197477#198190#0" expanded="false" />
@@ -840,6 +885,7 @@
             <element signature="e#199997#200873#0" expanded="false" />
             <element signature="e#200911#201183#0" expanded="false" />
             <element signature="e#201241#201525#0" expanded="false" />
+            <element signature="e#201574#213157#0" expanded="false" />
             <element signature="e#207362#207539#0" expanded="false" />
             <element signature="e#207618#208615#0" expanded="false" />
             <element signature="e#209872#210025#0" expanded="false" />
@@ -847,7 +893,33 @@
             <element signature="e#211629#212505#0" expanded="false" />
             <element signature="e#212543#212815#0" expanded="false" />
             <element signature="e#212873#213157#0" expanded="false" />
+            <element signature="e#213207#224499#0" expanded="false" />
+            <element signature="e#219497#219674#0" expanded="false" />
+            <element signature="e#219753#220750#0" expanded="false" />
+            <element signature="e#220797#221510#0" expanded="false" />
+            <element signature="e#221560#221713#0" expanded="false" />
+            <element signature="e#221772#223010#0" expanded="false" />
+            <element signature="e#223066#223847#0" expanded="false" />
+            <element signature="e#223885#224157#0" expanded="false" />
+            <element signature="e#224215#224499#0" expanded="false" />
+            <element signature="e#224554#235480#0" expanded="false" />
+            <element signature="e#230478#230655#0" expanded="false" />
+            <element signature="e#230734#231731#0" expanded="false" />
+            <element signature="e#231778#232491#0" expanded="false" />
+            <element signature="e#232541#232694#0" expanded="false" />
+            <element signature="e#232753#233991#0" expanded="false" />
+            <element signature="e#234047#234828#0" expanded="false" />
+            <element signature="e#234866#235138#0" expanded="false" />
+            <element signature="e#235196#235480#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conv_lstm_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -21,12 +21,6 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    # import tensorflow as tf
-    # from keras.backend.tensorflow_backend import set_session
-    #
-    # config = tf.ConfigProto()
-    # config.gpu_options.per_process_gpu_memory_fraction = 0.75
-    # set_session(tf.Session(config=config))
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
 
 elif('gpu' in socket.gethostname()):
@@ -61,10 +55,10 @@ ntrain = int(metric['-ntrain'])
 suffix = 'tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters)
 
 if(gs):
-    folder = os.path.join('chapter_store_conv','data_store_greyscale_'+str(tstrides))
+    folder = os.path.join('chapter_store_lstm','data_store_greyscale_'+str(tstrides))
     nc=1
 else:
-    folder = os.path.join('chapter_store_conv','data_store_'+str(tstrides))
+    folder = os.path.join('chapter_store_lstm','data_store_'+str(tstrides))
     nc=3
 
 if(n_chapters == 0):
@@ -101,24 +95,20 @@ if('-model' in metric.keys()):
     if str(metric['-model']) == 'bn':
         suffix += '_' + str(metric['-model'])
         # Get MODEL
-        model_store = 'models/conv_autoencoder_chapters_' + suffix
-        ae_model = models.Conv_autoencoder_nostream_nocl(model_store=model_store, loss=loss, h_units=h_units,
-                                                              n_timesteps=5, n_channels=nc,
-                                                              batch_size=batch_size, n_clusters=10, lr_model=1e-5,
-                                                              lamda=lamda,
-                                                              n_gpus=n_gpus, gs=gs, notrain=False, data_folder=folder,
-                                                              reverse=False, large=large)
+        model_store = 'models/conv_lstmac_chapters_' + suffix
+        ae_model = models.Conv_LSTM_autoencoder_nostream_nocl(model_store=model_store, loss=loss, h_units=h_units,
+                                                              n_timesteps=5, n_channels=nc, batch_size=batch_size,
+                                                              lr_model=1e-5, n_gpus=n_gpus, gs=gs, notrain=False,
+                                                              data_folder=folder, reverse=False, large=large)
 
     elif str(metric['-model']) == 'nobn':
         suffix += '_' + str(metric['-model'])
         # Get MODEL
-        model_store = 'models/conv_autoencoder_chapters_' + suffix
-        ae_model = models.Conv_autoencoder_nostream_nocl_nobn(model_store=model_store, loss=loss, h_units=h_units,
-                                                              n_timesteps=5, n_channels=nc,
-                                                              batch_size=batch_size, n_clusters=10, lr_model=1e-5,
-                                                              lamda=lamda,
-                                                              n_gpus=n_gpus, gs=gs, notrain=False, data_folder=folder,
-                                                              reverse=False, large=large)
+        model_store = 'models/conv_lstmac_chapters_' + suffix
+        ae_model = models.Conv_LSTM_autoencoder_nostream_nocl(model_store=model_store, loss=loss, h_units=h_units,
+                                                              n_timesteps=5, n_channels=nc, batch_size=batch_size,
+                                                              lr_model=1e-5, n_gpus=n_gpus, gs=gs, notrain=False,
+                                                              data_folder=folder, reverse=False, large=large)
 
 
     else :
@@ -130,10 +120,9 @@ else:
     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
     suffix += '_' + 'nobn'
     # Get MODEL
-    model_store = 'models/conv_autoencoder_chapters_' + suffix
-    ae_model = models.Conv_autoencoder_nostream_nocl_nobn(model_store=model_store,loss=loss,h_units=h_units,n_timesteps=5,n_channels=nc,
-                                                 batch_size=batch_size,n_clusters=10, lr_model=1e-5,lamda=lamda,
-                                                 n_gpus=n_gpus,gs=gs,notrain=False,data_folder=folder,reverse=False,large=large)
+    model_store = 'models/conv_lstmac_chapters_' + suffix
+    ae_model = models.Conv_LSTM_autoencoder_nostream_nocl_nobn(model_store=model_store,loss=loss,h_units=h_units,n_timesteps=5,n_channels=nc,
+                                                 batch_size=batch_size,lr_model=1e-5,n_gpus=n_gpus,gs=gs,notrain=False,data_folder=folder,reverse=False,large=large)
 
 
 print "############################"

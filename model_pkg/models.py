@@ -5890,3 +5890,644 @@ class Conv_autoencoder_nostream_nocl_nobn:
         plt.ylabel('Loss Value')
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
+
+class Conv_LSTM_autoencoder_nostream_nocl:
+
+    means = None
+    initial_means = None
+    list_mean_disp = []
+    loss_list = []
+
+    def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
+                 loss='mse', batch_size=64,lr_model=1e-4, n_gpus=1, gs=False, notrain=False, reverse=False, data_folder='data_store',large=1):
+
+        self.batch_size = batch_size
+        self.model_store = model_store
+        self.loss = loss
+        self.size_y = size_y
+        self.size_x = size_x
+        self.lr_model = lr_model
+        self.cluster_assigns = None
+        self.ntsteps = n_timesteps
+        self.x_train = [100, 10, 10]
+        self.gs = gs
+        self.notrain = notrain
+        self.reverse = reverse
+        self.large = large
+
+        self.dat_folder = data_folder
+
+        if not os.path.exists(self.model_store):
+            os.makedirs(self.model_store)
+
+        if(self.large):
+            f1=64
+            f2=128
+            f3=256
+            f4=512
+            f5=256
+            f6=128
+            f7=64
+            f8=32
+        else:
+            f1=16
+            f2=32
+            f3=64
+            f4=256
+            f5=128
+            f6=64
+            f7=32
+            f8=16
+
+        # MODEL CREATION
+        inp = Input(shape=(n_timesteps, size_y, size_x, n_channels))
+
+        x1 = ConvLSTM2D(f1, (3, 3), padding='same', return_sequences=True, dropout=0.3)(inp)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 14x14
+
+        x1 = GaussianNoise(0.03)(x1)
+        x1 = ConvLSTM2D(f2, (3, 3), padding='same', return_sequences=True, dropout=0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 7x7
+
+        x1 = GaussianNoise(0.02)(x1)
+        x1 = ConvLSTM2D(f3, (3, 3), padding='same', return_sequences=True, dropout=0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 4x4
+
+        x1 = Flatten()(x1)
+        x1 = Dropout(0.3)(x1)
+        x1 = Dense(units=h_units)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        encoder = BatchNormalization()(x1)
+
+        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4 * n_timesteps)
+        dec2 = LeakyReLU(alpha=0.2)
+        dec3 = Reshape((n_timesteps, size_x / 8, size_y / 8, f4))
+
+        dec4 = TimeDistributed(UpSampling2D(size=(2, 2)))
+        dec5 = ConvLSTM2D(f5, (3, 3), padding='same', return_sequences=True)
+        dec6 = LeakyReLU(alpha=0.2)
+        dec7 = BatchNormalization()  # 8x8
+
+        dec8 = TimeDistributed(UpSampling2D(size=(2, 2)))
+        dec9 = ConvLSTM2D(f6, (3, 3), padding='same', return_sequences=True)
+        dec10 = LeakyReLU(alpha=0.2)
+        dec11 = BatchNormalization()  # 16x16
+
+        dec12 = TimeDistributed(UpSampling2D(size=(2, 2)))
+        dec13 = ConvLSTM2D(f7, (3, 3), padding='same', return_sequences=True)
+        dec14 = LeakyReLU(alpha=0.2)
+        dec15 = BatchNormalization()  # 32x32
+
+        dec16 = ConvLSTM2D(f8, (3, 3), padding='same', return_sequences=True)
+        dec17 = LeakyReLU(alpha=0.2)  # 32x32
+
+        recon = ConvLSTM2D(n_channels, (3, 3), activation='sigmoid', padding='same', return_sequences=True)
+
+        ae1 = dec1(encoder)
+        ae2 = dec2(ae1)
+        ae3 = dec3(ae2)
+        ae4 = dec4(ae3)
+        ae5 = dec5(ae4)
+        ae6 = dec6(ae5)
+        ae7 = dec7(ae6)
+        ae8 = dec8(ae7)
+        ae9 = dec9(ae8)
+        ae10 = dec10(ae9)
+        ae11 = dec11(ae10)
+        ae12 = dec12(ae11)
+        ae13 = dec13(ae12)
+        ae14 = dec14(ae13)
+        ae15 = dec15(ae14)
+        ae16 = dec16(ae15)
+        ae17 = dec17(ae16)
+        ae18 = recon(ae17)
+
+        adam_ae = Adam(lr=self.lr_model)
+        dssim = DSSIMObjective(kernel_size=4)
+
+        if (loss == 'mse'):
+            self.loss_fn = mean_squared_error
+        elif (loss == 'dssim'):
+            self.loss_fn = dssim
+        elif (loss == 'bce'):
+            self.loss_fn = binary_crossentropy
+
+        self.encoder = Model(inputs=[inp], outputs=[encoder])
+
+        if (n_gpus > 1):
+            self.encoder = make_parallel(self.encoder, n_gpus)
+
+        dinp = Input(shape=(h_units,))
+        de1 = dec1(dinp)
+        de2 = dec2(de1)
+        de3 = dec3(de2)
+        de4 = dec4(de3)
+        de5 = dec5(de4)
+        de6 = dec6(de5)
+        de7 = dec7(de6)
+        de8 = dec8(de7)
+        de9 = dec9(de8)
+        de10 = dec10(de9)
+        de11 = dec11(de10)
+        de12 = dec12(de11)
+        de13 = dec13(de12)
+        de14 = dec14(de13)
+        de15 = dec15(de14)
+        de16 = dec16(de15)
+        de17 = dec17(de16)
+        de18 = recon(de17)
+
+        self.decoder = Model(inputs=[dinp], outputs=[de18])
+
+        if (n_gpus > 1):
+            self.decoder = make_parallel(self.decoder, n_gpus)
+
+
+        self.ae = Model(inputs=[inp], outputs=[ae18])
+
+        if (n_gpus > 1):
+            self.ae = make_parallel(self.ae, n_gpus)
+
+        self.ae.compile(optimizer=adam_ae, loss=self.loss_fn)
+
+        if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
+            print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.ae.load_weights(os.path.join(model_store, 'ae_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'decoder_weights.h5'))):
+            print "LOADING DECODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.decoder.load_weights(os.path.join(model_store, 'decoder_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'encoder_weights.h5'))):
+            print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
+
+        if (notrain):
+            self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
+            self.means = np.load(os.path.join(self.model_store, 'means.npy'))
+
+            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                self.loss_list = pickle.load(f)
+            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                self.list_mean_disp = pickle.load(f)
+
+    def set_x_train(self, id):
+        del (self.x_train)
+        print "Loading Chapter : ", 'chapter_' + str(id) + '.npy'
+        self.x_train = np.load(os.path.join(self.dat_folder, 'chapter_' + str(id) + '.npy'))
+
+    def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10):
+
+        if (self.notrain):
+            return True
+
+        # start_initial chapters training
+        for i in range(0, n_initial_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            history = self.ae.fit(x=self.x_train,y=self.x_train, shuffle=True, epochs=1,
+                                  batch_size=self.batch_size, verbose=verbose)
+            self.loss_list.append(history.history['loss'][0])
+
+            del feats
+
+
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        print "PICKLING LISTS AND SAVING WEIGHTS"
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
+            pickle.dump(self.loss_list, f)
+
+        with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
+            pickle.dump(self.list_mean_disp, f)
+
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+
+        self.save_weights()
+
+        return True
+
+    def fit_model_ae(self, verbose):
+        self.set_x_train(1)
+        es = EarlyStopping(monitor='val_loss', min_delta=1e-10, patience=10, verbose=1)
+        rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1)
+        mcp = ModelCheckpoint(filepath=os.path.join(self.model_store, 'weights.h5'), monitor='val_loss', verbose=1,
+                              save_best_only=True, save_weights_only=True)
+        tb = TensorBoard(os.path.join(self.model_store, 'logs'))
+        history = self.ae.fit(self.x_train, self.x_train, shuffle=True, epochs=500, callbacks=[es, rlr, mcp, tb],
+                    validation_split=0.2, verbose=verbose, batch_size=64)
+        self.loss_list=history.history['loss']
+        self.save_weights()
+
+    def create_recons(self, n_recons):
+
+        for i in range(0, n_recons):
+            self.do_gif_recon(self.x_train[np.random.randint(0, len(self.x_train))], 'recon_' + str(i))
+
+        return True
+
+    def do_gif_recon(self, input_cuboid, name):
+
+        input_cuboid = np.expand_dims(input_cuboid, 0)
+        output_cuboid = self.ae.predict([input_cuboid, np.array([0])])
+
+        input_cuboid = input_cuboid[0]
+        output_cuboid = output_cuboid[0]
+
+        for i in range(0, len(input_cuboid)):
+
+            f, (ax1, ax2) = plt.subplots(2, 1)
+
+            if (self.gs):
+                ax1.imshow(input_cuboid[i].reshape(self.size_y, self.size_x))
+            else:
+                ax1.imshow(input_cuboid[i])
+            ax1.set_title('Input Cuboid')
+            ax1.set_axis_off()
+
+            idx = (-i - 1) if self.reverse else i
+
+            if (self.gs):
+
+                ax2.imshow(output_cuboid[idx].reshape(self.size_y, self.size_x))
+            else:
+                ax2.imshow(output_cuboid[idx])
+            ax2.set_title('Output Cuboid')
+            ax2.set_axis_off()
+
+            plt.axis('off')
+            plt.savefig(os.path.join(self.model_store, str(i) + '.png'), bbox_inches='tight')
+            plt.close()
+
+        images = []
+        for i in range(0, len(input_cuboid)):
+            images.append(imageio.imread(os.path.join(self.model_store, str(i) + '.png')))
+
+        imageio.mimsave(os.path.join(self.model_store, name + '.gif'), images)
+
+        return True
+
+    def save_gifs(self, input_cuboid, name):
+
+        for i in range(0, len(input_cuboid)):
+
+            f, (ax1) = plt.subplots(1, 1)
+
+            idx = (-i - 1) if self.reverse else i
+
+            if (self.gs):
+                ax1.imshow(input_cuboid[idx].reshape(self.size_y, self.size_x))
+            else:
+                ax1.imshow(input_cuboid[idx])
+            ax1.set_title('Input Cuboid')
+            ax1.set_axis_off()
+
+            plt.axis('off')
+            plt.savefig(os.path.join(self.model_store, str(i) + '.png'), bbox_inches='tight')
+            plt.close()
+
+        images = []
+        for i in range(0, len(input_cuboid)):
+            images.append(imageio.imread(os.path.join(self.model_store, str(i) + '.png')))
+
+        imageio.mimsave(os.path.join(self.model_store, name + '.gif'), images)
+
+        return True
+
+    def save_weights(self):
+        self.ae.save_weights(filepath=os.path.join(self.model_store, 'ae_weights.h5'))
+        self.decoder.save_weights(filepath=os.path.join(self.model_store, 'decoder_weights.h5'))
+        self.encoder.save_weights(filepath=os.path.join(self.model_store, 'encoder_weights.h5'))
+
+    def generate_loss_graph(self, graph_name):
+
+        hfm, = plt.plot(self.loss_list, label='loss')
+        plt.legend(handles=[hfm])
+        plt.title('Losses per epoch')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss Value')
+        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
+        plt.close()
+
+class Conv_LSTM_autoencoder_nostream_nocl_nobn:
+
+    means = None
+    initial_means = None
+    list_mean_disp = []
+    loss_list = []
+
+    def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
+                 loss='mse', batch_size=64,lr_model=1e-4, n_gpus=1, gs=False, notrain=False, reverse=False, data_folder='data_store',large=1):
+
+        self.batch_size = batch_size
+        self.model_store = model_store
+        self.loss = loss
+        self.size_y = size_y
+        self.size_x = size_x
+        self.lr_model = lr_model
+        self.cluster_assigns = None
+        self.ntsteps = n_timesteps
+        self.x_train = [100, 10, 10]
+        self.gs = gs
+        self.notrain = notrain
+        self.reverse = reverse
+        self.large = large
+
+        self.dat_folder = data_folder
+
+        if not os.path.exists(self.model_store):
+            os.makedirs(self.model_store)
+
+        if(self.large):
+            f1=64
+            f2=128
+            f3=256
+            f4=512
+            f5=256
+            f6=128
+            f7=64
+            f8=32
+        else:
+            f1=16
+            f2=32
+            f3=64
+            f4=256
+            f5=128
+            f6=64
+            f7=32
+            f8=16
+
+        # MODEL CREATION
+        inp = Input(shape=(n_timesteps, size_y, size_x, n_channels))
+
+        x1 = ConvLSTM2D(f1, (3, 3), padding='same', return_sequences=True, dropout=0.0)(inp)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 14x14
+
+        x1 = GaussianNoise(0.03)(x1)
+        x1 = ConvLSTM2D(f2, (3, 3), padding='same', return_sequences=True, dropout=0.0)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 7x7
+
+        x1 = GaussianNoise(0.02)(x1)
+        x1 = ConvLSTM2D(f3, (3, 3), padding='same', return_sequences=True, dropout=0.0)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 4x4
+
+        x1 = Flatten()(x1)
+        x1 = Dropout(0.3)(x1)
+        x1 = Dense(units=h_units)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        encoder = BatchNormalization()(x1)
+
+        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4 * n_timesteps)
+        dec2 = LeakyReLU(alpha=0.2)
+        dec3 = Reshape((n_timesteps, size_x / 8, size_y / 8, f4))
+
+        dec4 = TimeDistributed(UpSampling2D(size=(2, 2)))
+        dec5 = ConvLSTM2D(f5, (3, 3), padding='same', return_sequences=True)
+        dec6 = LeakyReLU(alpha=0.2)
+        # 8x8
+
+        dec7 = TimeDistributed(UpSampling2D(size=(2, 2)))
+        dec8 = ConvLSTM2D(f6, (3, 3), padding='same', return_sequences=True)
+        dec9 = LeakyReLU(alpha=0.2)
+        # 16x16
+
+        dec10 = TimeDistributed(UpSampling2D(size=(2, 2)))
+        dec11 = ConvLSTM2D(f7, (3, 3), padding='same', return_sequences=True)
+        dec12 = LeakyReLU(alpha=0.2)
+        # 32x32
+
+        dec13 = ConvLSTM2D(f8, (3, 3), padding='same', return_sequences=True)
+        dec14 = LeakyReLU(alpha=0.2)  # 32x32
+
+        recon = ConvLSTM2D(n_channels, (3, 3), activation='sigmoid', padding='same', return_sequences=True)
+
+        ae1 = dec1(encoder)
+        ae2 = dec2(ae1)
+        ae3 = dec3(ae2)
+        ae4 = dec4(ae3)
+        ae5 = dec5(ae4)
+        ae6 = dec6(ae5)
+        ae7 = dec7(ae6)
+        ae8 = dec8(ae7)
+        ae9 = dec9(ae8)
+        ae10 = dec10(ae9)
+        ae11 = dec11(ae10)
+        ae12 = dec12(ae11)
+        ae13 = dec13(ae12)
+        ae14 = dec14(ae13)
+        ae15 = recon(ae14)
+
+        adam_ae = Adam(lr=self.lr_model)
+        dssim = DSSIMObjective(kernel_size=4)
+
+        if (loss == 'mse'):
+            self.loss_fn = mean_squared_error
+        elif (loss == 'dssim'):
+            self.loss_fn = dssim
+        elif (loss == 'bce'):
+            self.loss_fn = binary_crossentropy
+
+        self.encoder = Model(inputs=[inp], outputs=[encoder])
+
+        if (n_gpus > 1):
+            self.encoder = make_parallel(self.encoder, n_gpus)
+
+        dinp = Input(shape=(h_units,))
+        de1 = dec1(dinp)
+        de2 = dec2(de1)
+        de3 = dec3(de2)
+        de4 = dec4(de3)
+        de5 = dec5(de4)
+        de6 = dec6(de5)
+        de7 = dec7(de6)
+        de8 = dec8(de7)
+        de9 = dec9(de8)
+        de10 = dec10(de9)
+        de11 = dec11(de10)
+        de12 = dec12(de11)
+        de13 = dec13(de12)
+        de14 = dec14(de13)
+        de15 = recon(de14)
+
+        self.decoder = Model(inputs=[dinp], outputs=[de15])
+
+        if (n_gpus > 1):
+            self.decoder = make_parallel(self.decoder, n_gpus)
+
+
+        self.ae = Model(inputs=[inp], outputs=[ae15])
+
+        if (n_gpus > 1):
+            self.ae = make_parallel(self.ae, n_gpus)
+
+        self.ae.compile(optimizer=adam_ae, loss=self.loss_fn)
+
+        if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
+            print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.ae.load_weights(os.path.join(model_store, 'ae_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'decoder_weights.h5'))):
+            print "LOADING DECODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.decoder.load_weights(os.path.join(model_store, 'decoder_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'encoder_weights.h5'))):
+            print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
+
+        if (notrain):
+            self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
+            self.means = np.load(os.path.join(self.model_store, 'means.npy'))
+
+            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                self.loss_list = pickle.load(f)
+            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                self.list_mean_disp = pickle.load(f)
+
+    def set_x_train(self, id):
+        del (self.x_train)
+        print "Loading Chapter : ", 'chapter_' + str(id) + '.npy'
+        self.x_train = np.load(os.path.join(self.dat_folder, 'chapter_' + str(id) + '.npy'))
+
+    def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10):
+
+        if (self.notrain):
+            return True
+
+        # start_initial chapters training
+        for i in range(0, n_initial_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            history = self.ae.fit(x=self.x_train,y=self.x_train, shuffle=True, epochs=1,
+                                  batch_size=self.batch_size, verbose=verbose)
+            self.loss_list.append(history.history['loss'][0])
+
+            del feats
+
+
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        print "PICKLING LISTS AND SAVING WEIGHTS"
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
+            pickle.dump(self.loss_list, f)
+
+        with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
+            pickle.dump(self.list_mean_disp, f)
+
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+
+        self.save_weights()
+
+        return True
+
+    def fit_model_ae(self, verbose):
+        self.set_x_train(1)
+        es = EarlyStopping(monitor='val_loss', min_delta=1e-10, patience=10, verbose=1)
+        rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1)
+        mcp = ModelCheckpoint(filepath=os.path.join(self.model_store, 'weights.h5'), monitor='val_loss', verbose=1,
+                              save_best_only=True, save_weights_only=True)
+        tb = TensorBoard(os.path.join(self.model_store, 'logs'))
+        history = self.ae.fit(self.x_train, self.x_train, shuffle=True, epochs=500, callbacks=[es, rlr, mcp, tb],
+                    validation_split=0.2, verbose=verbose, batch_size=64)
+        self.loss_list=history.history['loss']
+        self.save_weights()
+
+    def create_recons(self, n_recons):
+
+        for i in range(0, n_recons):
+            self.do_gif_recon(self.x_train[np.random.randint(0, len(self.x_train))], 'recon_' + str(i))
+
+        return True
+
+    def do_gif_recon(self, input_cuboid, name):
+
+        input_cuboid = np.expand_dims(input_cuboid, 0)
+        output_cuboid = self.ae.predict([input_cuboid, np.array([0])])
+
+        input_cuboid = input_cuboid[0]
+        output_cuboid = output_cuboid[0]
+
+        for i in range(0, len(input_cuboid)):
+
+            f, (ax1, ax2) = plt.subplots(2, 1)
+
+            if (self.gs):
+                ax1.imshow(input_cuboid[i].reshape(self.size_y, self.size_x))
+            else:
+                ax1.imshow(input_cuboid[i])
+            ax1.set_title('Input Cuboid')
+            ax1.set_axis_off()
+
+            idx = (-i - 1) if self.reverse else i
+
+            if (self.gs):
+
+                ax2.imshow(output_cuboid[idx].reshape(self.size_y, self.size_x))
+            else:
+                ax2.imshow(output_cuboid[idx])
+            ax2.set_title('Output Cuboid')
+            ax2.set_axis_off()
+
+            plt.axis('off')
+            plt.savefig(os.path.join(self.model_store, str(i) + '.png'), bbox_inches='tight')
+            plt.close()
+
+        images = []
+        for i in range(0, len(input_cuboid)):
+            images.append(imageio.imread(os.path.join(self.model_store, str(i) + '.png')))
+
+        imageio.mimsave(os.path.join(self.model_store, name + '.gif'), images)
+
+        return True
+
+    def save_gifs(self, input_cuboid, name):
+
+        for i in range(0, len(input_cuboid)):
+
+            f, (ax1) = plt.subplots(1, 1)
+
+            idx = (-i - 1) if self.reverse else i
+
+            if (self.gs):
+                ax1.imshow(input_cuboid[idx].reshape(self.size_y, self.size_x))
+            else:
+                ax1.imshow(input_cuboid[idx])
+            ax1.set_title('Input Cuboid')
+            ax1.set_axis_off()
+
+            plt.axis('off')
+            plt.savefig(os.path.join(self.model_store, str(i) + '.png'), bbox_inches='tight')
+            plt.close()
+
+        images = []
+        for i in range(0, len(input_cuboid)):
+            images.append(imageio.imread(os.path.join(self.model_store, str(i) + '.png')))
+
+        imageio.mimsave(os.path.join(self.model_store, name + '.gif'), images)
+
+        return True
+
+    def save_weights(self):
+        self.ae.save_weights(filepath=os.path.join(self.model_store, 'ae_weights.h5'))
+        self.decoder.save_weights(filepath=os.path.join(self.model_store, 'decoder_weights.h5'))
+        self.encoder.save_weights(filepath=os.path.join(self.model_store, 'encoder_weights.h5'))
+
+    def generate_loss_graph(self, graph_name):
+
+        hfm, = plt.plot(self.loss_list, label='loss')
+        plt.legend(handles=[hfm])
+        plt.title('Losses per epoch')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss Value')
+        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
+        plt.close()
