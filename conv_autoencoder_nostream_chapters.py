@@ -6,7 +6,7 @@ from sys import argv
 import functionals_pkg.config as cfg
 import os
 import socket
-
+import sys
 
 
 lamda = cfg.lamda
@@ -57,8 +57,12 @@ nic = int(metric['-i'])
 tstrides = int(metric['-tstrd'])
 loss = metric['-loss']
 ntrain = int(metric['-ntrain'])
+nclusters = int(metric['-nclust'])
+lamda = float(metric['-lamda'])
+lassign = float (metric['-lassign'])
 
-suffix = 'tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters)
+suffix = 'tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
+suffix +='_hunits_'+str(h_units)
 
 if(gs):
     folder = os.path.join('chapter_store_conv','data_store_greyscale_'+str(tstrides))
@@ -73,37 +77,62 @@ if(nic==0):
     nic=n_chapters
     suffix='tstrd_'+str(tstrides)+'_recon_only_h_units'+str(h_units)+'_'+str(loss)
 
+if(gs):
+    suffix += '_greyscale_'
+else:
+    suffix += '_color_'
+
 print "############################"
 print "SET UP MODEL"
 print "############################"
 
-# Get MODEL
-model_store = 'models/conv_autoencoder_chapters_'+suffix
 
-ae_model = models.Conv_autoencoder_nostream(model_store=model_store,loss=loss,h_units=h_units,n_timesteps=5,n_channels=nc,
-                                        batch_size=batch_size,n_clusters=10, clustering_lr=1, lr_model=1e-5,lamda=lamda,
-                                        lamda_assign=lamda_assign,n_gpus=n_gpus,gs=gs,notrain=False,data_folder=folder,reverse=False)
+
+if('-large' in metric.keys()):
+    large = bool(int(metric['-large']))
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "MODEL SIZE LARGE? :" , large
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+else:
+    large = False
+
+
+suffix += '_large_'+str(large)
+suffix +='_ntrain_'+str(ntrain)
+suffix +='_lamda_'+str(lamda)
+suffix +='_lassign_'+str(lassign)
+
+# Get MODEL
+model_store = 'models/' + suffix
+ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=32, size_x=32, n_channels=3, h_units=h_units,
+                                            n_timesteps=5, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
+                                            lr_model=1e-4, lamda=lamda, lamda_assign=lassign, n_gpus=1,gs=gs,notrain=False,
+                                            reverse=False, data_folder=folder,large=large)
+
 
 print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
 
-for _ in range(0,ntrain):
-    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=10,n_chapters=n_chapters)
+ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=10,n_chapters=n_chapters,n_train=ntrain)
 
 ae_model.generate_loss_graph('loss_graph.png')
 
 ae_model.create_recons(20)
 
 if(nic<n_chapters):
-    ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=5,total_chaps_trained=n_chapters)
+
+    ae_model.mean_and_samples(n_per_mean=8)
+
+    ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=10,total_chaps_trained=n_chapters)
 
     ae_model.mean_displacement_distance()
 
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
-    ae_model.decode_means('means_decoded.png')
+    ae_model.decode_means('means_decoded')
 
-    ae_model.create_tsne_plot('tsne_plot.png',n_chapters=5,total_chaps_trained=n_chapters)
+    ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
 
-    ae_model.create_tsne_plot3d('tsne_plot3d.png',n_chapters=n_chapters,total_chaps_trained=n_chapters)
+    ae_model.create_tsne_plot3d('tsne_plot3d.png',n_chapters=10,total_chaps_trained=n_chapters)

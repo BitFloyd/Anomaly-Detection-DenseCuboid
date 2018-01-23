@@ -3,6 +3,10 @@ import pickle
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import keras_contrib.backend as KC
+import imageio
+import tensorflow as tf
 from tqdm import tqdm
 from sklearn.utils import shuffle
 from sklearn.cluster import KMeans,MiniBatchKMeans
@@ -15,15 +19,14 @@ from keras.models import Model
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from keras.losses import mean_squared_error,binary_crossentropy
-import os
 from keras_contrib.losses import DSSIMObjective
+import os
 from keras.datasets import cifar10,mnist,fashion_mnist
 from scipy.spatial.distance import cdist
 from sklearn.manifold import TSNE
 import keras.backend as K
-from mpl_toolkits.mplot3d import Axes3D
-import imageio
-import tensorflow as tf
+from keras.objectives import *
+
 
 def small_2d_conv_net(size_y=32,size_x=32,n_channels=1,n_frames=5,h_units=100):
 
@@ -4691,7 +4694,7 @@ class Conv_autoencoder_nostream:
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
-                 lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store'):
+                 lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store',large=True):
 
         self.clustering_lr = clustering_lr
         self.batch_size = batch_size
@@ -4712,31 +4715,51 @@ class Conv_autoencoder_nostream:
         self.notrain = notrain
         self.reverse = reverse
         self.n_channels = n_channels
+        self.large = large
 
         self.dat_folder = data_folder
 
         if not os.path.exists(self.model_store):
             os.makedirs(self.model_store)
 
+        if (self.large):
+            f1 = 64
+            f2 = 128
+            f3 = 256
+            f4 = 512
+            f5 = 256
+            f6 = 128
+            f7 = 64
+            f8 = 32
+        else:
+            f1 = 16
+            f2 = 32
+            f3 = 64
+            f4 = 256
+            f5 = 128
+            f6 = 64
+            f7 = 32
+            f8 = 16
+
         # MODEL CREATION
-        inp = Input(shape=(size_y, size_x, n_channels*n_timesteps))
+        inp = Input(shape=(size_y, size_x, n_channels * n_timesteps))
         x1 = GaussianNoise(0.05)(inp)
-        x1 = Conv2D(64, (3, 3), padding='same')(x1)
-        x1 = SpatialDropout2D(0.5)(x1)
+        x1 = Conv2D(f1, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
         x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 16x16
 
         x1 = GaussianNoise(0.03)(x1)
-        x1 = Conv2D(128, (3, 3), padding='same')(x1)
-        x1 = SpatialDropout2D(0.5)(x1)
+        x1 = Conv2D(f2, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
         x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 8x8
 
         x1 = GaussianNoise(0.02)(x1)
-        x1 = Conv2D(128, (3, 3), padding='same')(x1)
-        x1 = SpatialDropout2D(0.5)(x1)
+        x1 = Conv2D(f3, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
         x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 4x4
@@ -4747,29 +4770,29 @@ class Conv_autoencoder_nostream:
         x1 = LeakyReLU(alpha=0.2)(x1)
         encoder = BatchNormalization()(x1)
 
-        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * 128)
+        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4)
         dec2 = LeakyReLU(alpha=0.2)
-        dec3 = Reshape((size_x / 8, size_y / 8, 128))
+        dec3 = Reshape((size_x / 8, size_y / 8, f4))
 
         dec4 = UpSampling2D(size=(2, 2))
-        dec5 = Conv2D(256, (3, 3), padding='same')
+        dec5 = Conv2D(f5, (3, 3), padding='same')
         dec6 = LeakyReLU(alpha=0.2)
         dec7 = BatchNormalization()  # 8x8
 
         dec8 = UpSampling2D(size=(2, 2))
-        dec9 = Conv2D(128, (3, 3), padding='same')
+        dec9 = Conv2D(f6, (3, 3), padding='same')
         dec10 = LeakyReLU(alpha=0.2)
         dec11 = BatchNormalization()  # 16x16
 
         dec12 = UpSampling2D(size=(2, 2))
-        dec13 = Conv2D(64, (3, 3), padding='same')
+        dec13 = Conv2D(f7, (3, 3), padding='same')
         dec14 = LeakyReLU(alpha=0.2)
         dec15 = BatchNormalization()  # 32x32
 
-        dec16 = Conv2D(32, (3, 3), padding='same')
+        dec16 = Conv2D(f8, (3, 3), padding='same')
         dec17 = LeakyReLU(alpha=0.2)  # 32x32
 
-        recon = Conv2D(n_timesteps, (3, 3), activation='sigmoid', padding='same')
+        recon = Conv2D(n_channels * n_timesteps, (3, 3), activation='sigmoid', padding='same')
 
         ae1 = dec1(encoder)
         ae2 = dec2(ae1)
@@ -4806,6 +4829,7 @@ class Conv_autoencoder_nostream:
             self.encoder = make_parallel(self.encoder, n_gpus)
 
         dinp = Input(shape=(h_units,))
+
         de1 = dec1(dinp)
         de2 = dec2(de1)
         de3 = dec3(de2)
@@ -4828,19 +4852,16 @@ class Conv_autoencoder_nostream:
         inp_assignments = Input(shape=(1,))
 
         self.y_obj = CustomClusterLayer_Test(self.loss_fn, self.means, self.lamda, self.n_clusters, h_units,
-                                             self.assignment_lamda,self.reverse)
+                                             self.assignment_lamda)
 
         y = self.y_obj([inp, ae18, encoder, inp_assignments])
 
         self.decoder = Model(inputs=[dinp], outputs=[de18])
 
-        if (n_gpus > 1):
-            self.decoder = make_parallel(self.decoder, n_gpus)
-
         self.ae = Model(inputs=[inp, inp_assignments], outputs=[y])
 
         if (n_gpus > 1):
-            self.ae = make_parallel(self.ae, n_gpus)
+            self.decoder = make_parallel(self.decoder, n_gpus)
 
         self.ae.compile(optimizer=adam_ae, loss=None)
 
@@ -4856,13 +4877,13 @@ class Conv_autoencoder_nostream:
             print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
             self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
 
-        if(notrain):
-            self.initial_means = np.load(os.path.join(self.model_store,'initial_means.npy'))
+        if (notrain):
+            self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
             self.means = np.load(os.path.join(self.model_store, 'means.npy'))
 
-            with open(os.path.join(self.model_store,'losslist.pkl'), 'rb') as f:
+            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
                 self.loss_list = pickle.load(f)
-            with open(os.path.join(self.model_store,'meandisp.pkl'), 'rb') as f:
+            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
                 self.list_mean_disp = pickle.load(f)
 
     def set_x_train(self, id):
@@ -4871,7 +4892,7 @@ class Conv_autoencoder_nostream:
         self.x_train = np.load(os.path.join(self.dat_folder, 'chapter_' + str(id) + '.npy'))
 
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
-                           n_chapters=20):
+                           n_chapters=20,n_train=2):
 
         if (self.notrain):
             return True
@@ -4883,16 +4904,17 @@ class Conv_autoencoder_nostream:
 
         for i in range(0, n_initial_chapters):
             self.set_x_train(i)
-            feats = self.encoder.predict(self.x_train)
+            feats = self.encoder.predict(self.x_train,verbose=1)
             self.cluster_assigns = self.get_assigns(self.means, feats)
+
             history = self.ae.fit([self.x_train, self.cluster_assigns], shuffle=True, epochs=1,
-                        batch_size=self.batch_size, verbose=verbose)
+                                   batch_size=self.batch_size, verbose=verbose)
+
             self.loss_list.append(history.history['loss'][0])
 
             del feats
             del self.cluster_assigns
 
-        return True
 
         # Get means of predicted features
         for i in range(0, n_initial_chapters):
@@ -4957,23 +4979,74 @@ class Conv_autoencoder_nostream:
 
             if (earlystopping and loss_track > patience):
                 print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                print "EARLY STOPPING AT EPOCH :", i
+                print "EARLY STOPPING AT EPOCH :", j
                 print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                 break
 
-            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-            print "PICKLING LISTS AND SAVING WEIGHTS"
-            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        if(n_train > 1):
+            for i in range(1,n_train+1):
 
-            with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
-                pickle.dump(self.loss_list, f)
+                print "#############################"
+                print "N_TRAIN: ", i
+                print "#############################"
 
-            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
-                pickle.dump(self.list_mean_disp, f)
+                for j in range(0, n_chapters):
 
-            np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+                    print (j), "/", n_chapters, ":"
+                    self.set_x_train(j)
+                    feats = self.encoder.predict(self.x_train)
+                    self.cluster_assigns = self.get_assigns(self.means, feats)
+                    history = self.ae.fit([self.x_train, self.cluster_assigns], batch_size=self.batch_size, epochs=1,
+                                          verbose=verbose, shuffle=True)
+                    current_loss = history.history['loss'][0]
+                    self.loss_list.append(history.history['loss'][0])
 
-            self.save_weights()
+                    del feats
+                    feats = self.encoder.predict(self.x_train)
+
+                    del self.cluster_assigns
+                    self.cluster_assigns = self.get_assigns(self.means, feats)
+
+                    means_pre = np.copy(self.means)
+                    self.update_means(feats, self.cluster_assigns)
+
+                    # update cluster assigns for the next loop
+                    del self.cluster_assigns
+                    self.cluster_assigns = self.get_assigns(self.means, feats)
+
+                    self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
+
+                    K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+                    if (lowest_loss_ever - current_loss > least_loss):
+                        loss_track = 0
+                        print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
+                        lowest_loss_ever = current_loss
+                    else:
+                        print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
+                        loss_track += 1
+                        print "Loss track is :", loss_track, "/", patience
+
+                    if (earlystopping and loss_track > patience):
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        print "EARLY STOPPING AT EPOCH :", j
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        break
+
+
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        print "PICKLING LISTS AND SAVING WEIGHTS"
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
+            pickle.dump(self.loss_list, f)
+
+        with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
+            pickle.dump(self.list_mean_disp, f)
+
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+
+        self.save_weights()
 
         return True
 
@@ -4994,8 +5067,10 @@ class Conv_autoencoder_nostream:
 
     def create_recons(self, n_recons):
 
+        self.set_x_train(np.random.randint(0,10))
+
         for i in range(0, n_recons):
-            self.do_gif_recon(self.x_train[np.random.randint(0, len(self.x_train))], 'recon_' + str(i))
+                self.do_gif_recon(self.x_train[np.random.randint(0, len(self.x_train))], 'recon_' + str(i))
 
         return True
 
@@ -5012,9 +5087,9 @@ class Conv_autoencoder_nostream:
             f, (ax1, ax2) = plt.subplots(2, 1)
 
             if (self.gs):
-                ax1.imshow(input_cuboid[:,:,i].reshape(self.size_y, self.size_x),cmap='gist_gray')
+                ax1.imshow(np.uint8(input_cuboid[:,:,i].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
             else:
-                ax1.imshow(input_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels],cmap='gist_gray')
+                ax1.imshow(np.uint8(input_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels]*255.0),cmap='gist_gray')
 
             ax1.set_title('Input Cuboid')
             ax1.set_axis_off()
@@ -5022,9 +5097,9 @@ class Conv_autoencoder_nostream:
             idx = (-i - 1) if self.reverse else i
 
             if (self.gs):
-                ax2.imshow(output_cuboid[:,:,idx].reshape(self.size_y, self.size_x))
+                ax2.imshow(np.uint8(output_cuboid[:,:,idx].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
             else:
-                ax2.imshow(output_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels])
+                ax2.imshow(np.uint8(output_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels]*255.0),cmap='gist_gray')
             ax2.set_title('Output Cuboid')
             ax2.set_axis_off()
 
@@ -5049,9 +5124,9 @@ class Conv_autoencoder_nostream:
             idx = (-i - 1) if self.reverse else i
 
             if (self.gs):
-                ax1.imshow(input_cuboid[:, :, i].reshape(self.size_y, self.size_x))
+                ax1.imshow(np.uint8(input_cuboid[:,:,idx].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
             else:
-                ax1.imshow(input_cuboid[:, :, i * self.n_channels:(i + 1) * self.n_channels])
+                ax1.imshow(np.uint8(input_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels]*255.0),cmap='gist_gray')
 
             ax1.set_title('Input Cuboid')
             ax1.set_axis_off()
@@ -5110,7 +5185,7 @@ class Conv_autoencoder_nostream:
 
         full_array_feats = np.vstack((train_encodings, self.means))
         full_array_labels = np.vstack(
-            (cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * 10))
+            (cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
 
         colors = full_array_labels.reshape((full_array_labels.shape[0],))
 
@@ -5123,13 +5198,14 @@ class Conv_autoencoder_nostream:
         print "TSNE FITTING DONE"
         print "##############################"
 
-        plt.scatter(x=train_tsne_embedding[:, 0], y=train_tsne_embedding[:, 1], c=colors, cmap=plt.get_cmap('Set3'),
-                    alpha=0.6)
+        ax = plt.subplot(111)
+        plt.scatter(x=train_tsne_embedding[:, 0], y=train_tsne_embedding[:, 1], c=colors,cmap='jet',alpha=0.6)
         plt.colorbar()
         plt.title('TSNE EMBEDDINGS OF THE CLUSTER MEANS AND THE ENCODED FEATURES')
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
+        pickle.dump(ax, file(os.path.join(self.model_store,'tsne2d.pickle'), 'w'))
         plt.close()
 
     def create_tsne_plot3d(self, graph_name, n_chapters, total_chaps_trained):
@@ -5141,7 +5217,7 @@ class Conv_autoencoder_nostream:
 
         full_array_feats = np.vstack((train_encodings, self.means))
         full_array_labels = np.vstack(
-            (cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * 10))
+            (cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
 
         colors = full_array_labels.reshape((full_array_labels.shape[0],))
 
@@ -5157,11 +5233,13 @@ class Conv_autoencoder_nostream:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         ax.scatter(train_tsne_embedding[:, 0], train_tsne_embedding[:, 1], train_tsne_embedding[:, 2], c=colors,
-                   cmap=plt.get_cmap('Set3'), alpha=0.6)
+                   cmap='jet', alpha=0.6)
+
         ax.set_title('TSNE EMBEDDINGS OF THE CLUSTER MEANS AND THE ENCODED FEATURES')
         ax.legend()
 
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
+        pickle.dump(ax, file(os.path.join(self.model_store, 'tsne3d.pickle'), 'w'))
         plt.close()
 
     def mean_displacement_distance(self):
@@ -5196,7 +5274,7 @@ class Conv_autoencoder_nostream:
             x, = plt.plot(mean_displacement[:, i], label='cluster_' + str(i + 1))
             list_labels.append(x)
 
-        plt.legend(handles=list_labels)
+        plt.legend(handles=list_labels,bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
         plt.title('Mean displacements over iterations')
         plt.xlabel('Iteration Index')
         plt.ylabel('Displacement Value')
@@ -5221,10 +5299,64 @@ class Conv_autoencoder_nostream:
 
     def decode_means(self, graph_name):
 
-        means_decoded = np.uint8(self.decoder.predict(self.means) * 255)
+        means_decoded = self.decoder.predict(self.means)
 
         for i in range(0, len(means_decoded)):
             self.save_gifs(means_decoded[i], graph_name + '_' + str(i + 1))
+
+    def mean_and_samples(self,n_per_mean):
+
+        assert((n_per_mean+1)%3==0),"n_per_mean+1 should be a multiple of 3 for columnwise display"
+
+        points = np.zeros(shape=(self.means.shape[0],n_per_mean+1,self.means.shape[1]))
+
+        for i in range(0,len(self.means)):
+
+            points[i,0,:] = self.means[i]
+
+            for j in range(0,n_per_mean):
+                points[i,j+1,:] = self.means[i]+np.random.normal(0.0,1.0,self.means.shape[1])
+
+            self.recon_mean_samples_to_gif(points=points[i],name='mean_and_samples_'+str(i))
+        return True
+
+    def recon_mean_samples_to_gif(self,points,name):
+        #Assume that points[0] is the centroid
+
+        decoded = self.decoder.predict(points)
+
+        for i in range(0, decoded.shape[-1]/self.n_channels):
+
+            f, axarr = plt.subplots(len(points) / 3, 3)
+            plt.suptitle('Centroid and Nearby Sampling (features) Reconstructed')
+            idx = (-i - 1) if self.reverse else i
+
+            for j in range(0, len(points) / 3):
+                for k in range(0, 3):
+                    if (self.gs):
+                        axarr[j,k].imshow(np.uint8(decoded[j*3+k,:,:,idx].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
+                    else:
+                        axarr[j,k].imshow(np.uint8(decoded[j*3+k,:,:,idx*self.n_channels:(idx+1)*self.n_channels]*255.0),cmap='gist_gray')
+
+                    if(j*3+k==0):
+                        axarr[j,k].set_title('Mean Cuboid')
+                    else:
+                        axarr[j,k].set_title('Sampling '+ str(j*3+k+1) + " Cuboid")
+
+                    axarr[j, k].set_axis_off()
+
+
+            plt.axis('off')
+            plt.savefig(os.path.join(self.model_store, str(i) + '.png'), bbox_inches='tight')
+            plt.close()
+
+        images = []
+        for i in range(0, decoded.shape[-1]/self.n_channels):
+            images.append(imageio.imread(os.path.join(self.model_store, str(i) + '.png')))
+
+        imageio.mimsave(os.path.join(self.model_store, name + '.gif'), images)
+
+        return True
 
 class Conv_autoencoder_nostream_nocl:
     means = None
@@ -6136,7 +6268,7 @@ class Conv_LSTM_autoencoder_nostream_nocl:
     def do_gif_recon(self, input_cuboid, name):
 
         input_cuboid = np.expand_dims(input_cuboid, 0)
-        output_cuboid = self.ae.predict([input_cuboid, np.array([0])])
+        output_cuboid = self.ae.predict(input_cuboid)
 
         input_cuboid = input_cuboid[0]
         output_cuboid = output_cuboid[0]
@@ -6452,7 +6584,7 @@ class Conv_LSTM_autoencoder_nostream_nocl_nobn:
     def do_gif_recon(self, input_cuboid, name):
 
         input_cuboid = np.expand_dims(input_cuboid, 0)
-        output_cuboid = self.ae.predict([input_cuboid, np.array([0])])
+        output_cuboid = self.ae.predict(input_cuboid)
 
         input_cuboid = input_cuboid[0]
         output_cuboid = output_cuboid[0]
