@@ -8,6 +8,24 @@ from collections import deque
 import copy
 
 
+class Cuboid:
+
+    def __init__(self,cuboid,pixmap,surroundings,anomaly_status):
+
+        self.cuboid=cuboid
+        #Normalized cuboid data
+
+        self.pixmap = pixmap
+        #pixel coordinates of the cuboid in the frame
+
+        self.surroundings = surroundings
+        #surroundings = list of surrounding cuboids in order [rowmajor-past,rowmajor present top, left, right,
+        #                                                     rowmajor bottom, rowmajor future] = 9+8+9 = 26 cuboids
+
+        self.anomaly_status = anomaly_status
+        #True if the cuboid has an anomaly in it.
+
+
 class Video_Stream_UCSD:
 
     video_path = 'INIT_PATH_TO_UCSD'

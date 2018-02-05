@@ -3,14 +3,10 @@ mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
 from sys import argv
-import functionals_pkg.config as cfg
 import os
 import socket
 import sys
 
-
-lamda = cfg.lamda
-lamda_assign = cfg.lamda_assign
 
 metric = af.getopts(argv)
 
@@ -115,7 +111,8 @@ print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
 
-ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=10,n_chapters=n_chapters,n_train=ntrain)
+ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=10,n_chapters=n_chapters,
+                            n_train=ntrain, reduce_lr = True, patience_lr=7 , factor=1.5)
 
 ae_model.generate_loss_graph('loss_graph.png')
 
@@ -134,5 +131,3 @@ if(nic<n_chapters):
     ae_model.decode_means('means_decoded')
 
     ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
-
-    ae_model.create_tsne_plot3d('tsne_plot3d.png',n_chapters=10,total_chaps_trained=n_chapters)

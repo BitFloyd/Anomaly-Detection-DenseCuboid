@@ -12,7 +12,7 @@ from sklearn.utils import shuffle
 from sklearn.cluster import KMeans,MiniBatchKMeans
 from keras.optimizers import RMSprop
 from keras.layers import Input, Dense, Lambda, Reshape, GaussianNoise, Conv2D, SpatialDropout2D, LeakyReLU
-from keras.layers import Dropout, MaxPooling2D, Layer, merge
+from keras.layers import Dropout, MaxPooling2D, Layer, merge, AveragePooling2D
 from keras.layers import UpSampling2D, Flatten, BatchNormalization,ConvLSTM2D,TimeDistributed
 from keras.layers.core import Lambda
 from keras.models import Model
@@ -282,8 +282,8 @@ class CustomClusterLayer_Test(Layer):
         zero = K.constant(0,dtype='int64')
         differences = best_centroids - K.cast(assignments,dtype='int64')
         unequal_assignments = K.not_equal(x=differences,y=zero)
-        sum_all_unequal = K.mean(K.cast(unequal_assignments,dtype='float32'))
-        assignment_loss = self.cl_loss_wt * (self.assignment_lamda) * sum_all_unequal
+        mean_all_unequal = K.mean(K.cast(unequal_assignments,dtype='float32'))
+        assignment_loss = self.cl_loss_wt * (self.assignment_lamda) * mean_all_unequal
 
         return loss+cl_loss+assignment_loss
 
@@ -4748,21 +4748,21 @@ class Conv_autoencoder_nostream:
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 16x16
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 16x16
 
         x1 = GaussianNoise(0.03)(x1)
         x1 = Conv2D(f2, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 8x8
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 8x8
 
         x1 = GaussianNoise(0.02)(x1)
         x1 = Conv2D(f3, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = MaxPooling2D(pool_size=(2, 2))(x1)  # 4x4
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 4x4
 
         x1 = Flatten()(x1)
         x1 = Dropout(0.3)(x1)
@@ -4892,7 +4892,7 @@ class Conv_autoencoder_nostream:
         self.x_train = np.load(os.path.join(self.dat_folder, 'chapter_' + str(id) + '.npy'))
 
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
-                           n_chapters=20,n_train=2):
+                           n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5):
 
         if (self.notrain):
             return True
@@ -4934,11 +4934,14 @@ class Conv_autoencoder_nostream:
         np.save(os.path.join(self.model_store, 'initial_means.npy'), self.initial_means)
 
         loss_track = 0
+        loss_track_lr = 0
         lowest_loss_ever = 1000.0
 
         # Make clustering loss weight to 1
         K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(1.0))
         K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+        lr = self.lr_model
 
         for j in range(n_initial_chapters, n_chapters):
 
@@ -4970,12 +4973,23 @@ class Conv_autoencoder_nostream:
 
             if (lowest_loss_ever - current_loss > least_loss):
                 loss_track = 0
+                loss_track_lr=0
                 print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
                 lowest_loss_ever = current_loss
             else:
                 print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
                 loss_track += 1
+                loss_track_lr += 1
                 print "Loss track is :", loss_track, "/", patience
+                print "Loss track lr is :", loss_track_lr, "/", patience_lr
+
+            if (reduce_lr and loss_track_lr > patience_lr):
+                loss_track_lr = 0
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                print "REDUCING_LR AT EPOCH :", j
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                K.set_value(self.ae.optimizer.lr, lr/factor)
+                lr = lr/factor
 
             if (earlystopping and loss_track > patience):
                 print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
@@ -4983,12 +4997,16 @@ class Conv_autoencoder_nostream:
                 print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                 break
 
+
         if(n_train > 1):
             for i in range(1,n_train+1):
 
                 print "#############################"
                 print "N_TRAIN: ", i
                 print "#############################"
+
+                if (earlystopping and loss_track > patience):
+                    break
 
                 for j in range(0, n_chapters):
 
@@ -5020,12 +5038,23 @@ class Conv_autoencoder_nostream:
 
                     if (lowest_loss_ever - current_loss > least_loss):
                         loss_track = 0
+                        loss_track_lr = 0
                         print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
                         lowest_loss_ever = current_loss
                     else:
                         print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
                         loss_track += 1
+                        loss_track_lr+=1
                         print "Loss track is :", loss_track, "/", patience
+                        print "Loss track lr is :", loss_track_lr, "/", patience_lr
+
+                    if (reduce_lr and loss_track_lr > patience_lr):
+                        loss_track_lr = 0
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        print "REDUCING_LR AT EPOCH :", j
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        K.set_value(self.ae.optimizer.lr, lr / factor)
+                        lr = lr / factor
 
                     if (earlystopping and loss_track > patience):
                         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
@@ -5150,11 +5179,12 @@ class Conv_autoencoder_nostream:
 
     def generate_loss_graph(self, graph_name):
 
-        hfm, = plt.plot(self.loss_list, label='loss')
+        hfm, = plt.plot(self.loss_list, 'ro',label='loss')
+        plt.plot(self.loss_list,'b:')
         plt.legend(handles=[hfm])
-        plt.title('Losses per epoch')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss Value')
+        plt.title('Losses per training iteration')
+        plt.xlabel('Training iteration index')
+        plt.ylabel('Loss value (Value of cost function)')
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
 
@@ -5269,15 +5299,20 @@ class Conv_autoencoder_nostream:
         mean_displacement = np.array(self.list_mean_disp)
         print mean_displacement.shape
         list_labels = []
+        n = mean_displacement.shape[1]*2
+
+        color = iter(plt.cm.rainbow(np.linspace(0,1,n)))
 
         for i in range(0, mean_displacement.shape[1]):
-            x, = plt.plot(mean_displacement[:, i], label='cluster_' + str(i + 1))
+            x, = plt.plot(mean_displacement[:, i],'o', c=next(color), label='centroid ' + str(i + 1))
+            plt.plot(mean_displacement[:,i],':',c=next(color))
             list_labels.append(x)
 
+
         plt.legend(handles=list_labels,bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-        plt.title('Mean displacements over iterations')
-        plt.xlabel('Iteration Index')
-        plt.ylabel('Displacement Value')
+        plt.title('Centroid displacements over training iterations')
+        plt.xlabel('Training iteration index')
+        plt.ylabel('Displacement value')
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
 

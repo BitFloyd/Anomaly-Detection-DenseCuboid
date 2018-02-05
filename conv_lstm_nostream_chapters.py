@@ -3,14 +3,9 @@ mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
 from sys import argv
-import functionals_pkg.config as cfg
 import os
 import socket
 
-
-
-lamda = cfg.lamda
-lamda_assign = cfg.lamda_assign
 
 metric = af.getopts(argv)
 
