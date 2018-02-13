@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.utils import shuffle
 from data_pkg.data_fns import  Cuboid
+import sys
+
 
 def norm_batch(batch,min=0,max=255.0,sub_mean=False):
 
@@ -92,6 +94,7 @@ def get_next_relevant_cuboids(vstream,gs=False):
     return cuboids_batch
 
 def get_next_relevant_cuboids_test(vstream,gs=False):
+
     list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, _, _ = vstream.get_next_cuboids_from_stream(gs)
 
     return list_cuboids,list_cuboids_pixmap,list_cuboids_anomaly
@@ -137,12 +140,16 @@ def return_relevant_cubs(vstream,thresh_variance,gs=False,ts_pos=0):
 
     return cuboids_batch
 
+
 def make_test_cuboid_structures(list_cuboids,list_cuboids_pixmap,list_cuboids_anomaly):
 
     rows = list_cuboids[0].shape[0]
     cols = list_cuboids[0].shape[1]
 
+
     cubstructs=[]
+
+   
 
     for j in range(1, rows - 1):
         for k in range(1, cols - 1):
@@ -194,17 +201,14 @@ def make_test_cuboid_structures(list_cuboids,list_cuboids_pixmap,list_cuboids_an
             surroundings.append(list_cuboids[surr_idx][j + 1, k + 1])
 
 
-            cub =  Cuboid(current_cuboid,list_cuboids_pixmap[1][j][k],surroundings,list_cuboids_pixmap[1][j][k])
+            cub =  Cuboid(current_cuboid,list_cuboids_pixmap[1][j][k],surroundings,list_cuboids_anomaly[1][j][k])
 
             cubstructs.append(cub)
 
     return cubstructs
 
-def return_cuboid_test(vstream,thresh_variance,gs=False,ts_pos=0):
 
-    #This function gets cuboids in the array format, processes and extracts neighors and checks if all the neighbors
-    #have enough variance to be computed by the model. This is temporary.
-    # TODO. Fix this to a more permanent one after analysis
+def return_cuboid_test(vstream,thresh_variance,gs=False,ts_pos=0):
 
     list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly = get_next_relevant_cuboids_test(vstream,gs)
 
@@ -212,6 +216,4 @@ def return_cuboid_test(vstream,thresh_variance,gs=False,ts_pos=0):
         for idx,i in enumerate(list_cuboids):
             list_cuboids[idx] = norm_batch(i)
 
-    cubstructs = make_test_cuboid_structures(list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly)
-
-    return cubstructs
+    return list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly

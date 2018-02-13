@@ -6,7 +6,7 @@ from sys import argv
 import os
 import socket
 import sys
-
+import re
 
 metric = af.getopts(argv)
 
@@ -40,7 +40,7 @@ else:
     print "DETECTED RUN ON GUILLIMIN: Probably"
     print "############################################"
     verbose = 1
-    os.chdir('/gs/scratch/sejacob/densecub')
+    os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
     path_videos = '/gs/project/suu-621-aa/sejacob/data/art_videos_prob_0.01/artif_videos_128x128'
     n_gpus = int(metric['-ngpu'])
 
@@ -64,11 +64,13 @@ if(gs):
     folder = os.path.join('chapter_store_conv','data_store_greyscale_'+str(tstrides))
     nc=1
 else:
-    folder = os.path.join('chapter_store_conv','data_store_'+str(tstrides))
+    folder = os.path.join('chapter_store_conv','data_store_' + str(tstrides) + '_0.0')
     nc=3
 
 if(n_chapters == 0):
-    n_chapters=len(os.listdir(folder))-2
+    r = re.compile('chapter_.*.npy')
+    n_chapters=len(filter(r.match,os.listdir(folder)))
+
 if(nic==0):
     nic=n_chapters
     suffix='tstrd_'+str(tstrides)+'_recon_only_h_units'+str(h_units)+'_'+str(loss)
@@ -101,8 +103,8 @@ suffix +='_lassign_'+str(lassign)
 
 # Get MODEL
 model_store = 'models/' + suffix
-ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=32, size_x=32, n_channels=3, h_units=h_units,
-                                            n_timesteps=5, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
+ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
+                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
                                             lr_model=1e-4, lamda=lamda, lamda_assign=lassign, n_gpus=1,gs=gs,notrain=False,
                                             reverse=False, data_folder=folder,large=large)
 
@@ -111,8 +113,8 @@ print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
 
-ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=10,n_chapters=n_chapters,
-                            n_train=ntrain, reduce_lr = True, patience_lr=7 , factor=1.5)
+ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=25,n_chapters=n_chapters,
+                            n_train=ntrain, reduce_lr = True, patience_lr=10 , factor=1.5)
 
 ae_model.generate_loss_graph('loss_graph.png')
 
@@ -131,3 +133,5 @@ if(nic<n_chapters):
     ae_model.decode_means('means_decoded')
 
     ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
+
+    ae_model.generate_loss_graph_with_anomaly_gt('loss_graph_with_anomaly_gt.png')

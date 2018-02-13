@@ -4,26 +4,177 @@ from skimage.io import imread
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from skimage import color,img_as_float
+from scipy.spatial.distance import cdist
 from collections import deque
 import copy
 
 
-class Cuboid:
+class TestDictionary:
 
-    def __init__(self,cuboid,pixmap,surroundings,anomaly_status):
+    model = None
+    dictionary_words = {}
+    means = None
 
-        self.cuboid=cuboid
-        #Normalized cuboid data
+    data_store = None    #Where the test data is stored
 
-        self.pixmap = pixmap
-        #pixel coordinates of the cuboid in the frame
+    vid = None           #Id of the video being processed ATM -> Always points to the next id to be loaded
+    cubarray = None      #Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
+    amongtarray = None   #Contains anomaly groundtruths of corresponding cuboids in cubarray (shape = cubarray.shape())
+    pixmaparray = None   #Each element contains a tuple of the pixel centres of corresponding cuboid in cubarray
+                         # (shape = cubarray.shape())
 
-        self.surroundings = surroundings
-        #surroundings = list of surrounding cuboids in order [rowmajor-past,rowmajor present top, left, right,
-        #                                                     rowmajor bottom, rowmajor future] = 9+8+9 = 26 cuboids
+    cubarray_process_index = None #The index of the set in cubarray that is being processed.
 
-        self.anomaly_status = anomaly_status
-        #True if the cuboid has an anomaly in it.
+
+    def __init__(self,model,data_store):
+
+        self.model = model.encoder #we only need the encoder from the model
+
+
+        self.means = model.means  #means of each cluster learned by the model
+
+        self.data_store = data_store #location of test data
+        self.vid = 0
+
+    def load_data(self):
+
+        if(os.path.exists(os.path.join('video_cuboids_array_'+str(self.vid)+'.npy'))):
+            self.cubarray = np.load(os.path.join('video_cuboids_array_'+str(self.vid)+'.npy'))
+            self.anomgtarray = np.load(os.path.join('video_anomgt_array_' + str(self.vid) + '.npy'))
+            self.pixmaparray = np.load(os.path.join('video_pixmap_array_' + str(self.vid) + '.npy'))
+
+            self.vid+=1
+            self.cubarray_process_index = 1
+            return True
+
+        else:
+
+            return False
+
+    def fetch_next_set_from_cubarray(self):
+        #returns 3 things. 3 rows of cubarray, The relevant row of anomaly_gt and the relevant row of  pixmap
+        if(self.cubarray_process_index<len(self.cubarray)-1):
+            three_rows_cubarray = self.cubarray[self.cubarray_process_index-1:self.cubarray_process_index+2]
+            relevant_row_anom_gt = self.anomgtarray[self.cubarray_process_index]
+            relevant_row_pixmap = self.pixmaparray[self.cubarray_process_index]
+
+            self.cubarray_process_index+=1
+
+            return (three_rows_cubarray,relevant_row_anom_gt,relevant_row_pixmap)
+        else:
+            return False
+
+    def create_surroundings(self,three_rows_cubarray):
+
+        rows = three_rows_cubarray[0].shape[0]
+        cols = three_rows_cubarray[0].shape[1]
+
+        list_surrounding_cuboids_from_three_rows = []
+
+        for j in range(1, rows - 1):
+            for k in range(1, cols - 1):
+                surroundings = []
+
+                surr_idx = 0
+
+                current_cuboid = three_rows_cubarray[1][j, k]
+
+                surroundings.append(current_cuboid)
+
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
+
+                surr_idx = 1
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
+
+                surr_idx = 2
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
+
+                list_surrounding_cuboids_from_three_rows.append(np.array(surroundings))
+
+
+        return np.array(list_surrounding_cuboids_from_three_rows)
+
+    def predict_on_surroundings(self,surroundings_from_three_rows):
+
+        list_predictions = []
+
+        for i in range(0,len(surroundings_from_three_rows)):
+            list_predictions.append(self.model.predict(surroundings_from_three_rows[i]))
+
+        return np.array(list_predictions)
+
+    def create_words_from_predictions(self,predictions):
+
+        list_words = []
+
+        for i in range(0,len(predictions)):
+            x = predictions[i]
+            dist = cdist(x,self.means)
+            word = tuple(np.argmin(dist,1))
+            list_words.append(word)
+
+        return list_words
+
+    def update_dict_with_words(self,words_from_preds):
+
+        for i in words_from_preds:
+
+            if(self.dictionary_words.has_key(i)):
+                self.dictionary_words[i]+=1
+            else:
+                self.dictionary_words[i]=1
+
+
+        return True
+
+    def update_dict_from_data(self):
+
+        while (self.load_data()):
+            self.update_dict_from_video()
+
+        return True
+
+    def update_dict_from_video(self):
+
+        next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+        while(next_set_from_cubarray):
+            surroundings_from_three_rows = self.create_surroundings(next_set_from_cubarray[0])
+            predictions = self.predict_on_surroundings(surroundings_from_three_rows)
+            words_from_preds = self.create_words_from_predictions(predictions)
+            self.update_dict_with_words(words_from_preds)
+            next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+        return True
 
 
 class Video_Stream_UCSD:

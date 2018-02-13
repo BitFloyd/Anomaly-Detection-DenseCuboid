@@ -52,23 +52,23 @@ else:
     ts_pos = -1
     mainfol = 'chapter_store_conv'
 
+tv = 0.0
 
 if(gs):
     folder = os.path.join(mainfol, 'data_store_greyscale_' + str(tstrides))
     if(tstrides==2):
-        tv = 0.02
+        # tv = 0.02
         print "VARIANCE THRESHOLD IS:", tv
     elif(tstrides==4):
-        tv = 0.05
+        # tv = 0.05
         print "VARIANCE THRESHOLD IS:", tv
     elif (tstrides==8):
-        tv = 0.05
+        # tv = 0.05
         print "VARIANCE THRESHOLD IS:", tv
 
 else:
-    folder = os.path.join(mainfol, 'data_store_' + str(tstrides))
-    tv = 0.1
-
+    # tv = 0.0
+    folder = os.path.join(mainfol, 'data_store_' + str(tstrides) + '_' + str(tv))
 
 
 if(not os.path.exists(mainfol)):
@@ -84,8 +84,8 @@ print "############################"
 #Get Data Stream
 train_test = 'Test'
 
-size_axis = 32
-n_frames = 5
+size_axis = 24
+n_frames = 8
 vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
                                 timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides)
 
@@ -114,7 +114,8 @@ print "SEEK IS NOW:", vstream.seek
 while True:
 
     list_cubatch = []
-    for k in tqdm(range(0,100)):
+
+    for k in tqdm(range(0,200)):
         cubatch = bf.return_relevant_cubs(vstream,thresh_variance=tv,gs=gs,ts_pos=ts_pos)
         list_cubatch.append(cubatch.tolist())
 

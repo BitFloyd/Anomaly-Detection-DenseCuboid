@@ -19,9 +19,10 @@ from keras.models import Model
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from keras.losses import mean_squared_error,binary_crossentropy
+from keras.utils import plot_model
 from keras_contrib.losses import DSSIMObjective
 import os
-from keras.datasets import cifar10,mnist,fashion_mnist
+from keras.datasets import cifar10,mnist
 from scipy.spatial.distance import cdist
 from sklearn.manifold import TSNE
 import keras.backend as K
@@ -4687,6 +4688,7 @@ class Conv_LSTM_autoencoder_nostream:
             self.save_gifs(means_decoded[i],graph_name+'_'+str(i+1))
 
 class Conv_autoencoder_nostream:
+
     means = None
     initial_means = None
     list_mean_disp = []
@@ -4885,6 +4887,14 @@ class Conv_autoencoder_nostream:
                 self.loss_list = pickle.load(f)
             with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
                 self.list_mean_disp = pickle.load(f)
+
+        # print "PLOTTING AE MODEL"
+        # plot_model(self.ae,      to_file=os.path.join(self.model_store,'ae_model.png'), show_shapes=True)
+        # print "PLOTTING DECODER MODEL"
+        # plot_model(self.decoder, to_file=os.path.join(self.model_store,'decoder_model.png'), show_shapes=True)
+        # print "PLOTTING ENCODER MODEL"
+        # plot_model(self.encoder, to_file=os.path.join(self.model_store,'encoder_model.png'), show_shapes=True)
+
 
     def set_x_train(self, id):
         del (self.x_train)
@@ -5187,6 +5197,32 @@ class Conv_autoencoder_nostream:
         plt.ylabel('Loss value (Value of cost function)')
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
+
+        return True
+
+    def generate_loss_graph_with_anomaly_gt(self,graph_name):
+
+        with open(os.path.join(self.dat_folder, 'chapter_id_anomaly_list.pkl'), 'rb') as f:
+            chapter_id_anomaly_list = pickle.load(f)
+
+        chapter_id_anom_list_completed = []
+
+        for idx, _ in enumerate(self.loss_list):
+            chapter_id_anom_list_completed.append(chapter_id_anomaly_list[idx % len(chapter_id_anomaly_list)])
+
+        loss_of_chapters_with_anomaly = np.array(chapter_id_anom_list_completed) * np.array(self.loss_list)
+
+        hfm, = plt.plot(self.loss_list, 'ro',label='loss')
+        plt.plot(self.loss_list,'b:')
+        hfm2, = plt.plot(loss_of_chapters_with_anomaly, 'go',label='anomalies-present')
+        plt.legend(handles=[hfm,hfm2])
+        plt.title('Losses per training iteration')
+        plt.xlabel('Training iteration index')
+        plt.ylabel('Loss value (Value of cost function)')
+        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
+        plt.close()
+
+        return True
 
     def get_encodings_and_assigns(self, n_chapters, total_chaps_trained_on):
 

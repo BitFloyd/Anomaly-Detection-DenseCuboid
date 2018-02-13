@@ -5,7 +5,7 @@
       <paths name="guillimin">
         <serverdata>
           <mappings>
-            <mapping deploy="/gs/scratch/sejacob/densecub" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/gs/project/suu-621-aa/sejacob/densecub/" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
