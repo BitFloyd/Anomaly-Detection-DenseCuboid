@@ -57,7 +57,7 @@ nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
 lassign = float (metric['-lassign'])
 
-suffix = 'tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
+suffix = 'noclustering_tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
 suffix +='_hunits_'+str(h_units)
 
 if(gs):
@@ -113,8 +113,8 @@ print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
 
-ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=30,n_chapters=n_chapters,
-                            n_train=ntrain, reduce_lr = True, patience_lr=12 , factor=1.25)
+ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True,patience=30,n_chapters=n_chapters,
+                                    n_train=ntrain, reduce_lr = True, patience_lr=12 , factor=1.25)
 
 ae_model.generate_loss_graph('loss_graph.png')
 

@@ -4901,6 +4901,10 @@ class Conv_autoencoder_nostream:
         print "Loading Chapter : ", 'chapter_' + str(id) + '.npy'
         self.x_train = np.load(os.path.join(self.dat_folder, 'chapter_' + str(id) + '.npy'))
 
+    def set_cl_loss(self,val):
+        K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(val))
+        return True
+
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
                            n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5):
 
@@ -5088,6 +5092,122 @@ class Conv_autoencoder_nostream:
         self.save_weights()
 
         return True
+
+
+    def fit_model_ae_chaps_nocloss(self, verbose=1, earlystopping=False, patience=10, least_loss=1e-5,
+                                   n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5):
+
+        if (self.notrain):
+            return True
+
+        loss_track = 0
+        loss_track_lr = 0
+        lowest_loss_ever = 1000.0
+
+        lr = self.lr_model
+
+        # Make clustering loss weight to 0
+        K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(0.0))
+
+        for i in range(0, n_train ):
+
+            print "#############################"
+            print "N_TRAIN: ", i
+            print "#############################"
+
+            if (earlystopping and loss_track > patience):
+                break
+
+            for j in range(0, n_chapters):
+
+                print (j), "/", n_chapters, ":"
+                self.set_x_train(j)
+
+
+                self.cluster_assigns = np.zeros(shape=(len(self.x_train),1))
+
+                history = self.ae.fit([self.x_train, self.cluster_assigns], batch_size=self.batch_size, epochs=1,
+                                      verbose=verbose, shuffle=True)
+
+                current_loss = history.history['loss'][0]
+                self.loss_list.append(history.history['loss'][0])
+
+
+                feats = self.encoder.predict(self.x_train)
+
+                self.km.partial_fit(feats)
+
+                del feats
+
+                means_pre = np.copy(self.means)
+
+                self.means = np.copy(self.km.cluster_centers_).astype('float64')
+
+                self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
+
+                K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+                if (lowest_loss_ever - current_loss > least_loss):
+                    loss_track = 0
+                    loss_track_lr = 0
+                    print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
+                    lowest_loss_ever = current_loss
+                else:
+                    print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
+                    loss_track += 1
+                    loss_track_lr += 1
+                    print "Loss track is :", loss_track, "/", patience
+                    print "Loss track lr is :", loss_track_lr, "/", patience_lr
+
+                if (reduce_lr and loss_track_lr > patience_lr):
+                    loss_track_lr = 0
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    print "REDUCING_LR AT EPOCH :", j
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    K.set_value(self.ae.optimizer.lr, lr / factor)
+                    lr = lr / factor
+
+                if (earlystopping and loss_track > patience):
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    print "EARLY STOPPING AT EPOCH :", j
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    break
+
+
+        # Get means of predicted features
+        for j in range(0, n_train):
+            for i in range(0, n_chapters):
+                self.set_x_train(i)
+                feats = self.encoder.predict(self.x_train)
+                self.km.partial_fit(feats)
+                del feats
+
+        self.means = np.copy(self.km.cluster_centers_).astype('float64')
+
+        print "$$$$$$$$$$$$$$$$$$"
+        print "MEANS_INITIAL"
+        print "$$$$$$$$$$$$$$$$$$"
+        print self.means
+
+        self.initial_means = np.copy(self.km.cluster_centers_)
+        np.save(os.path.join(self.model_store, 'initial_means.npy'), self.initial_means)
+
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        print "PICKLING LISTS AND SAVING WEIGHTS"
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
+            pickle.dump(self.loss_list, f)
+
+        with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
+            pickle.dump(self.list_mean_disp, f)
+
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+
+        self.save_weights()
+
+        return True
+
 
     def get_assigns(self, means, feats):
 

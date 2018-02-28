@@ -5,9 +5,14 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from skimage import color,img_as_float
 from scipy.spatial.distance import cdist
+from sklearn.metrics import precision_score, f1_score, recall_score
+from sklearn.metrics import accuracy_score,confusion_matrix
 from collections import deque
+from matplotlib.colors import ListedColormap
 import copy
-
+import sys
+import pickle
+import math
 
 class TestDictionary:
 
@@ -25,35 +30,74 @@ class TestDictionary:
 
     cubarray_process_index = None #The index of the set in cubarray that is being processed.
 
+    list_of_cub_words_full_dataset = []
+    list_of_cub_loss_full_dataset = []
+    list_of_cub_anom_gt_full_dataset = []
+    list_full_dset_cuboid_frequencies = []
 
-    def __init__(self,model,data_store):
+    def __init__(self,model,data_store,notest=False,model_store=None):
 
-        self.model = model.encoder #we only need the encoder from the model
+        self.notest = notest
+
+        if(not notest):
+            self.model_enc = model.encoder
+            self.model_ae = model.ae
+            self.model_store = model.model_store
+
+            self.means = model.means  #means of each cluster learned by the model
+
+            self.data_store = data_store #location of test data
+            self.vid = 1
 
 
-        self.means = model.means  #means of each cluster learned by the model
 
-        self.data_store = data_store #location of test data
-        self.vid = 0
+        if(notest):
+
+            self.model_store = model_store
+            with open(os.path.join(self.model_store,'dictionary.pkl'), 'rb') as f:
+                self.dictionary_words = pickle.load(f)
+
+            with open(os.path.join(self.model_store,'list_cub_words_full_dataset.pkl'), 'rb') as f:
+                self.list_of_cub_words_full_dataset = pickle.load(f)
+
+            with open(os.path.join(self.model_store,'list_cub_anomgt_full_dataset.pkl'), 'rb') as f:
+                self.list_of_cub_anom_gt_full_dataset = pickle.load(f)
+
+            with open(os.path.join(self.model_store, 'list_cub_loss_full_dataset.pkl'), 'rb') as f:
+                self.list_of_cub_loss_full_dataset = pickle.load(f)
+
+            if(os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'))):
+
+                with open(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'), 'rb') as f:
+                    self.list_full_dset_cuboid_frequencies = pickle.load(f)
 
     def load_data(self):
 
-        if(os.path.exists(os.path.join('video_cuboids_array_'+str(self.vid)+'.npy'))):
-            self.cubarray = np.load(os.path.join('video_cuboids_array_'+str(self.vid)+'.npy'))
-            self.anomgtarray = np.load(os.path.join('video_anomgt_array_' + str(self.vid) + '.npy'))
-            self.pixmaparray = np.load(os.path.join('video_pixmap_array_' + str(self.vid) + '.npy'))
+        # print os.path.join(self.data_store,'video_cuboids_array_'+str(self.vid)+'.npy')
+        if(os.path.exists(os.path.join(self.data_store,'video_cuboids_array_'+str(self.vid)+'.npy'))):
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            print "LOADING VIDEO ARRAY ", self.vid
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            self.cubarray = np.load(os.path.join(self.data_store,'video_cuboids_array_'+str(self.vid)+'.npy'))
+            self.anomgtarray = np.load(os.path.join(self.data_store,'video_anomgt_array_' + str(self.vid) + '.npy'))
+            self.pixmaparray = np.load(os.path.join(self.data_store,'video_pixmap_array_' + str(self.vid) + '.npy'))
 
             self.vid+=1
             self.cubarray_process_index = 1
             return True
 
         else:
-
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            print "VIDEOS FINISHED"
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$"
             return False
 
     def fetch_next_set_from_cubarray(self):
+
         #returns 3 things. 3 rows of cubarray, The relevant row of anomaly_gt and the relevant row of  pixmap
         if(self.cubarray_process_index<len(self.cubarray)-1):
+            print self.cubarray_process_index,'/',len(self.cubarray)-1
+            sys.stdout.write("\033[F")
             three_rows_cubarray = self.cubarray[self.cubarray_process_index-1:self.cubarray_process_index+2]
             relevant_row_anom_gt = self.anomgtarray[self.cubarray_process_index]
             relevant_row_pixmap = self.pixmaparray[self.cubarray_process_index]
@@ -64,12 +108,14 @@ class TestDictionary:
         else:
             return False
 
-    def create_surroundings(self,three_rows_cubarray):
+    def create_surroundings(self,three_rows_cubarray,relevant_row_anom_gt):
 
         rows = three_rows_cubarray[0].shape[0]
         cols = three_rows_cubarray[0].shape[1]
 
         list_surrounding_cuboids_from_three_rows = []
+        sublist_full_dataset_anom_gt = []
+        sublist_full_dataset_dssim_loss = []
 
         for j in range(1, rows - 1):
             for k in range(1, cols - 1):
@@ -78,6 +124,11 @@ class TestDictionary:
                 surr_idx = 0
 
                 current_cuboid = three_rows_cubarray[1][j, k]
+
+                sublist_full_dataset_anom_gt.append(relevant_row_anom_gt[j,k])
+
+                loss = self.model_ae.evaluate(x=[np.expand_dims(current_cuboid,0),np.array([0])],y=None,verbose=False)
+                sublist_full_dataset_dssim_loss.append(loss)
 
                 surroundings.append(current_cuboid)
 
@@ -121,14 +172,14 @@ class TestDictionary:
                 list_surrounding_cuboids_from_three_rows.append(np.array(surroundings))
 
 
-        return np.array(list_surrounding_cuboids_from_three_rows)
+        return np.array(list_surrounding_cuboids_from_three_rows), sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss
 
     def predict_on_surroundings(self,surroundings_from_three_rows):
 
         list_predictions = []
 
         for i in range(0,len(surroundings_from_three_rows)):
-            list_predictions.append(self.model.predict(surroundings_from_three_rows[i]))
+            list_predictions.append(self.model_enc.predict(surroundings_from_three_rows[i]))
 
         return np.array(list_predictions)
 
@@ -160,6 +211,19 @@ class TestDictionary:
 
         while (self.load_data()):
             self.update_dict_from_video()
+            self.print_details_and_plot(graph_name_frq='word_frequency.png',graph_name_loss='dssim_recon_losses.png')
+
+        with open(os.path.join(self.model_store, 'dictionary.pkl'), 'wb') as f:
+            pickle.dump(self.dictionary_words, f)
+
+        with open(os.path.join(self.model_store, 'list_cub_words_full_dataset.pkl'), 'wb') as f:
+            pickle.dump(self.list_of_cub_words_full_dataset,f)
+
+        with open(os.path.join(self.model_store, 'list_cub_anomgt_full_dataset.pkl'), 'wb') as f:
+            pickle.dump(self.list_of_cub_anom_gt_full_dataset,f)
+
+        with open(os.path.join(self.model_store,'list_cub_loss_full_dataset.pkl'),'wb') as f:
+            pickle.dump(self.list_of_cub_loss_full_dataset,f)
 
         return True
 
@@ -168,14 +232,374 @@ class TestDictionary:
         next_set_from_cubarray = self.fetch_next_set_from_cubarray()
 
         while(next_set_from_cubarray):
-            surroundings_from_three_rows = self.create_surroundings(next_set_from_cubarray[0])
+            surroundings_from_three_rows, sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss = \
+                self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],relevant_row_anom_gt=next_set_from_cubarray[1])
+
             predictions = self.predict_on_surroundings(surroundings_from_three_rows)
             words_from_preds = self.create_words_from_predictions(predictions)
             self.update_dict_with_words(words_from_preds)
+
+            self.list_of_cub_anom_gt_full_dataset.extend(sublist_full_dataset_anom_gt)
+            self.list_of_cub_loss_full_dataset.extend(sublist_full_dataset_dssim_loss)
+            self.list_of_cub_words_full_dataset.extend(words_from_preds)
+
             next_set_from_cubarray = self.fetch_next_set_from_cubarray()
 
         return True
 
+    def print_details_and_plot(self,graph_name_frq,graph_name_loss):
+
+        print "########################################"
+        print "MAXIMUM FREQUENCY OF WORDS:"
+        print max(self.dictionary_words.values())
+        print "########################################"
+
+        print "########################################"
+        print "MINIMUM FREQUENCY OF WORDS:"
+        print min(self.dictionary_words.values())
+        print "########################################"
+
+        print "########################################"
+        print "MAXIMUM DSSIM LOSS:"
+        print max(self.list_of_cub_loss_full_dataset)
+        print "########################################"
+
+        print "########################################"
+        print "MINIMUM DSSIM LOSS:"
+        print min(self.list_of_cub_loss_full_dataset)
+        print "########################################"
+
+        hfm, = plt.plot(self.dictionary_words.values(), label='frequency_words')
+        plt.legend(handles=[hfm])
+        plt.title('Word Frequency')
+        plt.xlabel('Word_index')
+        plt.ylabel('Frequency')
+        plt.savefig(os.path.join(self.model_store, graph_name_frq), bbox_inches='tight')
+        plt.close()
+
+        hfm, = plt.plot(self.list_of_cub_loss_full_dataset, label='loss values')
+        plt.legend(handles=[hfm])
+        plt.title('DSSIM Reconstruction Loss')
+        plt.xlabel('Cuboid Index')
+        plt.ylabel('Loss')
+        plt.savefig(os.path.join(self.model_store, graph_name_loss), bbox_inches='tight')
+        plt.close()
+
+        return True
+
+    def make_list_full_dset_cuboid_frequencies(self):
+
+        if (self.notest and os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'))):
+            print "LIST CUBOID FREQUENCIES ALREADY EXISTS."
+
+            with open(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'), 'rb') as f:
+                self.list_full_dset_cuboid_frequencies = pickle.load(f)
+
+            return True
+
+        self.list_full_dset_cuboid_frequencies=[]
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "MAKING LIST CUBOID FREQUENCIES"
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        for i in self.list_of_cub_words_full_dataset:
+            self.list_full_dset_cuboid_frequencies.append(self.dictionary_words[i])
+
+        with open(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'), 'wb') as f:
+            pickle.dump(self.list_full_dset_cuboid_frequencies,f)
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "LEN LIST_CUB_FREQUENCIES_FULL", len(self.list_full_dset_cuboid_frequencies)
+        print "MAX LIST_CUB_FREQUENCIES_FULL", max(self.list_full_dset_cuboid_frequencies)
+        print "MIN LIST_CUB_FREQUENCIES_FULL", min(self.list_full_dset_cuboid_frequencies)
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        return True
+
+    def make_p_r_f_a_curve(self,prfa_graph_name,tp_fp_graph_name,deets_filename):
+
+        precision_score_list = []
+        recall_score_list = []
+        f1_score_list = []
+        accuracy_score_list = []
+
+        tp_list = []
+        fp_list = []
+        tn_list = []
+        fn_list = []
+
+        lspace = np.logspace(math.log10(min(self.dictionary_words.values())),math.log10(max(self.dictionary_words.values())),1000)
+
+        total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
+
+        print "#################################################################################"
+        print "TOTAL NUMBER OF TRUE POSITIVES:" , total_num_tp
+        print "TOTAL NUMBER OF SAMPLES TO BE TESTED:",len(self.list_of_cub_anom_gt_full_dataset)
+        print "RATIO:",total_num_tp/(len(self.list_of_cub_anom_gt_full_dataset)+0.0)
+        print "ACC WHEN ALL 0: ", (len(self.list_of_cub_anom_gt_full_dataset) - total_num_tp)/(len(self.list_of_cub_anom_gt_full_dataset)+0.0) * 100
+        print "#################################################################################"
+
+
+        for i in tqdm(lspace):
+
+            y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
+            y_pred = (np.array(self.list_full_dset_cuboid_frequencies)<=i)
+
+            cm = confusion_matrix(y_true,y_pred)
+
+            precision_score_list.append(precision_score(y_true,y_pred)*100)
+            recall_score_list.append(recall_score(y_true,y_pred)*100)
+            f1_score_list.append(f1_score(y_true,y_pred)*100)
+            accuracy_score_list.append(accuracy_score(y_true,y_pred)*100)
+
+            TN = cm[0][0]
+
+            FP = cm[0][1]
+
+            FN = cm[1][0]
+
+            TP = cm[1][1]
+
+            tp_list.append(TP)
+            tn_list.append(TN)
+
+            fn_list.append(FN)
+            fp_list.append(FP)
+
+        print "##########################################################################"
+        print "MAX ACCURACY:",max(accuracy_score_list)
+        print "THRESHOLD:",lspace[accuracy_score_list.index(max(accuracy_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX PRECISION:",max(precision_score_list)
+        print "THRESHOLD:",lspace[precision_score_list.index(max(precision_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX RECALL:", max(recall_score_list)
+        print "THRESHOLD:", lspace[recall_score_list.index(max(recall_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX F1:", max(f1_score_list)
+        print "F1 score:", lspace[f1_score_list.index(max(f1_score_list))]
+        print "##########################################################################"
+
+        #Plot PRFA curve
+        hfm, = plt.plot(precision_score_list, label='precision_score')
+        hfm2, = plt.plot(recall_score_list, label='recall_score')
+        hfm3, = plt.plot(f1_score_list, label='f1_score')
+        hfm4, = plt.plot(accuracy_score_list,label='accuracy_score')
+
+        s_acc = 'max_acc:'+str(format(max(accuracy_score_list),'.2f'))+' at '+ str(int(lspace[accuracy_score_list.index(max(accuracy_score_list))]))
+        s_f1 = 'max_f1:'+str(format(max(f1_score_list),'.2f'))+' at '+ str(int(lspace[f1_score_list.index(max(f1_score_list))]))
+        s_pr = 'max_pr:'+str(format(max(precision_score_list),'.2f'))+' at '+ str(int(lspace[precision_score_list.index(max(precision_score_list))]))
+        s_re = 'max_re:' + str(format(max(recall_score_list),'.2f')) + ' at ' + str(int(lspace[recall_score_list.index(max(recall_score_list))]))
+
+
+        plt.legend(handles=[hfm,hfm2,hfm3,hfm4])
+        plt.title('Precision, Recall, F1_Score')
+        plt.ylabel('Scores')
+        plt.xlabel('Word frequency threshold')
+        plt.savefig(os.path.join(self.model_store, prfa_graph_name), bbox_inches='tight')
+        plt.close()
+
+        f = open(os.path.join(self.model_store, deets_filename), 'a+')
+        f.write(s_acc +  '\n')
+        f.write(s_f1  +  '\n')
+        f.write(s_pr  +  '\n')
+        f.write(s_re  +  '\n')
+        f.close()
+
+        #Plot TPFPcurve
+        hfm,  = plt.plot(tp_list,  label='N_true_positives')
+        hfm2, = plt.plot(fp_list, label='N_false_positives')
+        hfm3, = plt.plot(tn_list, label='N_true_negatives')
+        hfm4, = plt.plot(fn_list, label='N_false_negatives')
+
+        plt.legend(handles=[hfm,hfm2,hfm3,hfm4])
+        plt.title('TP,FP,TN,FN')
+        plt.ylabel('Values')
+        plt.xlabel('Word frequency threshold')
+        plt.savefig(os.path.join(self.model_store, tp_fp_graph_name), bbox_inches='tight')
+        plt.close()
+
+    def make_p_r_f_a_curve_dss(self,prfa_graph_name_loss,tp_fp_graph_name_loss,deets_filename_loss):
+
+        precision_score_list = []
+        recall_score_list = []
+        f1_score_list = []
+        accuracy_score_list = []
+
+        tp_list = []
+        fp_list = []
+        tn_list = []
+        fn_list = []
+
+        lspace = np.linspace(min(self.list_of_cub_loss_full_dataset),max(self.list_of_cub_loss_full_dataset),1000)
+
+        total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
+
+        print "#################################################################################"
+        print "TOTAL NUMBER OF TRUE POSITIVES:" , total_num_tp
+        print "TOTAL NUMBER OF SAMPLES TO BE TESTED:",len(self.list_of_cub_anom_gt_full_dataset)
+        print "RATIO:",total_num_tp/(len(self.list_of_cub_anom_gt_full_dataset)+0.0)
+        print "ACC WHEN ALL 0: ", (len(self.list_of_cub_anom_gt_full_dataset) - total_num_tp)/(len(self.list_of_cub_anom_gt_full_dataset)+0.0) * 100
+        print "#################################################################################"
+
+
+        for i in tqdm(lspace):
+
+            y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
+            y_pred = (np.array(self.list_of_cub_loss_full_dataset)>=i)
+
+            cm = confusion_matrix(y_true, y_pred)
+
+            precision_score_list.append(precision_score(y_true, y_pred) * 100)
+            recall_score_list.append(recall_score(y_true, y_pred) * 100)
+            f1_score_list.append(f1_score(y_true, y_pred) * 100)
+            accuracy_score_list.append(accuracy_score(y_true, y_pred) * 100)
+
+            TN = cm[0][0]
+
+            FP = cm[0][1]
+
+            FN = cm[1][0]
+
+            TP = cm[1][1]
+
+            tp_list.append(TP)
+            tn_list.append(TN)
+
+            fn_list.append(FN)
+            fp_list.append(FP)
+
+        print "##########################################################################"
+        print "MAX ACCURACY:", max(accuracy_score_list)
+        print "THRESHOLD:", lspace[accuracy_score_list.index(max(accuracy_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX PRECISION:", max(precision_score_list)
+        print "THRESHOLD:", lspace[precision_score_list.index(max(precision_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX RECALL:", max(recall_score_list)
+        print "THRESHOLD:", lspace[recall_score_list.index(max(recall_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX F1:", max(f1_score_list)
+        print "F1 score:", lspace[f1_score_list.index(max(f1_score_list))]
+        print "##########################################################################"
+
+        # Plot PRFA curve
+        hfm, = plt.plot(precision_score_list, label='precision_score')
+        hfm2, = plt.plot(recall_score_list, label='recall_score')
+        hfm3, = plt.plot(f1_score_list, label='f1_score')
+        hfm4, = plt.plot(accuracy_score_list, label='accuracy_score')
+
+        s_acc = 'max_acc:' + str(format(max(accuracy_score_list), '.2f')) + ' at ' + str(
+            (lspace[accuracy_score_list.index(max(accuracy_score_list))]))
+        s_f1 = 'max_f1:' + str(format(max(f1_score_list), '.2f')) + ' at ' + str(
+            (lspace[f1_score_list.index(max(f1_score_list))]))
+        s_pr = 'max_pr:' + str(format(max(precision_score_list), '.2f')) + ' at ' + str(
+            (lspace[precision_score_list.index(max(precision_score_list))]))
+        s_re = 'max_re:' + str(format(max(recall_score_list), '.2f')) + ' at ' + str(
+            (lspace[recall_score_list.index(max(recall_score_list))]))
+
+        plt.legend(handles=[hfm, hfm2, hfm3, hfm4])
+        plt.title('Precision, Recall, F1_Score')
+        plt.ylabel('Scores')
+        plt.xlabel('Word frequency threshold')
+        plt.savefig(os.path.join(self.model_store, prfa_graph_name_loss), bbox_inches='tight')
+        plt.close()
+
+        f = open(os.path.join(self.model_store, deets_filename_loss), 'a+')
+        f.write(s_acc + '\n')
+        f.write(s_f1 + '\n')
+        f.write(s_pr + '\n')
+        f.write(s_re + '\n')
+        f.close()
+
+        # Plot TPFPcurve
+        hfm, = plt.plot(tp_list, label='N_true_positives')
+        hfm2, = plt.plot(fp_list, label='N_false_positives')
+        hfm3, = plt.plot(tn_list, label='N_true_negatives')
+        hfm4, = plt.plot(fn_list, label='N_false_negatives')
+
+        plt.legend(handles=[hfm, hfm2, hfm3, hfm4])
+        plt.title('TP,FP,TN,FN')
+        plt.ylabel('Values')
+        plt.xlabel('Word frequency threshold')
+        plt.savefig(os.path.join(self.model_store, tp_fp_graph_name_loss), bbox_inches='tight')
+        plt.close()
+
+    def plot_frequencies_of_samples(self,anom_frequency_graph_name):
+
+        y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
+        frequency_array = np.array(self.list_full_dset_cuboid_frequencies)
+        loss_array = np.array(self.list_of_cub_loss_full_dataset)
+
+
+        args_frq_sort = np.argsort(frequency_array)
+
+        y_true_frq = y_true[args_frq_sort]
+
+        frequency_array = frequency_array[args_frq_sort]
+
+        colors = ['green', 'red']
+
+        f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row',figsize=(40,30))
+
+        im1 = ax1.scatter(range(0,len(frequency_array)),frequency_array,c=y_true_frq, cmap=ListedColormap(colors),alpha=0.5)
+        ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+        ax1.set_ylabel('Frequency')
+        ax1.set_xlabel('Cuboid index')
+        ax1.grid(True)
+        cb1 = f.colorbar(im1,ax=ax1)
+        loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
+        cb1.set_ticks(loc)
+        cb1.set_ticklabels(['normal','anomaly'])
+
+        fq_anoms = frequency_array[y_true_frq==1]
+
+        im2 = ax2.scatter(range(0,len(fq_anoms)),fq_anoms,c='red',alpha=0.5)
+        ax2.set_title('ANOMS:Red')
+        ax2.set_ylabel('Frequency')
+        ax2.set_xlabel('Cuboid index')
+        ax2.grid(True)
+
+        args_loss_sort = np.argsort(loss_array)
+        y_true_loss = y_true[args_loss_sort]
+        loss_array = loss_array[args_loss_sort]
+
+        im3 = ax3.scatter(range(0,len(loss_array)),loss_array,c=y_true_loss, cmap=ListedColormap(colors),alpha=0.5)
+        ax3.set_title('ANOMS:Red, N-ANOMS:Green')
+        ax3.set_ylabel('DSSIM Loss')
+        ax3.set_xlabel('Cuboid index')
+        ax3.grid(True)
+        cb3 = f.colorbar(im3,ax=ax3)
+        loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
+        cb3.set_ticks(loc)
+        cb3.set_ticklabels(['normal','anomaly'])
+
+
+        loss_anoms = loss_array[y_true_loss==1]
+
+        im4 = ax4.scatter(range(0,len(loss_anoms)),loss_anoms,c='red',alpha=0.5)
+        ax4.set_title('ANOMS:Red')
+        ax4.set_ylabel('DSSIM Loss')
+        ax4.set_xlabel('Cuboid index')
+        ax4.grid(True)
+
+        plt.savefig(os.path.join(self.model_store, anom_frequency_graph_name), bbox_inches='tight')
+        plt.close()
+
+        return True
 
 class Video_Stream_UCSD:
 
@@ -299,7 +723,7 @@ class Video_Stream_ARTIF:
     list_all_cuboids = []
     list_all_cuboids_gt = []
 
-    def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1,tstrides=1):
+    def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1,tstrides=1,anompth=0.0):
 
         # Initialize-video-params
         self.video_path = video_path
@@ -310,7 +734,7 @@ class Video_Stream_ARTIF:
         self.ts_first_or_last = ts_first_or_last
         self.list_images_relevant_full_dset, self.list_images_relevant_gt_full_dset = make_file_list(video_path, train_test=video_train_test,n_frames=timesteps,num=num,tstrides=tstrides)
         self.strides = strides
-
+        self.anompth = anompth
         i = 0
         j = 0
         k = 0
@@ -373,7 +797,7 @@ class Video_Stream_ARTIF:
 
             list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, list_all_cuboids, list_all_cuboids_gt = \
             make_cuboids_for_stream(self,self.seek_dict[self.seek], self.seek_dict_gt[self.seek], self.size_x, self.size_y,
-                                    test_or_train=self.video_train_test, ts_first_last = self.ts_first_or_last,strides=self.strides,gs=gs)
+                                    test_or_train=self.video_train_test, ts_first_last = self.ts_first_or_last,strides=self.strides,gs=gs,anompth=self.anompth)
 
             del (self.list_cuboids[:])
             self.list_cuboids = copy.copy(list_cuboids)
@@ -429,8 +853,7 @@ def strip_sth(list_to_be_stripped, strip_tag,strip_if_present=True):
 
     return list_relevant
 
-
-def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test_or_train='Train', ts_first_last = 'first',strides=1,gs=True):
+def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test_or_train='Train', ts_first_last = 'first',strides=1,gs=True,anompth=0.0):
 
 
     list_cuboids = deque(stream.list_cuboids)
@@ -537,7 +960,8 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
                     elif (ts_first_last == 'last'):
                         anomaly_gt_sum = np.sum(local_collection_gt[start_rows:end_rows, start_cols:end_cols, :])
 
-                    if(anomaly_gt_sum>0):
+                    if(anomaly_gt_sum/((end_cols-start_cols)*(end_rows-start_rows)*n_channels*n_frames*255.0)>anompth):
+                        print "ANOMALY DETECTED WITH PERCENTAGE > ", anompth
                         anomaly_gt=True
 
 

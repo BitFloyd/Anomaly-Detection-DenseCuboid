@@ -2,14 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/conv_autoencoder_nostream_nocl_chaps.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test_autoencoder.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/analyze_data_chapters.py" afterPath="$PROJECT_DIR$/analyze_data_chapters.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py" afterPath="$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_pkg/data_fns.py" afterPath="$PROJECT_DIR$/data_pkg/data_fns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/batch_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/batch_fns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_data_chapters.py" afterPath="$PROJECT_DIR$/save_data_chapters.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -29,56 +29,21 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="analyze_data_chapters.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/analyze_data_chapters.py">
+      <file leaf-file-name="conv_autoencoder_nostream_chapters.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1584">
-              <caret line="88" column="0" lean-forward="true" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+            <state relative-caret-position="715">
+              <caret line="134" column="78" lean-forward="true" selection-start-line="134" selection-start-column="78" selection-end-line="134" selection-end-column="78" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+      <file leaf-file-name="conv_autoencoder_nostream_nocl_chaps.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_nocl_chaps.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="430" column="0" lean-forward="true" selection-start-line="430" selection-start-column="0" selection-end-line="430" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-                <element signature="e#264#6746#0" expanded="false" />
-                <element signature="e#1023#1252#0" expanded="false" />
-                <element signature="e#1288#1797#0" expanded="false" />
-                <element signature="e#1851#2450#0" expanded="false" />
-                <element signature="e#2516#5181#0" expanded="false" />
-                <element signature="e#5260#5475#0" expanded="false" />
-                <element signature="e#5543#5780#0" expanded="false" />
-                <element signature="e#5846#6050#0" expanded="false" />
-                <element signature="e#6098#6186#0" expanded="false" />
-                <element signature="e#6235#6746#0" expanded="false" />
-                <element signature="e#6779#10066#0" expanded="false" />
-                <element signature="e#10099#14216#0" expanded="false" />
-                <element signature="e#14291#14780#0" expanded="false" />
-                <element signature="e#14932#20879#0" expanded="false" />
-                <element signature="e#20936#21099#0" expanded="false" />
-                <element signature="e#21200#24707#0" expanded="false" />
-                <element signature="e#24815#25980#0" expanded="false" />
-                <element signature="e#26068#27013#0" expanded="false" />
-                <element signature="e#27101#27812#0" expanded="false" />
-                <element signature="e#27923#28299#0" expanded="false" />
-                <element signature="e#28407#30279#0" expanded="false" />
-                <element signature="e#30350#31596#0" expanded="false" />
-                <element signature="e#31690#32229#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="conv_autoencoder_nostream_chapters.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="474">
-              <caret line="105" column="43" lean-forward="false" selection-start-line="105" selection-start-column="18" selection-end-line="105" selection-end-column="43" />
+            <state relative-caret-position="1039">
+              <caret line="134" column="78" lean-forward="true" selection-start-line="134" selection-start-column="78" selection-end-line="134" selection-end-column="78" />
               <folding />
             </state>
           </provider>
@@ -87,32 +52,52 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-205">
-              <caret line="4883" column="22" lean-forward="false" selection-start-line="4883" selection-start-column="17" selection-end-line="4883" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="batch_fns.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/functionals_pkg/batch_fns.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="744">
-              <caret line="207" column="21" lean-forward="true" selection-start-line="145" selection-start-column="4" selection-end-line="207" selection-end-column="21" />
+            <state relative-caret-position="589">
+              <caret line="5550" column="0" lean-forward="true" selection-start-line="5550" selection-start-column="0" selection-end-line="5550" selection-end-column="0" />
               <folding>
-                <element signature="e#0#18#0" expanded="true" />
-                <element signature="e#163#290#0" expanded="false" />
-                <element signature="e#340#694#0" expanded="false" />
-                <element signature="e#756#944#0" expanded="false" />
-                <element signature="e#995#1110#0" expanded="false" />
-                <element signature="e#1158#1902#0" expanded="false" />
-                <element signature="e#1957#2189#0" expanded="false" />
-                <element signature="e#2244#2455#0" expanded="false" />
-                <element signature="e#2757#2854#0" expanded="false" />
-                <element signature="e#2958#3202#0" expanded="false" />
-                <element signature="e#3294#3527#0" expanded="false" />
-                <element signature="e#3598#3960#0" expanded="false" />
-                <element signature="e#4036#4265#0" expanded="false" />
+                <element signature="e#1283#3191#0" expanded="false" />
+                <element signature="e#3272#5088#0" expanded="false" />
+                <element signature="e#5131#6625#0" expanded="false" />
+                <element signature="e#6665#8168#0" expanded="false" />
+                <element signature="e#8213#10378#0" expanded="false" />
+                <element signature="e#10413#19165#0" expanded="false" />
+                <element signature="e#19199#31822#0" expanded="false" />
+                <element signature="e#31856#41386#0" expanded="false" />
+                <element signature="e#41420#54919#0" expanded="false" />
+                <element signature="e#54952#70845#0" expanded="false" />
+                <element signature="e#70879#86576#0" expanded="false" />
+                <element signature="e#86610#99017#0" expanded="false" />
+                <element signature="e#99062#115739#0" expanded="false" />
+                <element signature="e#115785#131991#0" expanded="false" />
+                <element signature="e#132027#145755#0" expanded="false" />
+                <element signature="e#145800#169734#0" expanded="false" />
+                <element signature="e#169774#202429#0" expanded="false" />
+                <element signature="e#170191#176912#0" expanded="false" />
+                <element signature="e#176954#177131#0" expanded="false" />
+                <element signature="e#177172#177249#0" expanded="false" />
+                <element signature="e#177477#184907#0" expanded="false" />
+                <element signature="e#185129#189029#0" expanded="false" />
+                <element signature="e#189082#189187#0" expanded="false" />
+                <element signature="e#189250#189553#0" expanded="false" />
+                <element signature="e#189603#189811#0" expanded="false" />
+                <element signature="e#189870#191376#0" expanded="false" />
+                <element signature="e#191432#192370#0" expanded="false" />
+                <element signature="e#192408#192680#0" expanded="false" />
+                <element signature="e#192738#193142#0" expanded="false" />
+                <element signature="e#193215#194173#0" expanded="false" />
+                <element signature="e#194261#194813#0" expanded="false" />
+                <element signature="e#194901#196298#0" expanded="false" />
+                <element signature="e#196388#197835#0" expanded="false" />
+                <element signature="e#197888#198552#0" expanded="false" />
+                <element signature="e#198623#199443#0" expanded="false" />
+                <element signature="e#199540#200138#0" expanded="false" />
+                <element signature="e#200189#200361#0" expanded="false" />
+                <element signature="e#200415#200933#0" expanded="false" />
+                <element signature="e#200996#202429#0" expanded="false" />
+                <element signature="e#202473#214052#0" expanded="false" />
+                <element signature="e#214101#225684#0" expanded="false" />
+                <element signature="e#225734#237009#0" expanded="false" />
+                <element signature="e#237064#247973#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -140,6 +125,7 @@
       <find>conv</find>
       <find>get</find>
       <find>.normed_data(data_mean=mean_data, data_std=std_data)</find>
+      <find>ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -180,12 +166,14 @@
         <option value="$PROJECT_DIR$/count_frames.py" />
         <option value="$PROJECT_DIR$/count_samples.py" />
         <option value="$USER_HOME$/.PyCharm2017.1/system/remote_sources/-1342635288/53804424/keras/utils/vis_utils.py" />
-        <option value="$PROJECT_DIR$/model_pkg/models.py" />
-        <option value="$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/batch_fns.py" />
+        <option value="$PROJECT_DIR$/test_autoencoder.py" />
         <option value="$PROJECT_DIR$/analyze_data_chapters.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
+        <option value="$PROJECT_DIR$/model_pkg/models.py" />
+        <option value="$PROJECT_DIR$/conv_autoencoder_nostream_nocl_chaps.py" />
+        <option value="$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py" />
       </list>
     </option>
   </component>
@@ -241,20 +229,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="model_pkg" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="densecub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="densecub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="data_pkg" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -594,7 +568,14 @@
       <option name="project" value="LOCAL" />
       <updated>1517868858388</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Testing phase added">
+      <created>1518549690492</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1518549690492</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -610,28 +591,52 @@
     <frame x="1600" y="-4" width="1920" height="1084" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1515768" sideWeight="0.50208336" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35575944" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.06422018" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10295617" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.598369" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31906217" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17916666" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20625" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41590214" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296875" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08460754" sideWeight="0.49791667" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960325" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1515768" sideWeight="0.50208336" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20224719" sideWeight="0.49791667" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2559301" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.598369" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960325" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.215" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41590214" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296875" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="processedProjectFiles" value="true" />
@@ -644,7 +649,8 @@
     <MESSAGE value="fix data norm, add convolutional_test" />
     <MESSAGE value="add LSTM model test" />
     <MESSAGE value="MaxPooling changed to average pooling. Discrete graphs instead of lines." />
-    <option name="LAST_COMMIT_MESSAGE" value="MaxPooling changed to average pooling. Discrete graphs instead of lines." />
+    <MESSAGE value="Testing phase added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing phase added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -655,14 +661,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="89" />
+      <option name="time" value="94" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/cuboids_full_run_cnn.py" />
-    <entry file="file://$PROJECT_DIR$/execute_train_model.py" />
-    <entry file="file://$PROJECT_DIR$/recon_test_dynamic.py" />
     <entry file="file://$PROJECT_DIR$/make_distributions.py" />
     <entry file="file://$PROJECT_DIR$/functionals_pkg/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -790,13 +793,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lstm_multiple_op.py" />
     <entry file="file://$PROJECT_DIR$/functionals_pkg/config.py" />
-    <entry file="file://$PROJECT_DIR$/artif_data_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1026">
-          <caret line="58" column="0" lean-forward="true" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conv_ac_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -821,13 +817,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/generate_motion_stats.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="158" column="41" lean-forward="true" selection-start-line="158" selection-start-column="41" selection-end-line="158" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/count_frames.py" />
     <entry file="file://$PROJECT_DIR$/count_samples.py" />
     <entry file="file://$USER_HOME$/.PyCharm2017.1/system/remote_sources/-1342635288/53804424/keras/utils/vis_utils.py">
@@ -837,89 +826,156 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/batch_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generate_motion_stats.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="142" column="26" lean-forward="true" selection-start-line="142" selection-start-column="26" selection-end-line="142" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2808">
+          <caret line="156" column="34" lean-forward="false" selection-start-line="156" selection-start-column="7" selection-end-line="156" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="116" column="0" lean-forward="true" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+        <state relative-caret-position="2664">
+          <caret line="148" column="21" lean-forward="false" selection-start-line="148" selection-start-column="13" selection-end-line="148" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="963" column="76" lean-forward="false" selection-start-line="963" selection-start-column="76" selection-end-line="963" selection-end-column="76" />
+          <folding>
+            <element signature="e#0#18#0" expanded="false" />
+            <element signature="e#1426#2784#0" expanded="false" />
+            <element signature="e#2820#3759#0" expanded="false" />
+            <element signature="e#3814#4523#0" expanded="false" />
+            <element signature="e#4610#7686#0" expanded="false" />
+            <element signature="e#7765#7984#0" expanded="false" />
+            <element signature="e#8052#8289#0" expanded="false" />
+            <element signature="e#8355#8559#0" expanded="false" />
+            <element signature="e#9475#10384#0" expanded="false" />
+            <element signature="e#10464#11964#0" expanded="false" />
+            <element signature="e#13499#18416#0" expanded="false" />
+            <element signature="e#25843#29130#0" expanded="false" />
+            <element signature="e#33418#33907#0" expanded="false" />
+            <element signature="e#40229#40392#0" expanded="false" />
+            <element signature="e#40493#44000#0" expanded="false" />
+            <element signature="e#44108#45273#0" expanded="false" />
+            <element signature="e#45361#46306#0" expanded="false" />
+            <element signature="e#46394#47105#0" expanded="false" />
+            <element signature="e#47216#47592#0" expanded="false" />
+            <element signature="e#47700#49572#0" expanded="false" />
+            <element signature="e#49643#50889#0" expanded="false" />
+            <element signature="e#50983#51522#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2017.1/system/remote_sources/-1342635288/53804424/sklearn/cluster/k_means_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="1561" column="8" lean-forward="false" selection-start-line="1561" selection-start-column="8" selection-end-line="1561" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/artif_data_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="953">
+          <caret line="58" column="0" lean-forward="true" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/analyze_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1584">
-          <caret line="88" column="0" lean-forward="true" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+        <state relative-caret-position="1566">
+          <caret line="87" column="116" lean-forward="false" selection-start-line="87" selection-start-column="116" selection-end-line="87" selection-end-column="116" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py">
+    <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_nocl_chaps.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="474">
-          <caret line="105" column="43" lean-forward="false" selection-start-line="105" selection-start-column="18" selection-end-line="105" selection-end-column="43" />
+        <state relative-caret-position="1039">
+          <caret line="134" column="78" lean-forward="true" selection-start-line="134" selection-start-column="78" selection-end-line="134" selection-end-column="78" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-205">
-          <caret line="4883" column="22" lean-forward="false" selection-start-line="4883" selection-start-column="17" selection-end-line="4883" selection-end-column="22" />
+        <state relative-caret-position="589">
+          <caret line="5550" column="0" lean-forward="true" selection-start-line="5550" selection-start-column="0" selection-end-line="5550" selection-end-column="0" />
+          <folding>
+            <element signature="e#1283#3191#0" expanded="false" />
+            <element signature="e#3272#5088#0" expanded="false" />
+            <element signature="e#5131#6625#0" expanded="false" />
+            <element signature="e#6665#8168#0" expanded="false" />
+            <element signature="e#8213#10378#0" expanded="false" />
+            <element signature="e#10413#19165#0" expanded="false" />
+            <element signature="e#19199#31822#0" expanded="false" />
+            <element signature="e#31856#41386#0" expanded="false" />
+            <element signature="e#41420#54919#0" expanded="false" />
+            <element signature="e#54952#70845#0" expanded="false" />
+            <element signature="e#70879#86576#0" expanded="false" />
+            <element signature="e#86610#99017#0" expanded="false" />
+            <element signature="e#99062#115739#0" expanded="false" />
+            <element signature="e#115785#131991#0" expanded="false" />
+            <element signature="e#132027#145755#0" expanded="false" />
+            <element signature="e#145800#169734#0" expanded="false" />
+            <element signature="e#169774#202429#0" expanded="false" />
+            <element signature="e#170191#176912#0" expanded="false" />
+            <element signature="e#176954#177131#0" expanded="false" />
+            <element signature="e#177172#177249#0" expanded="false" />
+            <element signature="e#177477#184907#0" expanded="false" />
+            <element signature="e#185129#189029#0" expanded="false" />
+            <element signature="e#189082#189187#0" expanded="false" />
+            <element signature="e#189250#189553#0" expanded="false" />
+            <element signature="e#189603#189811#0" expanded="false" />
+            <element signature="e#189870#191376#0" expanded="false" />
+            <element signature="e#191432#192370#0" expanded="false" />
+            <element signature="e#192408#192680#0" expanded="false" />
+            <element signature="e#192738#193142#0" expanded="false" />
+            <element signature="e#193215#194173#0" expanded="false" />
+            <element signature="e#194261#194813#0" expanded="false" />
+            <element signature="e#194901#196298#0" expanded="false" />
+            <element signature="e#196388#197835#0" expanded="false" />
+            <element signature="e#197888#198552#0" expanded="false" />
+            <element signature="e#198623#199443#0" expanded="false" />
+            <element signature="e#199540#200138#0" expanded="false" />
+            <element signature="e#200189#200361#0" expanded="false" />
+            <element signature="e#200415#200933#0" expanded="false" />
+            <element signature="e#200996#202429#0" expanded="false" />
+            <element signature="e#202473#214052#0" expanded="false" />
+            <element signature="e#214101#225684#0" expanded="false" />
+            <element signature="e#225734#237009#0" expanded="false" />
+            <element signature="e#237064#247973#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_chapters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="715">
+          <caret line="134" column="78" lean-forward="true" selection-start-line="134" selection-start-column="78" selection-end-line="134" selection-end-column="78" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/batch_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="744">
-          <caret line="207" column="21" lean-forward="true" selection-start-line="145" selection-start-column="4" selection-end-line="207" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <element signature="e#163#290#0" expanded="false" />
-            <element signature="e#340#694#0" expanded="false" />
-            <element signature="e#756#944#0" expanded="false" />
-            <element signature="e#995#1110#0" expanded="false" />
-            <element signature="e#1158#1902#0" expanded="false" />
-            <element signature="e#1957#2189#0" expanded="false" />
-            <element signature="e#2244#2455#0" expanded="false" />
-            <element signature="e#2757#2854#0" expanded="false" />
-            <element signature="e#2958#3202#0" expanded="false" />
-            <element signature="e#3294#3527#0" expanded="false" />
-            <element signature="e#3598#3960#0" expanded="false" />
-            <element signature="e#4036#4265#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="430" column="0" lean-forward="true" selection-start-line="430" selection-start-column="0" selection-end-line="430" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <element signature="e#264#6746#0" expanded="false" />
-            <element signature="e#1023#1252#0" expanded="false" />
-            <element signature="e#1288#1797#0" expanded="false" />
-            <element signature="e#1851#2450#0" expanded="false" />
-            <element signature="e#2516#5181#0" expanded="false" />
-            <element signature="e#5260#5475#0" expanded="false" />
-            <element signature="e#5543#5780#0" expanded="false" />
-            <element signature="e#5846#6050#0" expanded="false" />
-            <element signature="e#6098#6186#0" expanded="false" />
-            <element signature="e#6235#6746#0" expanded="false" />
-            <element signature="e#6779#10066#0" expanded="false" />
-            <element signature="e#10099#14216#0" expanded="false" />
-            <element signature="e#14291#14780#0" expanded="false" />
-            <element signature="e#14932#20879#0" expanded="false" />
-            <element signature="e#20936#21099#0" expanded="false" />
-            <element signature="e#21200#24707#0" expanded="false" />
-            <element signature="e#24815#25980#0" expanded="false" />
-            <element signature="e#26068#27013#0" expanded="false" />
-            <element signature="e#27101#27812#0" expanded="false" />
-            <element signature="e#27923#28299#0" expanded="false" />
-            <element signature="e#28407#30279#0" expanded="false" />
-            <element signature="e#30350#31596#0" expanded="false" />
-            <element signature="e#31690#32229#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>

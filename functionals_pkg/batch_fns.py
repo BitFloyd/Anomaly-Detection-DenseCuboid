@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.utils import shuffle
-from data_pkg.data_fns import  Cuboid
 import sys
 
 
