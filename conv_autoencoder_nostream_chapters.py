@@ -73,7 +73,6 @@ if(n_chapters == 0):
 
 if(nic==0):
     nic=n_chapters
-    suffix='tstrd_'+str(tstrides)+'_recon_only_h_units'+str(h_units)+'_'+str(loss)
 
 if(gs):
     suffix += '_greyscale_'

@@ -57,7 +57,7 @@ nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
 lassign = float (metric['-lassign'])
 
-suffix = 'noclustering_tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
+suffix = 'nocl_tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
 suffix +='_hunits_'+str(h_units)
 
 if(gs):
@@ -73,7 +73,7 @@ if(n_chapters == 0):
 
 if(nic==0):
     nic=n_chapters
-    suffix='tstrd_'+str(tstrides)+'_recon_only_h_units'+str(h_units)+'_'+str(loss)
+
 
 if(gs):
     suffix += '_greyscale_'
