@@ -17,7 +17,7 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
 
 elif('gpu' in socket.gethostname()):
     print "############################################"
@@ -25,7 +25,7 @@ elif('gpu' in socket.gethostname()):
     print "############################################"
     verbose = 1
     os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
-    path_videos='/scratch/suu-621-aa/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
+    path_videos='/scratch/suu-621-aa/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
 
 else:
     print socket.gethostname()
@@ -34,7 +34,7 @@ else:
     print "############################################"
     verbose = 1
     os.chdir('/gs/project/suu-621-aa/sejacob/densecub/')
-    path_videos = '/gs/project/suu-621-aa/sejacob/data/art_videos_prob_0.01/artif_videos_128x128'
+    path_videos = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
 
 
 strides = int(metric['-strd'])
@@ -45,17 +45,17 @@ filename = 'chapters_tstrd_'+str(tstrides)+'_gs_'+str(gs)+'_lstm_'+str(lstm)+'.t
 if(lstm):
     ts = 'first'
     ts_pos = 0
-    mainfol = 'chapter_store_lstm'
+    mainfol = 'chapter_store_lstm_ucsd1'
 
 else:
     ts = 'last'
     ts_pos = -1
-    mainfol = 'chapter_store_conv'
+    mainfol = 'chapter_store_conv_ucsd1'
 
 tv = 0.0
 
 if(gs):
-    folder = os.path.join(mainfol, 'data_store_greyscale_' + str(tstrides))
+    folder = os.path.join(mainfol, 'data_store_greyscale_ucsd1' + str(tstrides))
     if(tstrides==2):
         # tv = 0.02
         print "VARIANCE THRESHOLD IS:", tv
@@ -68,7 +68,7 @@ if(gs):
 
 else:
     # tv = 0.0
-    folder = os.path.join(mainfol, 'data_store_' + str(tstrides) + '_' + str(tv))
+    folder = os.path.join(mainfol, 'data_store_ucsd1' + str(tstrides) + '_' + str(tv))
 
 
 if(not os.path.exists(mainfol)):
@@ -82,7 +82,7 @@ print "SET UP VIDEO STREAM"
 print "############################"
 
 #Get Data Stream
-train_test = 'Test'
+train_test = 'Train'
 
 size_axis = 24
 n_frames = 8

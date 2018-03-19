@@ -13,6 +13,9 @@ import copy
 import sys
 import pickle
 import math
+import imageio
+
+list_anom_percentage = []
 
 class TestDictionary:
 
@@ -34,10 +37,13 @@ class TestDictionary:
     list_of_cub_loss_full_dataset = []
     list_of_cub_anom_gt_full_dataset = []
     list_full_dset_cuboid_frequencies = []
+    list_anom_gifs=[]
 
     def __init__(self,model,data_store,notest=False,model_store=None):
 
         self.notest = notest
+        self.n_channels = model.n_channels
+        self.timesteps = 8
 
         if(not notest):
             self.model_enc = model.encoder
@@ -49,11 +55,11 @@ class TestDictionary:
             self.data_store = data_store #location of test data
             self.vid = 1
 
-
-
         if(notest):
 
             self.model_store = model_store
+            self.data_store = data_store
+
             with open(os.path.join(self.model_store,'dictionary.pkl'), 'rb') as f:
                 self.dictionary_words = pickle.load(f)
 
@@ -93,7 +99,6 @@ class TestDictionary:
             return False
 
     def fetch_next_set_from_cubarray(self):
-
         #returns 3 things. 3 rows of cubarray, The relevant row of anomaly_gt and the relevant row of  pixmap
         if(self.cubarray_process_index<len(self.cubarray)-1):
             print self.cubarray_process_index,'/',len(self.cubarray)-1
@@ -108,7 +113,7 @@ class TestDictionary:
         else:
             return False
 
-    def create_surroundings(self,three_rows_cubarray,relevant_row_anom_gt):
+    def create_surroundings(self,three_rows_cubarray,relevant_row_anom_gt,gif=False):
 
         rows = three_rows_cubarray[0].shape[0]
         cols = three_rows_cubarray[0].shape[1]
@@ -127,8 +132,9 @@ class TestDictionary:
 
                 sublist_full_dataset_anom_gt.append(relevant_row_anom_gt[j,k])
 
-                loss = self.model_ae.evaluate(x=[np.expand_dims(current_cuboid,0),np.array([0])],y=None,verbose=False)
-                sublist_full_dataset_dssim_loss.append(loss)
+                if(not gif):
+                    loss = self.model_ae.evaluate(x=[np.expand_dims(current_cuboid,0),np.array([0])],y=None,verbose=False)
+                    sublist_full_dataset_dssim_loss.append(loss)
 
                 surroundings.append(current_cuboid)
 
@@ -203,7 +209,6 @@ class TestDictionary:
                 self.dictionary_words[i]+=1
             else:
                 self.dictionary_words[i]=1
-
 
         return True
 
@@ -601,6 +606,115 @@ class TestDictionary:
 
         return True
 
+    def make_anomaly_gifs(self):
+
+        if not os.path.exists(os.path.join(self.model_store,'anom_gifs')):
+            os.makedirs(os.path.join(self.model_store,'anom_gifs'))
+
+        self.vid=1 #Reset vid
+
+        while (self.load_data()):
+            self.create_anom_gif_from_video()
+
+        return True
+
+    def create_anom_gif_from_video(self):
+
+        next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+        while(next_set_from_cubarray):
+            surroundings_from_three_rows, sublist_full_dataset_anom_gt, _ = \
+                self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],relevant_row_anom_gt=next_set_from_cubarray[1]
+                                         ,gif=True)
+
+            if(not any(sublist_full_dataset_anom_gt)):
+                next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+                continue
+            else:
+                surroundings_from_three_rows = surroundings_from_three_rows[np.array(sublist_full_dataset_anom_gt)==True]
+                predictions = self.predict_on_surroundings(surroundings_from_three_rows)
+                words_from_preds = self.create_words_from_predictions(predictions)
+
+                self.make_gifs_from_surroundings(surroundings_from_three_rows,words_from_preds)
+
+
+            next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+        return True
+
+    def make_gifs_from_surroundings(self,surroundings_from_three_rows,words_from_preds):
+
+        for idx,i in enumerate(surroundings_from_three_rows):
+
+            past    = i[1:10]
+            present = i[[10,11,12,13,0,14,15,16,17],:]
+            future  = i[18:27]
+
+            word_of_cuboid = words_from_preds[idx]
+
+            frequency_of_cuboid = 0
+            if (self.dictionary_words.has_key(word_of_cuboid)):
+                frequency_of_cuboid = self.dictionary_words[word_of_cuboid]
+            else:
+                print "KEY ERROR.", "KEY:",word_of_cuboid, "DOES NOT EXIST IN THE DICTIONARY."
+
+            self.save_images_for_gif(past,'PAST')
+            self.save_images_for_gif(present,'PRESENT')
+            self.save_images_for_gif(future,'FUTURE')
+
+            self.create_save_gif(frequency_of_cuboid)
+
+        return True
+
+    def save_images_for_gif(self,cuboids,time):
+
+        multiplier = 0
+        timesteps = cuboids[0].shape[-1]/self.n_channels
+        assert (time=='PAST' or time=='PRESENT' or time=='FUTURE')
+
+        if(time=='PAST'):
+            multiplier = 0
+        elif(time=='PRESENT'):
+            multiplier=1
+        elif(time=='FUTURE'):
+            multiplier=2
+
+        for i in range(0,timesteps):
+            f, ax_array = plt.subplots(3, 3)
+
+            for idx in range(0,9):
+
+                row = int(idx/3)
+                col = idx%3
+                ax_array[row,col].imshow(np.uint8(cuboids[idx,:,:,i*self.n_channels:(i+1)*self.n_channels]*255.0))
+                ax_array[row,col].set_axis_off()
+                if(idx==4):
+                    ax_array[row, col].set_title(time)
+
+            plt.axis('off')
+            plt.savefig(os.path.join(self.model_store,'anom_gifs', str(timesteps*multiplier+i)+'.png'), bbox_inches='tight')
+            plt.close()
+
+    def create_save_gif(self,freq):
+
+        name = os.path.join(self.model_store, 'anom_gifs', str(freq) + '.gif')
+
+        images = []
+        for i in range(0,self.timesteps*3):
+            images.append(imageio.imread(os.path.join(self.model_store,'anom_gifs', str(i) + '.png')))
+
+        if(os.path.exists(name)):
+            j = 1
+
+            while (os.path.exists(name)):
+                j+=1
+                name = os.path.join(self.model_store, 'anom_gifs', str(freq) + '_' + str(j) + '.gif')
+
+        imageio.mimsave(name, images)
+
+        return True
+
+
 class Video_Stream_UCSD:
 
     video_path = 'INIT_PATH_TO_UCSD'
@@ -960,7 +1074,12 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
                     elif (ts_first_last == 'last'):
                         anomaly_gt_sum = np.sum(local_collection_gt[start_rows:end_rows, start_cols:end_cols, :])
 
-                    if(anomaly_gt_sum/((end_cols-start_cols)*(end_rows-start_rows)*n_channels*n_frames*255.0)>anompth):
+                    anompercentage = anomaly_gt_sum/((end_cols-start_cols)*(end_rows-start_rows)*n_channels*n_frames*255.0)
+
+                    if(anompercentage>0.0):
+                        list_anom_percentage.append(anompercentage)
+
+                    if(anompercentage > anompth):
                         print "ANOMALY DETECTED WITH PERCENTAGE > ", anompth
                         anomaly_gt=True
 

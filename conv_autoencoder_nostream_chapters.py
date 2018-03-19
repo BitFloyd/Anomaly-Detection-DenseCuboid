@@ -56,8 +56,13 @@ ntrain = int(metric['-ntrain'])
 nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
 lassign = float (metric['-lassign'])
+nocl = bool(int(metric['-nocl']))
 
-suffix = 'tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
+if(nocl):
+    suffix = 'nocl_tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
+else:
+    suffix = 'tstrd_' + str(tstrides) + '_nic_' + str(nic) + '_chapters_' + str(n_chapters) + '_clusters_' + str(nclusters)
+
 suffix +='_hunits_'+str(h_units)
 
 if(gs):
@@ -102,6 +107,7 @@ suffix +='_lassign_'+str(lassign)
 
 # Get MODEL
 model_store = 'models/' + suffix
+
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
                                             lr_model=1e-4, lamda=lamda, lamda_assign=lassign, n_gpus=1,gs=gs,notrain=False,
@@ -112,8 +118,14 @@ print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
 
-ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=30,n_chapters=n_chapters,
-                            n_train=ntrain, reduce_lr = True, patience_lr=12 , factor=1.25)
+if(nocl):
+    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=100, n_chapters=n_chapters,
+                                        n_train=ntrain, reduce_lr=True, patience_lr=25, factor=1.25)
+
+
+else:
+    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
+                            n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
 
 ae_model.generate_loss_graph('loss_graph.png')
 
@@ -132,3 +144,5 @@ ae_model.decode_means('means_decoded')
 ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
 
 ae_model.generate_loss_graph_with_anomaly_gt('loss_graph_with_anomaly_gt.png')
+
+ae_model.save_gifs_per_cluster_ids(n_samples_per_id=35,total_chaps_trained_on=n_chapters,max_try=100)

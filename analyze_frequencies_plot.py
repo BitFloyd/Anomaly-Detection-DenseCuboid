@@ -1,5 +1,8 @@
-import matplotlib as mpl
-mpl.use('Agg')
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+from matplotlib.colors import ListedColormap
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
 from data_pkg.data_fns import TestDictionary
@@ -8,11 +11,36 @@ import os
 import socket
 import sys
 import re
+import time
 
 metric = af.getopts(argv)
 
 n_gpus = 1
 server=0
+
+x = np.random.rand(24,24,24)
+
+
+def onclick(event):
+    if(event.inaxes is not None):
+        print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+                  (event.button, event.x, event.y, event.xdata, event.ydata))
+        ax = event.inaxes
+        print "CLICK DETECTED ON AXES:", ax.name
+        global x
+        if(ax.name=='frequency_both'):
+            x = np.load(os.path.join('cuboids','all_cubs',str(args_frq_sort[int(event.xdata)])+'.npy'))
+        elif(ax.name=='frequency_anom'):
+            x = np.load(os.path.join('cuboids', 'anom_cubs', str(args_frq_sort_gt[int(event.xdata)]) + '.npy'))
+        elif(ax.name=='loss_both'):
+            x = np.load(os.path.join('cuboids', 'all_cubs', str(args_loss_sort[int(event.xdata)]) + '.npy'))
+        elif(ax.name=='loss_anom'):
+            x = np.load(os.path.join('cuboids', 'anom_cubs', str(args_loss_sort_gt[int(event.xdata)]) + '.npy'))
+        else:
+            print "INVALID AXES NAME"
+            sys.exit(0)
+        
+        print "FINISH CLICK EVENT"
 
 if(socket.gethostname()=='puck'):
     print "############################################"
@@ -113,7 +141,7 @@ suffix +='_lamda_'+str(lamda)
 suffix +='_lassign_'+str(lassign)
 
 
-notest = False
+notest = True
 
 # Get MODEL
 model_store = 'models/' + suffix
@@ -133,37 +161,98 @@ else:
 tclass = TestDictionary(ae_model,data_store=data_store,notest=notest,model_store=model_store)
 
 print "############################"
-print "UPDATING DICT FROM DATA"
+print "SET UP TCLASS"
 print "############################"
-tclass.update_dict_from_data()
+
+y_true = np.array(tclass.list_of_cub_anom_gt_full_dataset)
+frequency_array = np.array(tclass.list_full_dset_cuboid_frequencies)
+loss_array = np.array(tclass.list_of_cub_loss_full_dataset)
+
+fq_anoms =frequency_array[y_true==1]
+args_frq_sort = np.argsort(frequency_array)
+y_true_frq = y_true[args_frq_sort]
+args_frq_sort_gt = np.argsort(fq_anoms)
 
 
-print "############################"
-print "PRINTING DEETS AND PLOT FREQUENCY"
-print "############################"
-tclass.print_details_and_plot('word_frequency.png','dssim_recon_losses.png')
+frequency_array = frequency_array[args_frq_sort]
+fq_anoms = fq_anoms[args_frq_sort_gt]
+
+colors = ['green', 'red']
 
 print "############################"
-print "MAKE LIST OF FULL CUBOID DATASET FREQUENCIES"
+print "START PLOTTING"
 print "############################"
-tclass.make_list_full_dset_cuboid_frequencies()
 
-print "############################"
-print "MAKE PRF CURVE FRQ"
-print "############################"
-tclass.make_p_r_f_a_curve('prf_curve.png','tpfp_curve.png','prf_deets.txt')
+f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2,figsize=(50,40))
 
-print "############################"
-print "MAKE PRF CURVE LOSS"
-print "############################"
-tclass.make_p_r_f_a_curve_dss('prf_curve_dss.png','tpfp_curve_dss.png','prf_deets_dss.txt')
 
-print "############################"
-print "MAKE FREQUENCY SAMPLES PLOT"
-print "############################"
-tclass.plot_frequencies_of_samples('frequency_samples_plot.png')
+im1 = ax1.scatter(range(0, len(frequency_array)), frequency_array, c=y_true_frq, cmap=ListedColormap(colors), alpha=0.5 ,s=10)
+ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+ax1.set_ylabel('Frequency')
+ax1.set_xlabel('Cuboid index')
+ax1.name = 'frequency_both'
+ax1.grid(True)
+cb1 = f.colorbar(im1, ax=ax1)
+loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
+cb1.set_ticks(loc)
+cb1.set_ticklabels(['normal', 'anomaly'])
 
-# print "############################"
-# print "MAKE ANOMALY GIFS"
-# print "############################"
-# tclass.make_anomaly_gifs()
+
+im2 = ax2.scatter(range(0, len(fq_anoms)), fq_anoms, c='red', alpha=0.5, s=10)
+ax2.set_title('ANOMS:Red')
+ax2.set_ylabel('Frequency')
+ax2.set_xlabel('Cuboid index')
+ax2.name ='frequency_anom'
+ax2.grid(True)
+
+loss_anoms = loss_array[y_true== 1]
+args_loss_sort = np.argsort(loss_array)
+args_loss_sort_gt = np.argsort(loss_anoms)
+
+y_true_loss = y_true[args_loss_sort]
+loss_array = loss_array[args_loss_sort]
+loss_anoms = loss_anoms[args_loss_sort_gt]
+
+im3 = ax3.scatter(range(0, len(loss_array)), loss_array, c=y_true_loss, cmap=ListedColormap(colors), alpha=0.5,s=10)
+ax3.set_title('ANOMS:Red, N-ANOMS:Green')
+ax3.set_ylabel('DSSIM Loss')
+ax3.set_xlabel('Cuboid index')
+ax3.name='loss_both'
+ax3.grid(True)
+cb3 = f.colorbar(im3, ax=ax3)
+loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
+cb3.set_ticks(loc)
+cb3.set_ticklabels(['normal', 'anomaly'])
+
+
+im4 = ax4.scatter(range(0, len(loss_anoms)), loss_anoms, c='red', alpha=0.5,s=10)
+ax4.set_title('ANOMS:Red')
+ax4.set_ylabel('DSSIM Loss')
+ax4.set_xlabel('Cuboid index')
+ax4.name='loss_anom'
+ax4.grid(True)
+
+f_new, ax_new = plt.subplots(1)
+
+def update(i):
+    # Update the line and the axes (with a new xlabel). Return a tuple of
+    # "artists" that have to be redrawn for this frame.
+    ax_new.clear()
+    ax_new.imshow(i)
+
+    # print "RUN UPDATE"
+    return [ax_new]
+
+def gen_frames():
+    global x
+    for i in range(0,x.shape[-1]/3):
+        # print "GENERATING FRAME:",i
+        yield x[:,:,i*3:(i+1)*3]
+
+anim = FuncAnimation(f_new, update, frames=gen_frames, interval=200,repeat=True,blit=True)
+cid = f.canvas.mpl_connect('button_press_event', onclick)
+
+
+plt.show()
+
+
