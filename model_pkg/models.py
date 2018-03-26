@@ -2806,7 +2806,8 @@ class Conv_autoencoder_nostream:
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
-                 lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store',large=True):
+                 lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store',large=True,
+                 means_tol = 1e-4,means_patience=20,max_fit_tries=3000):
 
         self.clustering_lr = clustering_lr
         self.batch_size = batch_size
@@ -2817,6 +2818,7 @@ class Conv_autoencoder_nostream:
         self.size_x = size_x
         self.lr_model = lr_model
         self.lamda = lamda
+        self.h_units = h_units
         self.means = np.zeros((n_clusters, h_units))
         self.cluster_assigns = None
         self.assignment_lamda = lamda_assign
@@ -2828,6 +2830,11 @@ class Conv_autoencoder_nostream:
         self.reverse = reverse
         self.n_channels = n_channels
         self.large = large
+
+        self.means_tol = means_tol
+        self.means_patience = means_patience
+        self.means_batch = 256
+        self.max_fit_tries = max_fit_tries
 
         self.dat_folder = data_folder
 
@@ -3041,11 +3048,61 @@ class Conv_autoencoder_nostream:
 
 
         # Get means of predicted features
-        for k in range(0,10):
-            for i in range(0, n_initial_chapters):
+        fit_tries = 0
+        disp_track = 0
+        bef_fit = None
+        aft_fit = None
+        means_patience = self.means_patience
+        max_fit_tries = self.max_fit_tries
+
+        # for j in range(0, n_train):
+        #     print "Partial KM phase:",j,'/',n_train-1
+        #
+
+        if(os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
+            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
+
+        while (disp_track < means_patience and fit_tries <= max_fit_tries):
+
+            for i in range(0, n_chapters):
+
+                if (disp_track >= means_patience or fit_tries > max_fit_tries):
+                    break
                 self.set_x_train(i)
                 feats = self.encoder.predict(self.x_train)
-                self.km.partial_fit(feats)
+
+                if (fit_tries == 0):
+                    bef_fit = np.zeros((self.n_clusters,self.h_units))
+                else:
+                    bef_fit = np.copy(self.km.cluster_centers_).astype('float64')
+
+                for k in range(0, len(feats), self.means_batch):
+                    if (k + self.means_batch < len(feats)):
+                        self.km.partial_fit(feats[k:k + self.means_batch])
+                    else:
+                        self.km.partial_fit(feats[k:])
+
+                aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
+
+                fit_tries += 1
+
+                disp_means = np.sum(np.linalg.norm(bef_fit - aft_fit, axis=1))
+
+                if (disp_means < self.means_tol):
+                    disp_track += 1
+                else:
+                    disp_track = 0
+
+                f = open(os.path.join(self.model_store, 'kmeans_fitting.txt'), 'a+')
+                f.write('fit_tries: ' + str(fit_tries) + '=> ' + str(disp_means) + '\n')
+                f.close()
+
+                print "-------------------------"
+                print "DISP:", disp_means
+                print "DISP_TRACK:", disp_track
+                print "FIT_TRIES:", fit_tries
+                print "-------------------------"
+
                 del feats
 
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
@@ -3100,7 +3157,9 @@ class Conv_autoencoder_nostream:
                 loss_track = 0
                 loss_track_lr=0
                 print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                lowest_loss_ever = current_loss
+                if (len(self.x_train) > 10000):
+                    lowest_loss_ever = current_loss
+
             else:
                 print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
                 loss_track += 1
@@ -3165,7 +3224,8 @@ class Conv_autoencoder_nostream:
                         loss_track = 0
                         loss_track_lr = 0
                         print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                        lowest_loss_ever = current_loss
+                        if (len(self.x_train) > 10000):
+                            lowest_loss_ever = current_loss
                     else:
                         print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
                         loss_track += 1
@@ -3262,7 +3322,8 @@ class Conv_autoencoder_nostream:
                     loss_track = 0
                     loss_track_lr = 0
                     print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                    lowest_loss_ever = current_loss
+                    if(len(self.x_train)>10000):
+                        lowest_loss_ever = current_loss
                 else:
                     print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
                     loss_track += 1
@@ -3286,11 +3347,60 @@ class Conv_autoencoder_nostream:
 
 
         # Get means of predicted features
-        for j in range(0, n_train):
+        fit_tries = 0
+        disp_track = 0
+        bef_fit = None
+        aft_fit = None
+        means_patience = self.means_patience
+        max_fit_tries = self.max_fit_tries
+
+        # for j in range(0, n_train):
+        #     print "Partial KM phase:",j,'/',n_train-1
+        #
+        if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
+            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
+
+        while (disp_track < means_patience and fit_tries<=max_fit_tries):
+
             for i in range(0, n_chapters):
+
+                if(disp_track >= means_patience or fit_tries>max_fit_tries):
+                    break
                 self.set_x_train(i)
                 feats = self.encoder.predict(self.x_train)
-                self.km.partial_fit(feats)
+
+                if(fit_tries==0):
+                    bef_fit = np.zeros((self.n_clusters,self.h_units))
+                else:
+                    bef_fit = np.copy(self.km.cluster_centers_).astype('float64')
+
+                for k in range(0,len(feats),self.means_batch):
+                    if(k+self.means_batch<len(feats)):
+                        self.km.partial_fit(feats[k:k+self.means_batch])
+                    else:
+                        self.km.partial_fit(feats[k:])
+
+                aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
+
+                fit_tries +=1
+
+                disp_means = np.sum(np.linalg.norm(bef_fit-aft_fit,axis=1))
+
+                if(disp_means < self.means_tol):
+                    disp_track+=1
+                else:
+                    disp_track = 0
+
+                f = open(os.path.join(self.model_store,'kmeans_fitting.txt'), 'a+')
+                f.write('fit_tries: ' + str(fit_tries) + '=> ' + str(disp_means) + '\n')
+                f.close()
+
+                print "-------------------------"
+                print "DISP:", disp_means
+                print "DISP_TRACK:", disp_track
+                print "FIT_TRIES:", fit_tries
+                print "-------------------------"
+
                 del feats
 
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
@@ -3488,7 +3598,10 @@ class Conv_autoencoder_nostream:
 
         n_saved_each = np.zeros(self.n_clusters)
         n_try = 0
-        while(np.all(n_saved_each < n_samples_per_id) and n_try < max_try):
+
+        while(not np.all(n_saved_each >= n_samples_per_id) and n_try < max_try):
+
+            print "SAVE_PROGRESS:", n_saved_each
 
             idx = np.random.randint(0, total_chaps_trained_on)
             self.set_x_train(idx)
@@ -3501,6 +3614,7 @@ class Conv_autoencoder_nostream:
                     continue
 
                 cuboids_in_cluster_i = self.x_train[assigns==i]
+                cuboids_in_cluster_i = shuffle(cuboids_in_cluster_i)
 
                 for j in cuboids_in_cluster_i:
 
@@ -3509,6 +3623,8 @@ class Conv_autoencoder_nostream:
 
                     self.save_gifs(j,os.path.join('cluster_gifs',str(i),str(n_saved_each[i])))
                     n_saved_each[i]+=1
+
+            n_try+=1
 
         return True
 
@@ -3699,3 +3815,21 @@ class Conv_autoencoder_nostream:
 
         return True
 
+    def kmeans_partial_fit_displacement_plot(self):
+
+        with open(os.path.join(self.model_store,'kmeans_fitting.txt')) as f:
+            content = f.read().splitlines()
+
+        list_displacements = [float(i.split('=>')[-1]) for i in content]
+        list_displacements = list_displacements[10:]
+
+        hfm, = plt.plot(list_displacements, 'ro',label='loss')
+        plt.plot(list_displacements,'b:')
+        plt.legend(handles=[hfm])
+        plt.title('Sum of mean displacements over kmeans iteration')
+        plt.xlabel('Kmeans iteration index')
+        plt.ylabel('Displacement value')
+        plt.savefig(os.path.join(self.model_store, 'kmeans_fit_plot.png'), bbox_inches='tight')
+        plt.close()
+
+        return True

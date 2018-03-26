@@ -5,13 +5,13 @@ import numpy as np
 n_clusters = [10,15,25,50]
 n_c_nocl1_pre =  [3.71,5.50,2.30,3.12]
 n_c_nocl2_pre =  [3.02,3.37,5.20,0.00]
-n_c_l_0_01_pre = [5.10,6.46,0.00,0.00]
+n_c_l_0_01_pre = [5.10,6.46,8.26,0.00]
 n_c_l_0_1_pre =  [9.47,6.42,5.11,2.01]
 
 #Clusters vs unique words
 n_c_nocl1_uq_words =  [7000,7100,35000,240000]
 n_c_nocl2_uq_words =  [8000,7200,49000,0000]
-n_c_l_0_01_uq_words = [14000,6300,0000,0000]
+n_c_l_0_01_uq_words = [14000,6300,32000,0000]
 n_c_l_0_1_uq_words =  [18000,29000,160000,600000]
 
 #Epochs vs precision
@@ -24,8 +24,8 @@ n_epochs_15_c =  [300,200,340,300]
 precision_15_c = [5.50,3.37,6.42,6.46]
 
 #25_clusters
-n_epochs_25_c =  [300,200,375,0]
-precision_25_c = [2.3,5.2,5.11,0]
+n_epochs_25_c =  [300,200,375,500]
+precision_25_c = [2.3,5.2,5.11,8.26]
 
 #50_clusters
 n_epochs_50_c =  [300,450]

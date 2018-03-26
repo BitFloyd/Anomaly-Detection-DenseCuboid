@@ -837,7 +837,7 @@ class Video_Stream_ARTIF:
     list_all_cuboids = []
     list_all_cuboids_gt = []
 
-    def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1,tstrides=1,anompth=0.0):
+    def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1,tstrides=1,anompth=0.0,bkgsub=False):
 
         # Initialize-video-params
         self.video_path = video_path
@@ -849,6 +849,7 @@ class Video_Stream_ARTIF:
         self.list_images_relevant_full_dset, self.list_images_relevant_gt_full_dset = make_file_list(video_path, train_test=video_train_test,n_frames=timesteps,num=num,tstrides=tstrides)
         self.strides = strides
         self.anompth = anompth
+        self.bkgsub = bkgsub
         i = 0
         j = 0
         k = 0
@@ -911,7 +912,8 @@ class Video_Stream_ARTIF:
 
             list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, list_all_cuboids, list_all_cuboids_gt = \
             make_cuboids_for_stream(self,self.seek_dict[self.seek], self.seek_dict_gt[self.seek], self.size_x, self.size_y,
-                                    test_or_train=self.video_train_test, ts_first_last = self.ts_first_or_last,strides=self.strides,gs=gs,anompth=self.anompth)
+                                    test_or_train=self.video_train_test, ts_first_last = self.ts_first_or_last,strides=self.strides,gs=gs,anompth=self.anompth,
+                                    bkgsub=self.bkgsub)
 
             del (self.list_cuboids[:])
             self.list_cuboids = copy.copy(list_cuboids)
@@ -967,7 +969,7 @@ def strip_sth(list_to_be_stripped, strip_tag,strip_if_present=True):
 
     return list_relevant
 
-def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test_or_train='Train', ts_first_last = 'first',strides=1,gs=True,anompth=0.0):
+def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test_or_train='Train', ts_first_last = 'first',strides=1,gs=True,anompth=0.0,bkgsub=False):
 
 
     list_cuboids = deque(stream.list_cuboids)
@@ -992,9 +994,21 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
         n_frames = len(local_collection)
         frame_size = local_collection[0].shape
 
+
         if(test_or_train=='Test'):
             local_collection_gt = imread_collection(list_images_gt[i],as_grey=gs)
 
+
+        if(bkgsub):
+            #Subtract mean
+            local_collection = local_collection - np.mean(local_collection,axis=0)
+
+            #Rescale data to 0-1 if gs and 0-255 if not-gs
+            local_collection = (local_collection - np.min(local_collection))
+            local_collection = local_collection/np.max(local_collection)
+
+            if(not gs):
+                local_collection = np.uint8(local_collection*255.0)
 
         frame_size_y = frame_size[0]
         frame_size_x = frame_size[1]

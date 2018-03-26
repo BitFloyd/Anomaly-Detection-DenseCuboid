@@ -17,12 +17,12 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    # import tensorflow as tf
-    # from keras.backend.tensorflow_backend import set_session
-    #
-    # config = tf.ConfigProto()
-    # config.gpu_options.per_process_gpu_memory_fraction = 0.75
-    # set_session(tf.Session(config=config))
+    import tensorflow as tf
+    from keras.backend.tensorflow_backend import set_session
+
+    config = tf.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 0.5
+    set_session(tf.Session(config=config))
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
 
 elif('gpu' in socket.gethostname()):
@@ -32,7 +32,7 @@ elif('gpu' in socket.gethostname()):
     verbose = 1
     os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
     path_videos='/scratch/suu-621-aa/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
-    n_gpus = int(metric['-ngpu'])
+
 
 else:
     print socket.gethostname()
@@ -42,7 +42,7 @@ else:
     verbose = 1
     os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
     path_videos = '/gs/project/suu-621-aa/sejacob/data/art_videos_prob_0.01/artif_videos_128x128'
-    n_gpus = int(metric['-ngpu'])
+
 
 
 h_units = int(metric['-h'])
@@ -55,7 +55,8 @@ loss = metric['-loss']
 ntrain = int(metric['-ntrain'])
 nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
-lassign = float (metric['-lassign'])
+# lassign = float (metric['-lassign'])
+lassign = 0.0
 nocl = bool(int(metric['-nocl']))
 
 if(nocl):
@@ -66,10 +67,18 @@ else:
 suffix +='_hunits_'+str(h_units)
 
 if(gs):
-    folder = os.path.join('chapter_store_conv','data_store_greyscale_'+str(tstrides))
+    if('-bkgsub' in metric.keys()):
+        folder = os.path.join('chapter_store_conv','data_store_greyscale_bkgsub'+str(tstrides))
+        print "USING BKGSUB DATA"
+    else:
+        folder = os.path.join('chapter_store_conv', 'data_store_greyscale_' + str(tstrides))
     nc=1
 else:
-    folder = os.path.join('chapter_store_conv','data_store_' + str(tstrides) + '_0.0')
+    if('-bkgsub' in metric.keys()):
+        folder = os.path.join('chapter_store_conv', 'data_store_bkgsub' + str(tstrides) + '_0.0')
+        print "USING BKGSUB DATA"
+    else:
+        folder = os.path.join('chapter_store_conv', 'data_store_' + str(tstrides) + '_0.0')
     nc=3
 
 if(n_chapters == 0):
@@ -127,6 +136,8 @@ else:
     ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
                             n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
 
+ae_model.kmeans_partial_fit_displacement_plot()
+
 ae_model.generate_loss_graph('loss_graph.png')
 
 ae_model.create_recons(20)
@@ -141,8 +152,8 @@ ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 ae_model.decode_means('means_decoded')
 
-ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
-
 ae_model.generate_loss_graph_with_anomaly_gt('loss_graph_with_anomaly_gt.png')
 
-ae_model.save_gifs_per_cluster_ids(n_samples_per_id=35,total_chaps_trained_on=n_chapters,max_try=100)
+ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=100)
+
+ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)

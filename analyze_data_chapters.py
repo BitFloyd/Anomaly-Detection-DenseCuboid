@@ -14,19 +14,19 @@ import sys
 
 metric = af.getopts(argv)
 
-if(socket.gethostname()=='puck'):
+if (socket.gethostname() == 'puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
 
-elif('gpu' in socket.gethostname()):
+elif ('gpu' in socket.gethostname()):
     print "############################################"
     print "DETECTED RUN ON HELIOS: Probably"
     print "############################################"
     verbose = 1
     os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
-    path_videos='/scratch/suu-621-aa/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+    path_videos = '/scratch/suu-621-aa/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
 
 else:
     print socket.gethostname()
@@ -34,8 +34,8 @@ else:
     print "DETECTED RUN ON GUILLIMIN: Probably"
     print "############################################"
     verbose = 1
-    os.chdir('/gs/project/suu-621-aa/sejacob/densecub/')
-    path_videos = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+    os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
+    path_videos = '/gs/project/suu-621-aa/sejacob/data/art_videos_prob_0.01/artif_videos_128x128'
 
 
 strides = int(metric['-strd'])
@@ -51,22 +51,24 @@ filename = 'chapters_tstrd_'+str(tstrides)+'_gs_'+str(gs)+'_lstm_'+str(lstm)+'_t
 if(lstm):
     ts = 'first'
     ts_pos = 0
-    mainfol = 'chapter_store_lstm_ucsd1_test'
+    mainfol = 'chapter_store_lstm_test'
 
 else:
     ts = 'last'
     ts_pos = -1
-    mainfol = 'chapter_store_conv_ucsd1_test'
+    mainfol = 'chapter_store_conv_test'
 
 
 
 tv = 0.0
 
 if(gs):
-    folder = os.path.join(mainfol, 'data_store_greyscale_ucsd1_test_' + str(tstrides))
+    folder = os.path.join(mainfol,'data_store_greyscale_test_bkgsub'+str(tstrides))
+
 
 else:
-    folder = os.path.join(mainfol,'data_store_ucsd1_test'+str(tstrides)+'_anom_20')
+    folder = os.path.join(mainfol,'data_store_test_bkgsub'+str(tstrides)+'_anom_20')
+
 
 
 if(not os.path.exists(mainfol)):
@@ -85,7 +87,8 @@ train_test = 'Test'
 size_axis = 24
 n_frames = 8
 vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
-                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.1)
+                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.1,
+                                bkgsub=True)
 
 
 print "############################"

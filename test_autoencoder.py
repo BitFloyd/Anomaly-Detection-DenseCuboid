@@ -59,7 +59,8 @@ loss = metric['-loss']
 ntrain = int(metric['-ntrain'])
 nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
-lassign = float (metric['-lassign'])
+# lassign = float (metric['-lassign'])
+lassign = 0.0
 nocl = bool(int(metric['-nocl']))
 
 if(nocl):
@@ -70,12 +71,23 @@ else:
 suffix +='_hunits_'+str(h_units)
 
 if(gs):
-    folder = os.path.join('chapter_store_conv','data_store_greyscale_'+str(tstrides))
-    data_store = os.path.join(data_store_suffix,'chapter_store_conv_test','data_store_greyscale_test'+str(tstrides))
+    if('-bkgsub' in metric.keys()):
+        folder = os.path.join('chapter_store_conv','data_store_greyscale_bkgsub'+str(tstrides))
+        data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test',
+                                  'data_store_greyscale_test_bkgsub' + str(tstrides))
+    else:
+        folder = os.path.join('chapter_store_conv', 'data_store_greyscale_' + str(tstrides))
+        data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test',
+                                  'data_store_greyscale_test' + str(tstrides))
     nc=1
 else:
-    folder = os.path.join('chapter_store_conv','data_store_' + str(tstrides) + '_0.0')
-    data_store = os.path.join(data_store_suffix,'chapter_store_conv_test','data_store_test'+str(tstrides))
+    if('-bkgsub' in metric.keys()):
+        folder = os.path.join('chapter_store_conv', 'data_store_bkgsub' + str(tstrides) + '_0.0')
+        data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test', 'data_store_test_bkgsub' + str(tstrides))
+    else:
+        folder = os.path.join('chapter_store_conv', 'data_store_' + str(tstrides) + '_0.0')
+        data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test',
+                                  'data_store_test' + str(tstrides))
     nc=3
 
 if(n_chapters == 0):
@@ -118,6 +130,10 @@ notest = False
 # Get MODEL
 model_store = 'models/' + suffix
 
+print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+print folder
+print data_store
+print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
 if(notest):
     ae_model = None
