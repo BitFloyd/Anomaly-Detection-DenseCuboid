@@ -24,6 +24,7 @@ if(socket.gethostname()=='puck'):
     config.gpu_options.per_process_gpu_memory_fraction = 0.5
     set_session(tf.Session(config=config))
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
+    data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
 
 elif('gpu' in socket.gethostname()):
     print "############################################"
@@ -32,6 +33,7 @@ elif('gpu' in socket.gethostname()):
     verbose = 1
     os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
     path_videos='/scratch/suu-621-aa/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
+    data_store_suffix = '/scratch/suu-621-aa/ANOMALY/densecub'
 
 
 else:
@@ -42,6 +44,7 @@ else:
     verbose = 1
     os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
     path_videos = '/gs/project/suu-621-aa/sejacob/data/art_videos_prob_0.01/artif_videos_128x128'
+    data_store_suffix = '/gs/scratch/sejacob/densecub/'
 
 
 
@@ -55,7 +58,6 @@ loss = metric['-loss']
 ntrain = int(metric['-ntrain'])
 nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
-# lassign = float (metric['-lassign'])
 lassign = 0.0
 nocl = bool(int(metric['-nocl']))
 
@@ -66,19 +68,12 @@ else:
 
 suffix +='_hunits_'+str(h_units)
 
+
 if(gs):
-    if('-bkgsub' in metric.keys()):
-        folder = os.path.join('chapter_store_conv','data_store_greyscale_bkgsub'+str(tstrides))
-        print "USING BKGSUB DATA"
-    else:
-        folder = os.path.join('chapter_store_conv', 'data_store_greyscale_' + str(tstrides))
+    folder = os.path.join(data_store_suffix,'chapter_store_conv','data_store_greyscale_bkgsub'+str(tstrides))
     nc=1
 else:
-    if('-bkgsub' in metric.keys()):
-        folder = os.path.join('chapter_store_conv', 'data_store_bkgsub' + str(tstrides) + '_0.0')
-        print "USING BKGSUB DATA"
-    else:
-        folder = os.path.join('chapter_store_conv', 'data_store_' + str(tstrides) + '_0.0')
+    folder = os.path.join(data_store_suffix,'chapter_store_conv', 'data_store_bkgsub' + str(tstrides) + '_0.0')
     nc=3
 
 if(n_chapters == 0):
@@ -117,10 +112,7 @@ suffix +='_lassign_'+str(lassign)
 # Get MODEL
 model_store = 'models/' + suffix
 
-if('-bkgsub' in metric.keys()):
-    size = 16
-else:
-    size=24
+size = 16
 
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,

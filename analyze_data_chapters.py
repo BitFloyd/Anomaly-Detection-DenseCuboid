@@ -67,7 +67,7 @@ if(gs):
 
 
 else:
-    folder = os.path.join(mainfol,'data_store_test_bkgsub'+str(tstrides)+'_anom_20')
+    folder = os.path.join(mainfol,'data_store_test_bkgsub'+str(tstrides))
 
 
 

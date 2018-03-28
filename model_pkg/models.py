@@ -3144,33 +3144,33 @@ class Conv_autoencoder_nostream:
             del self.means
             del self.cluster_assigns
 
-            if (lowest_loss_ever - current_loss > least_loss):
-                loss_track = 0
-                loss_track_lr=0
-                print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                if (len(self.x_train) > 30000):
+            if (len(self.x_train) > 30000):
+                if (lowest_loss_ever - current_loss > least_loss):
+                    loss_track = 0
+                    loss_track_lr = 0
+                    print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
                     lowest_loss_ever = current_loss
 
-            else:
-                print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
-                loss_track += 1
-                loss_track_lr += 1
-                print "Loss track is :", loss_track, "/", patience
-                print "Loss track lr is :", loss_track_lr, "/", patience_lr
+                else:
+                    print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
+                    loss_track += 1
+                    loss_track_lr += 1
+                    print "Loss track is :", loss_track, "/", patience
+                    print "Loss track lr is :", loss_track_lr, "/", patience_lr
 
-            if (reduce_lr and loss_track_lr > patience_lr):
-                loss_track_lr = 0
-                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                print "REDUCING_LR AT EPOCH :", j
-                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                K.set_value(self.ae.optimizer.lr, lr/factor)
-                lr = lr/factor
+                if (reduce_lr and loss_track_lr > patience_lr):
+                    loss_track_lr = 0
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    print "REDUCING_LR AT EPOCH :", j
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    K.set_value(self.ae.optimizer.lr, lr / factor)
+                    lr = lr / factor
 
-            if (earlystopping and loss_track > patience):
-                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                print "EARLY STOPPING AT EPOCH :", j
-                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                break
+                if (earlystopping and loss_track > patience):
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    print "EARLY STOPPING AT EPOCH :", j
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    break
 
 
         if(n_train > 1):
@@ -3210,32 +3210,33 @@ class Conv_autoencoder_nostream:
                     del feats
                     del self.cluster_assigns
 
-                    if (lowest_loss_ever - current_loss > least_loss):
-                        loss_track = 0
-                        loss_track_lr = 0
-                        print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                        if (len(self.x_train) > 10000):
+                    if (len(self.x_train) > 30000):
+                        if (lowest_loss_ever - current_loss > least_loss):
+                            loss_track = 0
+                            loss_track_lr = 0
+                            print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
                             lowest_loss_ever = current_loss
-                    else:
-                        print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
-                        loss_track += 1
-                        loss_track_lr+=1
-                        print "Loss track is :", loss_track, "/", patience
-                        print "Loss track lr is :", loss_track_lr, "/", patience_lr
 
-                    if (reduce_lr and loss_track_lr > patience_lr):
-                        loss_track_lr = 0
-                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                        print "REDUCING_LR AT EPOCH :", j
-                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                        K.set_value(self.ae.optimizer.lr, lr / factor)
-                        lr = lr / factor
+                        else:
+                            print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
+                            loss_track += 1
+                            loss_track_lr += 1
+                            print "Loss track is :", loss_track, "/", patience
+                            print "Loss track lr is :", loss_track_lr, "/", patience_lr
 
-                    if (earlystopping and loss_track > patience):
-                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                        print "EARLY STOPPING AT EPOCH :", j
-                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                        break
+                        if (reduce_lr and loss_track_lr > patience_lr):
+                            loss_track_lr = 0
+                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                            print "REDUCING_LR AT EPOCH :", j
+                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                            K.set_value(self.ae.optimizer.lr, lr / factor)
+                            lr = lr / factor
+
+                        if (earlystopping and loss_track > patience):
+                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                            print "EARLY STOPPING AT EPOCH :", j
+                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                            break
 
 
         # Get means of predicted features after the training
@@ -3366,32 +3367,33 @@ class Conv_autoencoder_nostream:
 
                 K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
 
-                if (lowest_loss_ever - current_loss > least_loss):
-                    loss_track = 0
-                    loss_track_lr = 0
-                    print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                    if(len(self.x_train)>30000):
+                if (len(self.x_train) > 30000):
+                    if (lowest_loss_ever - current_loss > least_loss):
+                        loss_track = 0
+                        loss_track_lr = 0
+                        print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
                         lowest_loss_ever = current_loss
-                else:
-                    print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
-                    loss_track += 1
-                    loss_track_lr += 1
-                    print "Loss track is :", loss_track, "/", patience
-                    print "Loss track lr is :", loss_track_lr, "/", patience_lr
 
-                if (reduce_lr and loss_track_lr > patience_lr):
-                    loss_track_lr = 0
-                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                    print "REDUCING_LR AT EPOCH :", j
-                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                    K.set_value(self.ae.optimizer.lr, lr / factor)
-                    lr = lr / factor
+                    else:
+                        print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
+                        loss_track += 1
+                        loss_track_lr += 1
+                        print "Loss track is :", loss_track, "/", patience
+                        print "Loss track lr is :", loss_track_lr, "/", patience_lr
 
-                if (earlystopping and loss_track > patience):
-                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                    print "EARLY STOPPING AT EPOCH :", j
-                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                    break
+                    if (reduce_lr and loss_track_lr > patience_lr):
+                        loss_track_lr = 0
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        print "REDUCING_LR AT EPOCH :", j
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        K.set_value(self.ae.optimizer.lr, lr / factor)
+                        lr = lr / factor
+
+                    if (earlystopping and loss_track > patience):
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        print "EARLY STOPPING AT EPOCH :", j
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        break
 
 
         # Get means of predicted features

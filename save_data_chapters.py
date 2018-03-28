@@ -69,7 +69,7 @@ if(gs):
 
 else:
     # tv = 0.0
-    folder = os.path.join(mainfol, 'data_store_bkgsub' + str(tstrides) + '_' + str(tv))
+    folder = os.path.join(mainfol, 'data_store_bksgub' + str(tstrides) + '_' + str(tv))
 
 
 if(not os.path.exists(mainfol)):
