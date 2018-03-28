@@ -117,7 +117,12 @@ suffix +='_lassign_'+str(lassign)
 # Get MODEL
 model_store = 'models/' + suffix
 
-ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
+if('-bkgsub' in metric.keys()):
+    size = 16
+else:
+    size=24
+
+ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
                                             lr_model=1e-4, lamda=lamda, lamda_assign=lassign, n_gpus=1,gs=gs,notrain=False,
                                             reverse=False, data_folder=folder,large=large)

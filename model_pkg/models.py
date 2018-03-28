@@ -227,7 +227,7 @@ class CustomClusterLayer(Layer):
         sum_squares = K.tf.reduce_sum(K.square(rep_points - rep_centroids),reduction_indices=2)
         best_centroids = K.argmin(sum_squares, 1)
 
-        cl_loss = self.cl_loss_wt * (self.lamda / 2.0) * K.mean(K.sqrt(K.sum(K.square(encoded_feats-K.gather(centroids,best_centroids)),axis=1)))
+        cl_loss = cl_loss = self.cl_loss_wt * (self.lamda) * K.mean(K.sqrt(K.sum(K.square(encoded_feats-K.gather(centroids,best_centroids)),axis=1)))
 
         return loss+cl_loss
 
@@ -2807,7 +2807,7 @@ class Conv_autoencoder_nostream:
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
                  lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store',large=True,
-                 means_tol = 1e-4,means_patience=20,max_fit_tries=3000):
+                 means_tol = 1e-4,means_patience=20,max_fit_tries=2000):
 
         self.clustering_lr = clustering_lr
         self.batch_size = batch_size
@@ -2968,16 +2968,14 @@ class Conv_autoencoder_nostream:
         de17 = dec17(de16)
         de18 = recon(de17)
 
-        inp_assignments = Input(shape=(1,))
 
-        self.y_obj = CustomClusterLayer_Test(self.loss_fn, self.means, self.lamda, self.n_clusters, h_units,
-                                             self.assignment_lamda)
+        self.y_obj = CustomClusterLayer(self.loss_fn, self.means, self.lamda, self.n_clusters, h_units)
 
-        y = self.y_obj([inp, ae18, encoder, inp_assignments])
+        y = self.y_obj([inp, ae18, encoder])
 
         self.decoder = Model(inputs=[dinp], outputs=[de18])
 
-        self.ae = Model(inputs=[inp, inp_assignments], outputs=[y])
+        self.ae = Model(inputs=[inp], outputs=[y])
 
         if (n_gpus > 1):
             self.decoder = make_parallel(self.decoder, n_gpus)
@@ -3035,16 +3033,12 @@ class Conv_autoencoder_nostream:
 
         for i in range(0, n_initial_chapters):
             self.set_x_train(i)
-            feats = self.encoder.predict(self.x_train,verbose=1)
-            self.cluster_assigns = self.get_assigns(self.means, feats)
 
-            history = self.ae.fit([self.x_train, self.cluster_assigns], shuffle=True, epochs=1,
+            history = self.ae.fit(self.x_train, shuffle=True, epochs=1,
                                    batch_size=self.batch_size, verbose=verbose)
 
             self.loss_list.append(history.history['loss'][0])
 
-            del feats
-            del self.cluster_assigns
 
 
         # Get means of predicted features
@@ -3053,7 +3047,7 @@ class Conv_autoencoder_nostream:
         bef_fit = None
         aft_fit = None
         means_patience = self.means_patience
-        max_fit_tries = self.max_fit_tries
+        max_fit_tries = int(self.max_fit_tries/10)
 
         # for j in range(0, n_train):
         #     print "Partial KM phase:",j,'/',n_train-1
@@ -3093,9 +3087,6 @@ class Conv_autoencoder_nostream:
                 else:
                     disp_track = 0
 
-                f = open(os.path.join(self.model_store, 'kmeans_fitting.txt'), 'a+')
-                f.write('fit_tries: ' + str(fit_tries) + '=> ' + str(disp_means) + '\n')
-                f.close()
 
                 print "-------------------------"
                 print "DISP:", disp_means
@@ -3129,35 +3120,35 @@ class Conv_autoencoder_nostream:
 
             print (j), "/", n_chapters, ":"
             self.set_x_train(j)
-            feats = self.encoder.predict(self.x_train)
-            self.cluster_assigns = self.get_assigns(self.means, feats)
-            history = self.ae.fit([self.x_train, self.cluster_assigns], batch_size=self.batch_size, epochs=1,
+
+            history = self.ae.fit(self.x_train, batch_size=self.batch_size, epochs=1,
                                   verbose=verbose, shuffle=True)
+
             current_loss = history.history['loss'][0]
             self.loss_list.append(history.history['loss'][0])
 
-            del feats
+
             feats = self.encoder.predict(self.x_train)
 
-            del self.cluster_assigns
+
             self.cluster_assigns = self.get_assigns(self.means, feats)
 
             means_pre = np.copy(self.means)
             self.update_means(feats, self.cluster_assigns)
 
             # update cluster assigns for the next loop
-            del self.cluster_assigns
-            self.cluster_assigns = self.get_assigns(self.means, feats)
-
             self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
 
             K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+            del self.means
+            del self.cluster_assigns
 
             if (lowest_loss_ever - current_loss > least_loss):
                 loss_track = 0
                 loss_track_lr=0
                 print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                if (len(self.x_train) > 10000):
+                if (len(self.x_train) > 30000):
                     lowest_loss_ever = current_loss
 
             else:
@@ -3196,29 +3187,28 @@ class Conv_autoencoder_nostream:
 
                     print (j), "/", n_chapters, ":"
                     self.set_x_train(j)
-                    feats = self.encoder.predict(self.x_train)
-                    self.cluster_assigns = self.get_assigns(self.means, feats)
-                    history = self.ae.fit([self.x_train, self.cluster_assigns], batch_size=self.batch_size, epochs=1,
+
+
+                    history = self.ae.fit(self.x_train, batch_size=self.batch_size, epochs=1,
                                           verbose=verbose, shuffle=True)
                     current_loss = history.history['loss'][0]
                     self.loss_list.append(history.history['loss'][0])
 
-                    del feats
+
                     feats = self.encoder.predict(self.x_train)
 
-                    del self.cluster_assigns
                     self.cluster_assigns = self.get_assigns(self.means, feats)
 
                     means_pre = np.copy(self.means)
                     self.update_means(feats, self.cluster_assigns)
 
-                    # update cluster assigns for the next loop
-                    del self.cluster_assigns
-                    self.cluster_assigns = self.get_assigns(self.means, feats)
 
                     self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
 
                     K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+                    del feats
+                    del self.cluster_assigns
 
                     if (lowest_loss_ever - current_loss > least_loss):
                         loss_track = 0
@@ -3247,6 +3237,66 @@ class Conv_autoencoder_nostream:
                         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                         break
 
+
+        # Get means of predicted features after the training
+        fit_tries = 0
+        disp_track = 0
+        bef_fit = None
+        aft_fit = None
+        means_patience = self.means_patience
+        max_fit_tries = self.max_fit_tries
+
+        # for j in range(0, n_train):
+        #     print "Partial KM phase:",j,'/',n_train-1
+        #
+
+        if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
+            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
+
+        while (disp_track < means_patience and fit_tries <= max_fit_tries):
+
+            for i in range(0, n_chapters):
+
+                if (disp_track >= means_patience or fit_tries > max_fit_tries):
+                    break
+                self.set_x_train(i)
+                feats = self.encoder.predict(self.x_train)
+
+                if (fit_tries == 0):
+                    bef_fit = np.zeros((self.n_clusters, self.h_units))
+                else:
+                    bef_fit = np.copy(self.km.cluster_centers_).astype('float64')
+
+                for k in range(0, len(feats), self.means_batch):
+                    if (k + self.means_batch < len(feats)):
+                        self.km.partial_fit(feats[k:k + self.means_batch])
+                    else:
+                        self.km.partial_fit(feats[k:])
+
+                aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
+
+                fit_tries += 1
+
+                disp_means = np.sum(np.linalg.norm(bef_fit - aft_fit, axis=1))
+
+                if (disp_means < self.means_tol):
+                    disp_track += 1
+                else:
+                    disp_track = 0
+
+                f = open(os.path.join(self.model_store, 'kmeans_fitting.txt'), 'a+')
+                f.write('fit_tries: ' + str(fit_tries) + '=> ' + str(disp_means) + '\n')
+                f.close()
+
+                print "-------------------------"
+                print "DISP:", disp_means
+                print "DISP_TRACK:", disp_track
+                print "FIT_TRIES:", fit_tries
+                print "-------------------------"
+
+                del feats
+
+        self.means = np.copy(self.km.cluster_centers_).astype('float64')
 
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
         print "PICKLING LISTS AND SAVING WEIGHTS"
@@ -3295,9 +3345,7 @@ class Conv_autoencoder_nostream:
                 self.set_x_train(j)
 
 
-                self.cluster_assigns = np.zeros(shape=(len(self.x_train),1))
-
-                history = self.ae.fit([self.x_train, self.cluster_assigns], batch_size=self.batch_size, epochs=1,
+                history = self.ae.fit(self.x_train, batch_size=self.batch_size, epochs=1,
                                       verbose=verbose, shuffle=True)
 
                 current_loss = history.history['loss'][0]
@@ -3322,7 +3370,7 @@ class Conv_autoencoder_nostream:
                     loss_track = 0
                     loss_track_lr = 0
                     print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                    if(len(self.x_train)>10000):
+                    if(len(self.x_train)>30000):
                         lowest_loss_ever = current_loss
                 else:
                     print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
@@ -3457,7 +3505,7 @@ class Conv_autoencoder_nostream:
     def do_gif_recon(self, input_cuboid, name):
 
         input_cuboid = np.expand_dims(input_cuboid, 0)
-        output_cuboid = self.ae.predict([input_cuboid, np.array([0])])
+        output_cuboid = self.ae.predict(input_cuboid)
 
         input_cuboid = input_cuboid[0]
         output_cuboid = output_cuboid[0]
@@ -3609,7 +3657,7 @@ class Conv_autoencoder_nostream:
             assigns = self.get_assigns(self.means, np.array(train_encodings))
 
             for i in range(0,self.n_clusters):
-
+                print "CLUSTER:", i
                 if(n_saved_each[i]>=n_samples_per_id):
                     continue
 

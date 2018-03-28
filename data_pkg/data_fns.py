@@ -39,11 +39,12 @@ class TestDictionary:
     list_full_dset_cuboid_frequencies = []
     list_anom_gifs=[]
 
-    def __init__(self,model,data_store,notest=False,model_store=None):
+    def __init__(self,model,data_store,notest=False,model_store=None,test_loss_metric='dssim'):
 
         self.notest = notest
         self.n_channels = model.n_channels
         self.timesteps = 8
+        self.test_loss_metric = test_loss_metric
 
         if(not notest):
             self.model_enc = model.encoder
@@ -133,7 +134,12 @@ class TestDictionary:
                 sublist_full_dataset_anom_gt.append(relevant_row_anom_gt[j,k])
 
                 if(not gif):
-                    loss = self.model_ae.evaluate(x=[np.expand_dims(current_cuboid,0),np.array([0])],y=None,verbose=False)
+                    if(self.test_loss_metric=='dssim'):
+                        loss = self.model_ae.evaluate(x=np.expand_dims(current_cuboid,0),y=None,verbose=False)
+                    else:
+                        loss = mean_squared_error(np.expand_dims(current_cuboid,0),
+                                                  self.model_ae.predict(np.expand_dims(current_cuboid,0)))
+
                     sublist_full_dataset_dssim_loss.append(loss)
 
                 surroundings.append(current_cuboid)
@@ -1448,4 +1454,5 @@ def make_videos_of_frames(path_results,list_dirs_of_videos,local=False,threshold
 
     return True
 
-
+def mean_squared_error(x,y):
+    return np.mean((x-y)**2)

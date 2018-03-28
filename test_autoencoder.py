@@ -146,7 +146,7 @@ else:
     ae_model.set_cl_loss(0.0)
 
 #Get Test class
-tclass = TestDictionary(ae_model,data_store=data_store,notest=notest,model_store=model_store)
+tclass = TestDictionary(ae_model,data_store=data_store,notest=notest,model_store=model_store,test_loss_metric='mse')
 
 print "############################"
 print "UPDATING DICT FROM DATA"

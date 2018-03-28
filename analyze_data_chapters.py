@@ -84,7 +84,7 @@ print "############################"
 #Get Data Stream
 train_test = 'Test'
 
-size_axis = 24
+size_axis = 16
 n_frames = 8
 vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
                                 timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.1,
