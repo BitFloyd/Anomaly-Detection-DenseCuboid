@@ -9,11 +9,14 @@ from sklearn.metrics import precision_score, f1_score, recall_score
 from sklearn.metrics import accuracy_score,confusion_matrix
 from collections import deque
 from matplotlib.colors import ListedColormap
+from matplotlib.backends.backend_pdf import PdfPages
 import copy
 import sys
 import pickle
 import math
 import imageio
+import h5py
+
 
 list_anom_percentage = []
 
@@ -38,13 +41,22 @@ class TestDictionary:
     list_of_cub_anom_gt_full_dataset = []
     list_full_dset_cuboid_frequencies = []
     list_anom_gifs=[]
+    list_full_dset_dist = []
 
-    def __init__(self,model,data_store,notest=False,model_store=None,test_loss_metric='dssim'):
+    def __init__(self,model,data_store,data_test_h5=None,notest=False,model_store=None,test_loss_metric='dssim',use_dist_in_word=False,round_to=1):
 
         self.notest = notest
-        self.n_channels = model.n_channels
+
         self.timesteps = 8
         self.test_loss_metric = test_loss_metric
+        self.data_store = data_store
+
+        self.data_vc = data_test_h5[0]
+        self.data_va = data_test_h5[1]
+        self.data_vp = data_test_h5[2]
+
+        self.use_dist_in_word=use_dist_in_word
+        self.round_to=round_to
 
         if(not notest):
             self.model_enc = model.encoder
@@ -53,13 +65,12 @@ class TestDictionary:
 
             self.means = model.means  #means of each cluster learned by the model
 
-            self.data_store = data_store #location of test data
+             #location of test data
             self.vid = 1
 
         if(notest):
-
+            self.n_channels = 3
             self.model_store = model_store
-            self.data_store = data_store
 
             with open(os.path.join(self.model_store,'dictionary.pkl'), 'rb') as f:
                 self.dictionary_words = pickle.load(f)
@@ -78,16 +89,20 @@ class TestDictionary:
                 with open(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'), 'rb') as f:
                     self.list_full_dset_cuboid_frequencies = pickle.load(f)
 
+            dist_measure_full_dset = h5py.File(os.path.join(self.model_store, 'list_dist_measure_full_dataset.h5'), 'r')
+            self.list_full_dset_dist = list(dist_measure_full_dset.get('list_dist_measure_full_dataset'))
+            dist_measure_full_dset.close()
+
     def load_data(self):
 
         # print os.path.join(self.data_store,'video_cuboids_array_'+str(self.vid)+'.npy')
-        if(os.path.exists(os.path.join(self.data_store,'video_cuboids_array_'+str(self.vid)+'.npy'))):
+        if('video_cuboids_array_'+str(self.vid) in self.data_vc.keys()):
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$"
             print "LOADING VIDEO ARRAY ", self.vid
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-            self.cubarray = np.load(os.path.join(self.data_store,'video_cuboids_array_'+str(self.vid)+'.npy'))
-            self.anomgtarray = np.load(os.path.join(self.data_store,'video_anomgt_array_' + str(self.vid) + '.npy'))
-            self.pixmaparray = np.load(os.path.join(self.data_store,'video_pixmap_array_' + str(self.vid) + '.npy'))
+            self.cubarray = np.array(self.data_vc.get('video_cuboids_array_'+str(self.vid)))
+            self.anomgtarray = np.array(self.data_va.get('video_anomgt_array_' + str(self.vid)))
+            self.pixmaparray = np.array(self.data_vp.get('video_pixmap_array_' + str(self.vid)))
 
             self.vid+=1
             self.cubarray_process_index = 1
@@ -122,6 +137,7 @@ class TestDictionary:
         list_surrounding_cuboids_from_three_rows = []
         sublist_full_dataset_anom_gt = []
         sublist_full_dataset_dssim_loss = []
+        sublist_full_dataset_distances = []
 
         for j in range(1, rows - 1):
             for k in range(1, cols - 1):
@@ -181,10 +197,15 @@ class TestDictionary:
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
 
+                d = np.min(cdist(self.model_enc.predict(np.array(surroundings)),self.means),axis=1)
+
+                sublist_full_dataset_distances.append(d)
+
                 list_surrounding_cuboids_from_three_rows.append(np.array(surroundings))
 
 
-        return np.array(list_surrounding_cuboids_from_three_rows), sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss
+        return np.array(list_surrounding_cuboids_from_three_rows), sublist_full_dataset_anom_gt, \
+               sublist_full_dataset_dssim_loss, sublist_full_dataset_distances
 
     def predict_on_surroundings(self,surroundings_from_three_rows):
 
@@ -195,15 +216,22 @@ class TestDictionary:
 
         return np.array(list_predictions)
 
-    def create_words_from_predictions(self,predictions):
+    def create_words_from_predictions(self,predictions,sublist_full_dataset_distances):
 
         list_words = []
 
-        for i in range(0,len(predictions)):
-            x = predictions[i]
-            dist = cdist(x,self.means)
-            word = tuple(np.argmin(dist,1))
-            list_words.append(word)
+        if(self.use_dist_in_word):
+            for i in range(0,len(predictions)):
+                x = predictions[i]
+                dist = cdist(x,self.means)
+                word = tuple(np.hstack((np.argmin(dist,1),np.around(sublist_full_dataset_distances[i],self.round_to))))
+                list_words.append(word)
+        else:
+            for i in range(0,len(predictions)):
+                x = predictions[i]
+                dist = cdist(x,self.means)
+                word = tuple(np.argmin(dist,1))
+                list_words.append(word)
 
         return list_words
 
@@ -236,6 +264,13 @@ class TestDictionary:
         with open(os.path.join(self.model_store,'list_cub_loss_full_dataset.pkl'),'wb') as f:
             pickle.dump(self.list_of_cub_loss_full_dataset,f)
 
+        # with open(os.path.join(self.model_store,'list_dist_measure_full_dataset.pkl'),'wb') as f:
+        #     pickle.dump(self.list_full_dset_dist,f)
+
+        with h5py.File(os.path.join(self.model_store, 'list_dist_measure_full_dataset.h5'), "a") as f:
+            dset = f.create_dataset('list_dist_measure_full_dataset', data=self.list_full_dset_dist)
+
+
         return True
 
     def update_dict_from_video(self):
@@ -243,15 +278,18 @@ class TestDictionary:
         next_set_from_cubarray = self.fetch_next_set_from_cubarray()
 
         while(next_set_from_cubarray):
-            surroundings_from_three_rows, sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss = \
-                self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],relevant_row_anom_gt=next_set_from_cubarray[1])
+
+            surroundings_from_three_rows, sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss,\
+            sublist_full_dataset_distances = self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],
+                                                                             relevant_row_anom_gt=next_set_from_cubarray[1])
 
             predictions = self.predict_on_surroundings(surroundings_from_three_rows)
-            words_from_preds = self.create_words_from_predictions(predictions)
+            words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
             self.update_dict_with_words(words_from_preds)
 
             self.list_of_cub_anom_gt_full_dataset.extend(sublist_full_dataset_anom_gt)
             self.list_of_cub_loss_full_dataset.extend(sublist_full_dataset_dssim_loss)
+            self.list_full_dset_dist.extend(sublist_full_dataset_distances)
             self.list_of_cub_words_full_dataset.extend(words_from_preds)
 
             next_set_from_cubarray = self.fetch_next_set_from_cubarray()
@@ -549,26 +587,23 @@ class TestDictionary:
         plt.savefig(os.path.join(self.model_store, tp_fp_graph_name_loss), bbox_inches='tight')
         plt.close()
 
-    def plot_frequencies_of_samples(self,anom_frequency_graph_name):
+    def make_comparitive_plot(self,graph_name,array_to_consider,metric_name=None):
 
         y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
-        frequency_array = np.array(self.list_full_dset_cuboid_frequencies)
-        loss_array = np.array(self.list_of_cub_loss_full_dataset)
 
+        args_arr_sort = np.argsort(array_to_consider)
 
-        args_frq_sort = np.argsort(frequency_array)
+        y_true_arr = y_true[args_arr_sort]
 
-        y_true_frq = y_true[args_frq_sort]
-
-        frequency_array = frequency_array[args_frq_sort]
+        array_to_consider = array_to_consider[args_arr_sort]
 
         colors = ['green', 'red']
 
-        f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row',figsize=(40,30))
+        f, (ax1, ax2) = plt.subplots(1, 2, sharex='col', sharey='row', figsize=(40, 30))
 
-        im1 = ax1.scatter(range(0,len(frequency_array)),frequency_array,c=y_true_frq, cmap=ListedColormap(colors),alpha=0.5)
+        im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
         ax1.set_title('ANOMS:Red, N-ANOMS:Green')
-        ax1.set_ylabel('Frequency')
+        ax1.set_ylabel(metric_name)
         ax1.set_xlabel('Cuboid index')
         ax1.grid(True)
         cb1 = f.colorbar(im1,ax=ax1)
@@ -576,39 +611,90 @@ class TestDictionary:
         cb1.set_ticks(loc)
         cb1.set_ticklabels(['normal','anomaly'])
 
-        fq_anoms = frequency_array[y_true_frq==1]
+        arr_anoms = array_to_consider[y_true_arr==1]
 
-        im2 = ax2.scatter(range(0,len(fq_anoms)),fq_anoms,c='red',alpha=0.5)
+        im2 = ax2.scatter(range(0,len(arr_anoms)),arr_anoms,c='red',alpha=0.5)
         ax2.set_title('ANOMS:Red')
-        ax2.set_ylabel('Frequency')
+        ax2.set_ylabel(metric_name)
         ax2.set_xlabel('Cuboid index')
         ax2.grid(True)
 
-        args_loss_sort = np.argsort(loss_array)
-        y_true_loss = y_true[args_loss_sort]
-        loss_array = loss_array[args_loss_sort]
-
-        im3 = ax3.scatter(range(0,len(loss_array)),loss_array,c=y_true_loss, cmap=ListedColormap(colors),alpha=0.5)
-        ax3.set_title('ANOMS:Red, N-ANOMS:Green')
-        ax3.set_ylabel('DSSIM Loss')
-        ax3.set_xlabel('Cuboid index')
-        ax3.grid(True)
-        cb3 = f.colorbar(im3,ax=ax3)
-        loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
-        cb3.set_ticks(loc)
-        cb3.set_ticklabels(['normal','anomaly'])
-
-
-        loss_anoms = loss_array[y_true_loss==1]
-
-        im4 = ax4.scatter(range(0,len(loss_anoms)),loss_anoms,c='red',alpha=0.5)
-        ax4.set_title('ANOMS:Red')
-        ax4.set_ylabel('DSSIM Loss')
-        ax4.set_xlabel('Cuboid index')
-        ax4.grid(True)
-
-        plt.savefig(os.path.join(self.model_store, anom_frequency_graph_name), bbox_inches='tight')
+        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
+
+        return True
+
+    def plot_frequencies_of_samples(self,anom_frequency_graph_name):
+
+        frequency_array = np.array(self.list_full_dset_cuboid_frequencies)
+        self.make_comparitive_plot(anom_frequency_graph_name,frequency_array,'Frequency')
+
+        return True
+
+    def plot_loss_of_samples(self,recon_loss_graph_name):
+
+        loss_array = np.array(self.list_of_cub_loss_full_dataset)
+        self.make_comparitive_plot(recon_loss_graph_name,loss_array,self.test_loss_metric+'-loss')
+
+        return True
+
+    def plot_distance_measure_of_samples(self,distance_measure_samples_graph_name,dmeasure='mean'):
+
+        if(dmeasure=='mean'):
+            dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1)
+
+        elif(dmeasure=='std'):
+            dmeasure_array = np.std(np.array(self.list_full_dset_dist),axis=1)
+
+        elif(dmeasure=='meanxloss'):
+            dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1) * np.array(self.list_of_cub_loss_full_dataset)
+
+        elif(dmeasure=='stdxloss'):
+            dmeasure_array = np.std(np.array(self.list_full_dset_dist), axis=1) * np.array(self.list_of_cub_loss_full_dataset)
+
+        else:
+            print "ERROR: DMEASURE MUST BE = mean or std"
+            return False
+
+        self.make_comparitive_plot(distance_measure_samples_graph_name,dmeasure_array,'distance-measure')
+
+        return True
+
+    def create_pdf_distance_surroundings(self,list_distances,pdf_name):
+
+        plots_done = 0
+
+        l = list_distances.shape[1]
+
+
+        with PdfPages(pdf_name) as pdf:
+
+            while (plots_done < len(list_distances)):
+
+                    f, ax = plt.subplots(10, 2, sharex='col', sharey='row', figsize=(40, 30))
+
+                    for i in range(0,10):
+                        for j in range(0,2):
+
+                            ax[i][j].plot(list_distances[plots_done])
+                            plots_done+=1
+
+                    pdf.savefig()  # saves the current figure into a pdf page
+                    plt.close()
+
+        return True
+
+    def create_distance_metric_pdfs(self,num_plots_per_pdf):
+
+        #distance_normal_cuboids_pdf
+        list_normal_cuboid_distances = np.array(self.list_full_dset_dist)[np.array(self.list_of_cub_anom_gt_full_dataset)==0]
+        list_normal_cuboid_distances = list_normal_cuboid_distances[np.random.randint(0,len(list_normal_cuboid_distances),num_plots_per_pdf)]
+        self.create_pdf_distance_surroundings(list_distances=list_normal_cuboid_distances,pdf_name=os.path.join(self.model_store,'cubds_norm_dist_bar.pdf'))
+
+        # distance_anom_cuboids_pdf
+        list_anom_cuboid_distances = np.array(self.list_full_dset_dist)[np.array(self.list_of_cub_anom_gt_full_dataset)==1]
+        list_anom_cuboid_distances = list_anom_cuboid_distances[np.random.randint(0,len(list_anom_cuboid_distances),num_plots_per_pdf)]
+        self.create_pdf_distance_surroundings(list_distances=list_anom_cuboid_distances,pdf_name=os.path.join(self.model_store,'cubds_anom_dist_bar.pdf'))
 
         return True
 
@@ -1455,4 +1541,4 @@ def make_videos_of_frames(path_results,list_dirs_of_videos,local=False,threshold
     return True
 
 def mean_squared_error(x,y):
-    return np.mean((x-y)**2)
+    return np.sqrt(np.mean((x-y)**2))

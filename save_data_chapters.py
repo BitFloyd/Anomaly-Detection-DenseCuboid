@@ -9,6 +9,7 @@ import os
 import socket
 import numpy as np
 import sys
+import h5py
 
 
 metric = af.getopts(argv)
@@ -85,7 +86,7 @@ print "############################"
 #Get Data Stream
 train_test = 'Train'
 
-size_axis = 16
+size_axis = 24
 n_frames = 8
 vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
                                 timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,bkgsub=True)
@@ -141,20 +142,15 @@ while True:
     print "DELETING LIST_CUBATCH"
     del (list_cubatch[:])
 
-    x = np.array(flat_list_cubs)
-    print "DELETING FLAT_LIST"
-    del(flat_list_cubs[:])
+    with h5py.File(os.path.join(folder,'data_train.h5'), "a") as f:
+        dset = f.create_dataset('chapter_'+str(chapter_id[0]),data=np.array(flat_list_cubs))
+        print(dset.shape)
 
 
     print "SAVING CHAPTER ID:",str(chapter_id[0])
     f = open(filename,'a+')
     f.write('chapter_id: '+str(chapter_id[0])+'=> '+str(length)+'\n')
     f.close()
-
-    np.save(os.path.join(folder,'chapter_'+str(chapter_id[0])+'.npy'),x)
-
-    print "DELETING ARRAY:"
-    del x
 
     chapter_id+=1
     if(vstream.seek+1 == len(vstream.seek_dict.values())):

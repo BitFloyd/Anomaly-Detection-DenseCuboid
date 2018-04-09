@@ -7,6 +7,7 @@ import os
 import socket
 import sys
 import re
+import h5py
 
 metric = af.getopts(argv)
 
@@ -73,12 +74,13 @@ if(gs):
     folder = os.path.join(data_store_suffix,'chapter_store_conv','data_store_greyscale_bkgsub'+str(tstrides))
     nc=1
 else:
-    folder = os.path.join(data_store_suffix,'chapter_store_conv', 'data_store_bkgsub' + str(tstrides) + '_0.0')
+    folder = os.path.join(data_store_suffix,'chapter_store_conv', 'data_store_bksgub' + str(tstrides) + '_0.0')
     nc=3
 
+train_dset = h5py.File(os.path.join(folder,'data_train.h5'),'r')
+
 if(n_chapters == 0):
-    r = re.compile('chapter_.*.npy')
-    n_chapters=len(filter(r.match,os.listdir(folder)))
+    n_chapters=len(train_dset.keys())
 
 if(nic==0):
     nic=n_chapters
@@ -112,12 +114,12 @@ suffix +='_lassign_'+str(lassign)
 # Get MODEL
 model_store = 'models/' + suffix
 
-size = 16
+size = 24
 
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
                                             lr_model=1e-4, lamda=lamda, lamda_assign=lassign, n_gpus=1,gs=gs,notrain=False,
-                                            reverse=False, data_folder=folder,large=large)
+                                            reverse=False, data_folder=folder,dat_h5=train_dset,large=large)
 
 
 print "############################"
@@ -149,8 +151,8 @@ ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 ae_model.decode_means('means_decoded')
 
-ae_model.generate_loss_graph_with_anomaly_gt('loss_graph_with_anomaly_gt.png')
-
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=100)
 
 ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
+
+train_dset.close()

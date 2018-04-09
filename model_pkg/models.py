@@ -27,6 +27,7 @@ from scipy.spatial.distance import cdist
 from sklearn.manifold import TSNE
 import keras.backend as K
 from keras.objectives import *
+import h5py
 
 
 def small_2d_conv_net(size_y=32,size_x=32,n_channels=1,n_frames=5,h_units=100):
@@ -2803,11 +2804,12 @@ class Conv_autoencoder_nostream:
     initial_means = None
     list_mean_disp = []
     loss_list = []
+    features_h5 = None
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
-                 lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store',large=True,
-                 means_tol = 1e-4,means_patience=20,max_fit_tries=2000):
+                 lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
+                 large=True, means_tol = 1e-5,means_patience=200,max_fit_tries=500000):
 
         self.clustering_lr = clustering_lr
         self.batch_size = batch_size
@@ -2837,6 +2839,7 @@ class Conv_autoencoder_nostream:
         self.max_fit_tries = max_fit_tries
 
         self.dat_folder = data_folder
+        self.dat_h5 = dat_h5
 
         if not os.path.exists(self.model_store):
             os.makedirs(self.model_store)
@@ -3003,18 +3006,17 @@ class Conv_autoencoder_nostream:
             with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
                 self.list_mean_disp = pickle.load(f)
 
-        # print "PLOTTING AE MODEL"
-        # plot_model(self.ae,      to_file=os.path.join(self.model_store,'ae_model.png'), show_shapes=True)
-        # print "PLOTTING DECODER MODEL"
-        # plot_model(self.decoder, to_file=os.path.join(self.model_store,'decoder_model.png'), show_shapes=True)
-        # print "PLOTTING ENCODER MODEL"
-        # plot_model(self.encoder, to_file=os.path.join(self.model_store,'encoder_model.png'), show_shapes=True)
         self.ae.summary()
 
     def set_x_train(self, id):
         del (self.x_train)
         print "Loading Chapter : ", 'chapter_' + str(id) + '.npy'
-        self.x_train = np.load(os.path.join(self.dat_folder, 'chapter_' + str(id) + '.npy'))
+        self.x_train = np.array(self.dat_h5.get('chapter_' + str(id)))
+
+    def set_feats(self, id):
+
+        print "Loading Chapter Feats : ", 'chapter_' + str(id) + '.npy'
+        return (np.array(self.features_h5.get('chapter_' + str(id))))
 
     def set_cl_loss(self,val):
         K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(val))
@@ -3047,7 +3049,7 @@ class Conv_autoencoder_nostream:
         bef_fit = None
         aft_fit = None
         means_patience = self.means_patience
-        max_fit_tries = int(self.max_fit_tries/10)
+        max_fit_tries = n_chapters*10
 
         # for j in range(0, n_train):
         #     print "Partial KM phase:",j,'/',n_train-1
@@ -3254,14 +3256,29 @@ class Conv_autoencoder_nostream:
         if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
             os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
 
+        #Create features h5 dataset
+        for i in range(0,n_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
+                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
+                print(dset.shape)
+            del feats
+
+        # Open features h5 dataset to be used in training
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        del self.km
+        self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=0)
+
         while (disp_track < means_patience and fit_tries <= max_fit_tries):
 
             for i in range(0, n_chapters):
 
                 if (disp_track >= means_patience or fit_tries > max_fit_tries):
                     break
-                self.set_x_train(i)
-                feats = self.encoder.predict(self.x_train)
+
+                feats = self.set_feats(i)
 
                 if (fit_tries == 0):
                     bef_fit = np.zeros((self.n_clusters, self.h_units))
@@ -3312,6 +3329,8 @@ class Conv_autoencoder_nostream:
         np.save(os.path.join(self.model_store, 'means.npy'), self.means)
 
         self.save_weights()
+
+        self.features_h5.close()
 
         return True
 
@@ -3410,14 +3429,26 @@ class Conv_autoencoder_nostream:
         if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
             os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
 
+        #Create features h5 dataset
+        for i in range(0,n_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
+                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
+                print(dset.shape)
+            del feats
+
+        # Open features h5 dataset to be used in training
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
         while (disp_track < means_patience and fit_tries<=max_fit_tries):
 
             for i in range(0, n_chapters):
 
                 if(disp_track >= means_patience or fit_tries>max_fit_tries):
                     break
-                self.set_x_train(i)
-                feats = self.encoder.predict(self.x_train)
+
+                feats = self.set_feats(i)
 
                 if(fit_tries==0):
                     bef_fit = np.zeros((self.n_clusters,self.h_units))
@@ -3476,6 +3507,7 @@ class Conv_autoencoder_nostream:
         np.save(os.path.join(self.model_store, 'means.npy'), self.means)
 
         self.save_weights()
+        self.features_h5.close()
 
         return True
 
@@ -3485,6 +3517,13 @@ class Conv_autoencoder_nostream:
         dist_matrix = cdist(feats, means)
         assigns = np.argmin(dist_matrix, axis=1)
         return assigns
+
+    def get_centroid_distances(self, means, feats):
+
+        dist_matrix = cdist(feats, means)
+        centroid_distances = np.min(dist_matrix, axis=1)
+
+        return centroid_distances
 
     def update_means(self, feats, cluster_assigns):
 
@@ -3545,7 +3584,7 @@ class Conv_autoencoder_nostream:
 
         return True
 
-    def save_gifs(self, input_cuboid, name):
+    def save_gifs(self, input_cuboid, name,custom_msg=None):
 
         for i in range(0, input_cuboid.shape[-1]/self.n_channels):
 
@@ -3558,7 +3597,11 @@ class Conv_autoencoder_nostream:
             else:
                 ax1.imshow(np.uint8(input_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels]*255.0),cmap='gist_gray')
 
-            ax1.set_title('Input Cuboid')
+            if(custom_msg):
+                ax1.set_title(custom_msg)
+            else:
+                ax1.set_title('Input Cuboid')
+
             ax1.set_axis_off()
 
             plt.axis('off')
@@ -3657,6 +3700,7 @@ class Conv_autoencoder_nostream:
             self.set_x_train(idx)
             train_encodings = self.encoder.predict(self.x_train)
             assigns = self.get_assigns(self.means, np.array(train_encodings))
+            distances = self.get_centroid_distances(self.means,np.array(train_encodings))
 
             for i in range(0,self.n_clusters):
                 print "CLUSTER:", i
@@ -3664,14 +3708,19 @@ class Conv_autoencoder_nostream:
                     continue
 
                 cuboids_in_cluster_i = self.x_train[assigns==i]
-                cuboids_in_cluster_i = shuffle(cuboids_in_cluster_i)
+                distances_in_cluster_i = distances[assigns==i]
 
-                for j in cuboids_in_cluster_i:
+                cuboids_in_cluster_i,distances_in_cluster_i = shuffle(cuboids_in_cluster_i,distances_in_cluster_i)
+                cuboids_in_cluster_i, distances_in_cluster_i = shuffle(cuboids_in_cluster_i, distances_in_cluster_i)
+
+                for idx,j in enumerate(cuboids_in_cluster_i):
 
                     if(n_saved_each[i]>=n_samples_per_id):
                         break
 
-                    self.save_gifs(j,os.path.join('cluster_gifs',str(i),str(n_saved_each[i])))
+                    self.save_gifs(j,os.path.join('cluster_gifs',str(i),str(n_saved_each[i])),
+                                   custom_msg='distance:'+str(distances_in_cluster_i[idx]))
+
                     n_saved_each[i]+=1
 
             n_try+=1

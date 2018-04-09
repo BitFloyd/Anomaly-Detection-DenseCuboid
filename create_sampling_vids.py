@@ -1,5 +1,6 @@
 import matplotlib as mpl
 mpl.use('Agg')
+import matplotlib.pyplot as plt
 from functionals_pkg import argparse_fns as af
 from functionals_pkg import batch_fns as bf
 from sys import argv
@@ -7,9 +8,40 @@ from data_pkg import data_fns as df
 import os
 import socket
 import numpy as np
-import h5py
+import sys
 
 metric = af.getopts(argv)
+
+def plot_figures(figures, nrows = 1, ncols=1,save_name=None):
+    """Plot a dictionary of figures.
+
+    Parameters
+    ----------
+    figures : array of images to be plotted
+    ncols : number of columns of subplots wanted in the display
+    nrows : number of rows of subplots wanted in the figure
+    """
+    fig, axeslist = plt.subplots(ncols=ncols, nrows=nrows,figsize=(20,20))
+
+    for i in range(0,figures.shape[0]):
+        for j in range(0,figures.shape[1]):
+            axeslist[i][j].imshow(figures[i][j], cmap=plt.gray())
+            axeslist[i][j].set_title('('+str(i)+','+str(j)+')')
+            axeslist[i][j].set_axis_off()
+
+    plt.tight_layout() # optional
+    plt.savefig(save_name,bbox_inches='tight')
+    plt.close()
+
+def create_videos(frames_folder,folder_video_store,video_id):
+
+    #Saves video and deletes everything in the frames_folder
+    str_command = 'avconv -r 4 -y -i '+ os.path.join(frames_folder,'%10d.png') + ' ' + os.path.join(folder_video_store,str(video_id[0])+'.mp4')
+    os.system(str_command)
+    str_command = 'rm -rf '+frames_folder+'/*'
+    os.system(str_command)
+
+    return True
 
 if (socket.gethostname() == 'puck'):
     print "############################################"
@@ -43,28 +75,26 @@ lstm = bool(int(metric['-lstm']))
 test = 1
 
 
-filename = 'chapters_tstrd_'+str(tstrides)+'_gs_'+str(gs)+'_lstm_'+str(lstm)+'_test_'+str(test)+'.txt'
+mainfol = 'create_vids'
 
 if(lstm):
     ts = 'first'
     ts_pos = 0
-    mainfol = 'chapter_store_lstm_test'
+
 
 else:
     ts = 'last'
     ts_pos = -1
-    mainfol = 'chapter_store_conv_test'
-
 
 
 tv = 0.0
 
 if(gs):
-    folder = os.path.join(mainfol,'data_store_greyscale_test_bkgsub'+str(tstrides))
+    folder = os.path.join(mainfol,'video_store_gs_bkgsub'+str(tstrides))
 
 
 else:
-    folder = os.path.join(mainfol,'data_store_test_bkgsub'+str(tstrides))
+    folder = os.path.join(mainfol,'video_store_bkgsub'+str(tstrides))
 
 
 
@@ -110,11 +140,12 @@ vstream.set_seek_to_video(video_id[0])
 
 print "SEEK IS NOW:", vstream.seek
 
+video_frames_loc = os.path.join(folder,'frames')
 
+if(not os.path.exists(video_frames_loc)):
+    os.makedirs(video_frames_loc)
 
-list_cuboids_full_video = []
-list_cuboids_pixmap_full_video = []
-list_cuboids_anomaly_full_video = []
+fid = 0
 
 while True:
 
@@ -122,16 +153,12 @@ while True:
 
     list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly = bf.return_cuboid_test(vstream,thresh_variance=tv,gs=gs,ts_pos=ts_pos)
 
-    if(len(list_cuboids_full_video)):
+    array_frames = list_cuboids[-1][:, :, :, :, -4:-1]
 
-        list_cuboids_full_video.append(list_cuboids[-1])
-        list_cuboids_pixmap_full_video.append(list_cuboids_pixmap[-1])
-        list_cuboids_anomaly_full_video.append(list_cuboids_anomaly[-1])
-    else:
-        list_cuboids_full_video=list_cuboids
-        list_cuboids_pixmap_full_video=list_cuboids_pixmap
-        list_cuboids_anomaly_full_video=list_cuboids_anomaly
-
+    plot_figures(array_frames,nrows = array_frames.shape[0],ncols=array_frames.shape[1],
+                 save_name=os.path.join(video_frames_loc,str(fid).zfill(10)+'.png'))
+    print fid
+    fid += 1
 
     if(vstream.seek+1 == len(vstream.seek_dict.values())):
         break
@@ -140,25 +167,14 @@ while True:
         break
 
 
+print "#########################################"
+print "SAVING VIDEO: ",video_id
+create_videos(video_frames_loc,folder,video_id)
+print "#########################################"
 
 video_id+=1
 np.save(os.path.join(folder,'vid_this.npy'),video_id)
 
-with h5py.File(os.path.join(folder, 'data_test_video_cuboids.h5'), "a") as f:
-    dset = f.create_dataset('video_cuboids_array_'+str(video_id[0]), data=np.array(list_cuboids_full_video))
-    print(dset.shape)
-
-with h5py.File(os.path.join(folder, 'data_test_video_pixmap.h5'), "a") as f:
-    dset = f.create_dataset('video_pixmap_array_'+str(video_id[0]), data=np.array(list_cuboids_pixmap_full_video))
-    print(dset.shape)
-
-with h5py.File(os.path.join(folder, 'data_test_video_anomgt.h5'), "a") as f:
-    dset = f.create_dataset('video_anomgt_array_'+str(video_id[0]), data=np.array(list_cuboids_anomaly_full_video))
-    print(dset.shape)
 
 
-#
-# np.save(os.path.join(folder,'video_cuboids_array_'+str(video_id[0])+'.npy'),np.array(list_cuboids_full_video))
-# np.save(os.path.join(folder,'video_pixmap_array_'+str(video_id[0])+'.npy'),np.array(list_cuboids_pixmap_full_video))
-# np.save(os.path.join(folder,'video_anomgt_array_'+str(video_id[0])+'.npy'),np.array(list_cuboids_anomaly_full_video))
 
