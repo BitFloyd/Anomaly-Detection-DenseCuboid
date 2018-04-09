@@ -3055,9 +3055,6 @@ class Conv_autoencoder_nostream:
         #     print "Partial KM phase:",j,'/',n_train-1
         #
 
-        if(os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
-            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
-
         while (disp_track < means_patience and fit_tries <= max_fit_tries):
 
             for i in range(0, n_chapters):
@@ -3240,82 +3237,6 @@ class Conv_autoencoder_nostream:
                             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                             break
 
-
-        # Get means of predicted features after the training
-        fit_tries = 0
-        disp_track = 0
-        bef_fit = None
-        aft_fit = None
-        means_patience = self.means_patience
-        max_fit_tries = self.max_fit_tries
-
-        # for j in range(0, n_train):
-        #     print "Partial KM phase:",j,'/',n_train-1
-        #
-
-        if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
-            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
-
-        #Create features h5 dataset
-        for i in range(0,n_chapters):
-            self.set_x_train(i)
-            feats = self.encoder.predict(self.x_train)
-            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
-                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
-                print(dset.shape)
-            del feats
-
-        # Open features h5 dataset to be used in training
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        del self.km
-        self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=0)
-
-        while (disp_track < means_patience and fit_tries <= max_fit_tries):
-
-            for i in range(0, n_chapters):
-
-                if (disp_track >= means_patience or fit_tries > max_fit_tries):
-                    break
-
-                feats = self.set_feats(i)
-
-                if (fit_tries == 0):
-                    bef_fit = np.zeros((self.n_clusters, self.h_units))
-                else:
-                    bef_fit = np.copy(self.km.cluster_centers_).astype('float64')
-
-                for k in range(0, len(feats), self.means_batch):
-                    if (k + self.means_batch < len(feats)):
-                        self.km.partial_fit(feats[k:k + self.means_batch])
-                    else:
-                        self.km.partial_fit(feats[k:])
-
-                aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
-
-                fit_tries += 1
-
-                disp_means = np.sum(np.linalg.norm(bef_fit - aft_fit, axis=1))
-
-                if (disp_means < self.means_tol):
-                    disp_track += 1
-                else:
-                    disp_track = 0
-
-                f = open(os.path.join(self.model_store, 'kmeans_fitting.txt'), 'a+')
-                f.write('fit_tries: ' + str(fit_tries) + '=> ' + str(disp_means) + '\n')
-                f.close()
-
-                print "-------------------------"
-                print "DISP:", disp_means
-                print "DISP_TRACK:", disp_track
-                print "FIT_TRIES:", fit_tries
-                print "-------------------------"
-
-                del feats
-
-        self.means = np.copy(self.km.cluster_centers_).astype('float64')
-
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
         print "PICKLING LISTS AND SAVING WEIGHTS"
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
@@ -3326,11 +3247,16 @@ class Conv_autoencoder_nostream:
         with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
             pickle.dump(self.list_mean_disp, f)
 
-        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
-
         self.save_weights()
 
-        self.features_h5.close()
+        #Create features h5 dataset
+        for i in range(0,n_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
+                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
+                print(dset.shape)
+            del feats
 
         return True
 
@@ -3414,6 +3340,42 @@ class Conv_autoencoder_nostream:
                         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                         break
 
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        print "PICKLING LISTS AND SAVING WEIGHTS"
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
+            pickle.dump(self.loss_list, f)
+
+        with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
+            pickle.dump(self.list_mean_disp, f)
+
+        #Create features h5 dataset
+        for i in range(0,n_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
+                if('chapter_' + str(i) in f.keys()):
+                    del f['chapter_' + str(i)]
+                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
+                print(dset.shape)
+            del feats
+
+        self.save_weights()
+
+        return True
+
+
+    def perform_kmeans(self,n_chapters):
+
+        if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
+            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
+
+        del self.km
+        self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=0)
+
+        # Open features h5 dataset to be used in training
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
 
         # Get means of predicted features
         fit_tries = 0
@@ -3422,24 +3384,6 @@ class Conv_autoencoder_nostream:
         aft_fit = None
         means_patience = self.means_patience
         max_fit_tries = self.max_fit_tries
-
-        # for j in range(0, n_train):
-        #     print "Partial KM phase:",j,'/',n_train-1
-        #
-        if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
-            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
-
-        #Create features h5 dataset
-        for i in range(0,n_chapters):
-            self.set_x_train(i)
-            feats = self.encoder.predict(self.x_train)
-            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
-                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
-                print(dset.shape)
-            del feats
-
-        # Open features h5 dataset to be used in training
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
 
         while (disp_track < means_patience and fit_tries<=max_fit_tries):
 
@@ -3485,32 +3429,11 @@ class Conv_autoencoder_nostream:
                 del feats
 
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
-
-        print "$$$$$$$$$$$$$$$$$$"
-        print "MEANS_INITIAL"
-        print "$$$$$$$$$$$$$$$$$$"
-        print self.means
-
-        self.initial_means = np.copy(self.km.cluster_centers_)
-        np.save(os.path.join(self.model_store, 'initial_means.npy'), self.initial_means)
-
-        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-        print "PICKLING LISTS AND SAVING WEIGHTS"
-        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-
-        with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
-            pickle.dump(self.loss_list, f)
-
-        with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
-            pickle.dump(self.list_mean_disp, f)
-
         np.save(os.path.join(self.model_store, 'means.npy'), self.means)
 
-        self.save_weights()
         self.features_h5.close()
 
         return True
-
 
     def get_assigns(self, means, feats):
 

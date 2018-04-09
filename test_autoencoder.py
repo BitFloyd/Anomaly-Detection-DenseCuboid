@@ -123,6 +123,15 @@ if('-udiw' in metric.keys()):
 else:
     udiw = False
 
+if('-tlm' in metric.keys()):
+    tlm = metric['-tlm']
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "USE TEST LOSS METRIC:" , tlm
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+else:
+    tlm = 'dssim'
+
 
 suffix += '_large_'+str(large)
 suffix +='_ntrain_'+str(ntrain)
@@ -156,7 +165,7 @@ data_h5_va = h5py.File(os.path.join(data_store,'data_test_video_anomgt.h5'))
 data_h5_vp = h5py.File(os.path.join(data_store,'data_test_video_pixmap.h5'))
 
 tclass = TestDictionary(ae_model,data_store=data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp],
-                        notest=notest,model_store=model_store,test_loss_metric='dssim',use_dist_in_word=udiw)
+                        notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw)
 
 print "############################"
 print "UPDATING DICT FROM DATA"
@@ -167,7 +176,7 @@ tclass.update_dict_from_data()
 print "############################"
 print "PRINTING DEETS AND PLOT FREQUENCY"
 print "############################"
-tclass.print_details_and_plot('word_frequency_udiw.png','dssim_recon_losses.png')
+tclass.print_details_and_plot('word_frequency_udiw_'+str(udiw)+'.png',tlm+'_recon_losses.png')
 
 print "############################"
 print "MAKE LIST OF FULL CUBOID DATASET FREQUENCIES"
@@ -177,34 +186,34 @@ tclass.make_list_full_dset_cuboid_frequencies()
 print "############################"
 print "MAKE PRF CURVE FRQ"
 print "############################"
-tclass.make_p_r_f_a_curve('prf_curve_udiw.png','tpfp_curve_udiw.png','prf_deets_udiw.txt')
+tclass.make_p_r_f_a_curve('prf_curve_udiw_'+str(udiw)+'.png','tpfp_curve_udiw_'+str(udiw)+'.png','prf_deets_udiw_'+str(udiw)+'.txt')
 
 print "############################"
 print "MAKE PRF CURVE LOSS"
 print "############################"
-tclass.make_p_r_f_a_curve_dss('prf_curve_dss.png','tpfp_curve_dss.png','prf_deets_dss.txt')
+tclass.make_p_r_f_a_curve_dss('prf_curve_'+tlm+'.png','tpfp_curve_'+tlm+'.png','prf_deets_'+tlm+'.txt')
 
 print "############################"
 print "MAKE FREQUENCY SAMPLES PLOT"
 print "############################"
-tclass.plot_frequencies_of_samples('frequency_samples_plot.png')
+tclass.plot_frequencies_of_samples('frequency_samples_plot_'+str(udiw)+'.png')
 
 print "############################"
 print "MAKE LOSS SAMPLES PLOT"
 print "############################"
-tclass.plot_loss_of_samples('loss_dss_samples_plot.png')
+tclass.plot_loss_of_samples('loss_'+tlm+'_samples_plot.png')
 
 print "############################"
 print "MAKE DISTANCE METRIC PLOT"
 print "############################"
 tclass.plot_distance_measure_of_samples('distance_measure_mean_samples_plot.png','mean')
-tclass.plot_distance_measure_of_samples('distance_measure_meanxloss_dss_samples_plot.png','meanxloss')
+tclass.plot_distance_measure_of_samples('distance_measure_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
 
 print "############################"
 print "MAKE DISTANCE METRIC PLOT"
 print "############################"
 tclass.plot_distance_measure_of_samples('distance_measure_std_samples_plot.png','std')
-tclass.plot_distance_measure_of_samples('distance_measure_stdxloss_dss_samples_plot.png','stdxloss')
+tclass.plot_distance_measure_of_samples('distance_measure_stdxloss_'+tlm+'_samples_plot.png','stdxloss')
 
 
 print "############################"

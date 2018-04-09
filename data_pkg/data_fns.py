@@ -69,29 +69,25 @@ class TestDictionary:
             self.vid = 1
 
         if(notest):
+
             self.n_channels = 3
+
             self.model_store = model_store
 
-            with open(os.path.join(self.model_store,'dictionary.pkl'), 'rb') as f:
-                self.dictionary_words = pickle.load(f)
+            self.dictionary_words = self.load_h5data('dictionary')
 
-            with open(os.path.join(self.model_store,'list_cub_words_full_dataset.pkl'), 'rb') as f:
-                self.list_of_cub_words_full_dataset = pickle.load(f)
+            self.list_of_cub_words_full_dataset = self.load_h5data('list_cub_words_full_dataset')
 
-            with open(os.path.join(self.model_store,'list_cub_anomgt_full_dataset.pkl'), 'rb') as f:
-                self.list_of_cub_anom_gt_full_dataset = pickle.load(f)
+            self.list_of_cub_anom_gt_full_dataset = self.load_h5data('list_cub_anomgt_full_dataset')
 
-            with open(os.path.join(self.model_store, 'list_cub_loss_full_dataset.pkl'), 'rb') as f:
-                self.list_of_cub_loss_full_dataset = pickle.load(f)
+            self.list_of_cub_loss_full_dataset = self.load_h5data('list_cub_loss_full_dataset')
 
-            if(os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'))):
+            self.list_full_dset_dist = self.load_h5data('list_dist_measure_full_dataset')
 
-                with open(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'), 'rb') as f:
-                    self.list_full_dset_cuboid_frequencies = pickle.load(f)
+            if(os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.h5'))):
+                self.list_full_dset_cuboid_frequencies = self.load_h5data('list_cub_frequencies_full_dataset')
 
-            dist_measure_full_dset = h5py.File(os.path.join(self.model_store, 'list_dist_measure_full_dataset.h5'), 'r')
-            self.list_full_dset_dist = list(dist_measure_full_dset.get('list_dist_measure_full_dataset'))
-            dist_measure_full_dset.close()
+
 
     def load_data(self):
 
@@ -113,6 +109,23 @@ class TestDictionary:
             print "VIDEOS FINISHED"
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$"
             return False
+
+    def save_h5data(self,name,content):
+
+        with h5py.File(os.path.join(self.model_store, name+'.h5'), "a") as f:
+
+            if (name in f.keys()):
+                del f[name]
+
+            dset = f.create_dataset(name, data=content)
+
+        return True
+
+    def load_h5data(self,name):
+        dset = h5py.File(os.path.join(self.model_store, name+'.h5'), 'r')
+        content = list(dset.get(name))
+        dset.close()
+        return content
 
     def fetch_next_set_from_cubarray(self):
         #returns 3 things. 3 rows of cubarray, The relevant row of anomaly_gt and the relevant row of  pixmap
@@ -250,25 +263,16 @@ class TestDictionary:
 
         while (self.load_data()):
             self.update_dict_from_video()
-            self.print_details_and_plot(graph_name_frq='word_frequency.png',graph_name_loss='dssim_recon_losses.png')
 
-        with open(os.path.join(self.model_store, 'dictionary.pkl'), 'wb') as f:
-            pickle.dump(self.dictionary_words, f)
+        self.save_h5data('dictionary',self.dictionary_words)
 
-        with open(os.path.join(self.model_store, 'list_cub_words_full_dataset.pkl'), 'wb') as f:
-            pickle.dump(self.list_of_cub_words_full_dataset,f)
+        self.save_h5data('list_cub_words_full_dataset',self.list_of_cub_words_full_dataset)
 
-        with open(os.path.join(self.model_store, 'list_cub_anomgt_full_dataset.pkl'), 'wb') as f:
-            pickle.dump(self.list_of_cub_anom_gt_full_dataset,f)
+        self.save_h5data('list_cub_anomgt_full_dataset',self.list_of_cub_anom_gt_full_dataset)
 
-        with open(os.path.join(self.model_store,'list_cub_loss_full_dataset.pkl'),'wb') as f:
-            pickle.dump(self.list_of_cub_loss_full_dataset,f)
+        self.save_h5data('list_cub_loss_full_dataset',self.list_of_cub_loss_full_dataset)
 
-        # with open(os.path.join(self.model_store,'list_dist_measure_full_dataset.pkl'),'wb') as f:
-        #     pickle.dump(self.list_full_dset_dist,f)
-
-        with h5py.File(os.path.join(self.model_store, 'list_dist_measure_full_dataset.h5'), "a") as f:
-            dset = f.create_dataset('list_dist_measure_full_dataset', data=self.list_full_dset_dist)
+        self.save_h5data('list_dist_measure_full_dataset',self.list_full_dset_dist)
 
 
         return True
@@ -338,11 +342,9 @@ class TestDictionary:
 
     def make_list_full_dset_cuboid_frequencies(self):
 
-        if (self.notest and os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'))):
+        if (self.notest and os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.h5'))):
             print "LIST CUBOID FREQUENCIES ALREADY EXISTS."
-
-            with open(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'), 'rb') as f:
-                self.list_full_dset_cuboid_frequencies = pickle.load(f)
+            self.list_full_dset_cuboid_frequencies = self.load_h5data('list_cub_frequencies_full_dataset')
 
             return True
 
@@ -355,8 +357,8 @@ class TestDictionary:
         for i in self.list_of_cub_words_full_dataset:
             self.list_full_dset_cuboid_frequencies.append(self.dictionary_words[i])
 
-        with open(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.pkl'), 'wb') as f:
-            pickle.dump(self.list_full_dset_cuboid_frequencies,f)
+
+        self.save_h5data('list_cub_frequencies_full_dataset', self.list_full_dset_cuboid_frequencies)
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "LEN LIST_CUB_FREQUENCIES_FULL", len(self.list_full_dset_cuboid_frequencies)

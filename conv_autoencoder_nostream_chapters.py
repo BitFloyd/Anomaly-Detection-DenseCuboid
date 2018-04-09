@@ -135,6 +135,9 @@ else:
     ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
                             n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
 
+
+ae_model.perform_kmeans(n_chapters=n_chapters)
+
 ae_model.kmeans_partial_fit_displacement_plot()
 
 ae_model.generate_loss_graph('loss_graph.png')
