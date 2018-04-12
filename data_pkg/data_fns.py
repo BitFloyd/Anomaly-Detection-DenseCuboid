@@ -74,7 +74,7 @@ class TestDictionary:
 
             self.model_store = model_store
 
-            self.dictionary_words = self.load_h5data('dictionary')
+            self.dictionary_words = dict(zip(self.load_h5data('dictionary_keys'),self.load_h5data('dictionary_values')))
 
             self.list_of_cub_words_full_dataset = self.load_h5data('list_cub_words_full_dataset')
 
@@ -86,8 +86,6 @@ class TestDictionary:
 
             if(os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.h5'))):
                 self.list_full_dset_cuboid_frequencies = self.load_h5data('list_cub_frequencies_full_dataset')
-
-
 
     def load_data(self):
 
@@ -264,7 +262,8 @@ class TestDictionary:
         while (self.load_data()):
             self.update_dict_from_video()
 
-        self.save_h5data('dictionary',self.dictionary_words)
+        self.save_h5data('dictionary_keys',self.dictionary_words.keys())
+        self.save_h5data('dictionary_values',self.dictionary_words.values())
 
         self.save_h5data('list_cub_words_full_dataset',self.list_of_cub_words_full_dataset)
 

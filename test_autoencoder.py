@@ -19,12 +19,12 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    # import tensorflow as tf
-    # from keras.backend.tensorflow_backend import set_session
-    #
-    # config = tf.ConfigProto()
-    # config.gpu_options.per_process_gpu_memory_fraction = 0.5
-    # set_session(tf.Session(config=config))
+    import tensorflow as tf
+    from keras.backend.tensorflow_backend import set_session
+
+    config = tf.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 0.5
+    set_session(tf.Session(config=config))
 
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
     data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
@@ -51,13 +51,21 @@ else:
     n_gpus = int(metric['-ngpu'])
 
 
+
+# batch_size=int(metric['-bs'])
+batch_size=256
+# n_chapters = int(metric['-nch'])
+n_chapters = 0
+# gs = bool(int(metric['-gs']))
+gs = False
+# nic = int(metric['-i'])
+nic = 0
+# tstrides = int(metric['-tstrd'])
+tstrides = 4
+# loss = metric['-loss']
+
 h_units = int(metric['-h'])
-batch_size=int(metric['-bs'])
-n_chapters = int(metric['-nch'])
-gs = bool(int(metric['-gs']))
-nic = int(metric['-i'])
-tstrides = int(metric['-tstrd'])
-loss = metric['-loss']
+loss = 'dssim'
 ntrain = int(metric['-ntrain'])
 nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
@@ -112,7 +120,7 @@ if('-large' in metric.keys()):
     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 
 else:
-    large = False
+    large = True
 
 if('-udiw' in metric.keys()):
     udiw = bool(int(metric['-udiw']))
@@ -167,11 +175,11 @@ data_h5_vp = h5py.File(os.path.join(data_store,'data_test_video_pixmap.h5'))
 tclass = TestDictionary(ae_model,data_store=data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp],
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw)
 
+
 print "############################"
 print "UPDATING DICT FROM DATA"
 print "############################"
 tclass.update_dict_from_data()
-
 
 print "############################"
 print "PRINTING DEETS AND PLOT FREQUENCY"
@@ -196,7 +204,7 @@ tclass.make_p_r_f_a_curve_dss('prf_curve_'+tlm+'.png','tpfp_curve_'+tlm+'.png','
 print "############################"
 print "MAKE FREQUENCY SAMPLES PLOT"
 print "############################"
-tclass.plot_frequencies_of_samples('frequency_samples_plot_'+str(udiw)+'.png')
+tclass.plot_frequencies_of_samples('word_frequency_plot_udiw'+str(udiw)+'.png')
 
 print "############################"
 print "MAKE LOSS SAMPLES PLOT"
@@ -206,14 +214,8 @@ tclass.plot_loss_of_samples('loss_'+tlm+'_samples_plot.png')
 print "############################"
 print "MAKE DISTANCE METRIC PLOT"
 print "############################"
-tclass.plot_distance_measure_of_samples('distance_measure_mean_samples_plot.png','mean')
-tclass.plot_distance_measure_of_samples('distance_measure_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
-
-print "############################"
-print "MAKE DISTANCE METRIC PLOT"
-print "############################"
-tclass.plot_distance_measure_of_samples('distance_measure_std_samples_plot.png','std')
-tclass.plot_distance_measure_of_samples('distance_measure_stdxloss_'+tlm+'_samples_plot.png','stdxloss')
+tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
+tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
 
 
 print "############################"

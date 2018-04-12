@@ -18,12 +18,12 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    import tensorflow as tf
-    from keras.backend.tensorflow_backend import set_session
-
-    config = tf.ConfigProto()
-    config.gpu_options.per_process_gpu_memory_fraction = 0.5
-    set_session(tf.Session(config=config))
+    # import tensorflow as tf
+    # from keras.backend.tensorflow_backend import set_session
+    #
+    # config = tf.ConfigProto()
+    # config.gpu_options.per_process_gpu_memory_fraction = 0.5
+    # set_session(tf.Session(config=config))
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
     data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
 
@@ -49,18 +49,26 @@ else:
 
 
 
+# batch_size=int(metric['-bs'])
+batch_size=256
+# n_chapters = int(metric['-nch'])
+n_chapters = 0
+# gs = bool(int(metric['-gs']))
+gs = False
+# nic = int(metric['-i'])
+nic = 0
+# tstrides = int(metric['-tstrd'])
+tstrides = 4
+# loss = metric['-loss']
+
 h_units = int(metric['-h'])
-batch_size=int(metric['-bs'])
-n_chapters = int(metric['-nch'])
-gs = bool(int(metric['-gs']))
-nic = int(metric['-i'])
-tstrides = int(metric['-tstrd'])
-loss = metric['-loss']
+loss = 'dssim'
 ntrain = int(metric['-ntrain'])
 nclusters = int(metric['-nclust'])
 lamda = float(metric['-lamda'])
 lassign = 0.0
 nocl = bool(int(metric['-nocl']))
+
 
 if(nocl):
     suffix = 'nocl_tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
@@ -103,7 +111,7 @@ if('-large' in metric.keys()):
     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 
 else:
-    large = False
+    large = True
 
 
 suffix += '_large_'+str(large)
@@ -156,6 +164,6 @@ ae_model.decode_means('means_decoded')
 
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=100)
 
-ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
+# ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
 
 train_dset.close()
