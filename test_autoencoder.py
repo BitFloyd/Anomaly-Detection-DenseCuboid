@@ -19,12 +19,12 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    import tensorflow as tf
-    from keras.backend.tensorflow_backend import set_session
-
-    config = tf.ConfigProto()
-    config.gpu_options.per_process_gpu_memory_fraction = 0.5
-    set_session(tf.Session(config=config))
+    # import tensorflow as tf
+    # from keras.backend.tensorflow_backend import set_session
+    #
+    # config = tf.ConfigProto()
+    # config.gpu_options.per_process_gpu_memory_fraction = 0.5
+    # set_session(tf.Session(config=config))
 
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
     data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
@@ -194,12 +194,18 @@ tclass.make_list_full_dset_cuboid_frequencies()
 print "############################"
 print "MAKE PRF CURVE FRQ"
 print "############################"
-tclass.make_p_r_f_a_curve('prf_curve_udiw_'+str(udiw)+'.png','tpfp_curve_udiw_'+str(udiw)+'.png','prf_deets_udiw_'+str(udiw)+'.txt')
+tclass.make_p_r_f_curve_word_frequency('prf_curve_udiw_'+str(udiw)+'.png',
+                                       'tpfp_curve_udiw_'+str(udiw)+'.png',
+                                       'prf_deets_udiw_'+str(udiw)+'.txt',
+                                       'word_frequency')
 
 print "############################"
 print "MAKE PRF CURVE LOSS"
 print "############################"
-tclass.make_p_r_f_a_curve_dss('prf_curve_'+tlm+'.png','tpfp_curve_'+tlm+'.png','prf_deets_'+tlm+'.txt')
+tclass.make_p_r_f_curve_loss_metric('prf_curve_'+tlm+'.png',
+                                    'tpfp_curve_'+tlm+'.png',
+                                    'prf_deets_'+tlm+'.txt',
+                                    tlm+' loss')
 
 print "############################"
 print "MAKE FREQUENCY SAMPLES PLOT"
@@ -216,7 +222,6 @@ print "MAKE DISTANCE METRIC PLOT"
 print "############################"
 tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
 tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
-
 
 print "############################"
 print "MAKE NORM ANOM CUBOID PDFS"

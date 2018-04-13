@@ -18,7 +18,7 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2_128x85/Train'
 
 elif('gpu' in socket.gethostname()):
     print "############################################"
@@ -57,7 +57,7 @@ else:
 tv = 0.0
 
 if(gs):
-    folder = os.path.join(mainfol, 'data_store_greyscale_bkgsub' + str(tstrides))
+    folder = os.path.join(mainfol, 'ucsd_data_store_greyscale_bkgsub' + str(tstrides))
     if(tstrides==2):
         # tv = 0.02
         print "VARIANCE THRESHOLD IS:", tv
@@ -70,7 +70,7 @@ if(gs):
 
 else:
     # tv = 0.0
-    folder = os.path.join(mainfol, 'data_store_bksgub' + str(tstrides) + '_' + str(tv))
+    folder = os.path.join(mainfol, 'ucsd_data_store_bksgub' + str(tstrides) + '_' + str(tv))
 
 
 if(not os.path.exists(mainfol)):

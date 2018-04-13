@@ -143,6 +143,8 @@ else:
     ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
                             n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
 
+    ae_model.generate_mean_displacement_graph('mean_displacements.png')
+
 
 ae_model.perform_kmeans(n_chapters=n_chapters)
 
@@ -156,14 +158,8 @@ ae_model.mean_and_samples(n_per_mean=8)
 
 ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=10,total_chaps_trained=n_chapters)
 
-ae_model.mean_displacement_distance()
-
-ae_model.generate_mean_displacement_graph('mean_displacements.png')
-
 ae_model.decode_means('means_decoded')
 
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=100)
-
-# ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)
 
 train_dset.close()

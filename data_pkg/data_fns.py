@@ -74,7 +74,13 @@ class TestDictionary:
 
             self.model_store = model_store
 
-            self.dictionary_words = dict(zip(self.load_h5data('dictionary_keys'),self.load_h5data('dictionary_values')))
+            keys = self.load_h5data('dictionary_keys')
+            keys_tuples = [tuple(i) for i in keys]
+
+            self.dictionary_words = dict(zip(keys_tuples,self.load_h5data('dictionary_values')))
+
+            del keys
+            del keys_tuples
 
             self.list_of_cub_words_full_dataset = self.load_h5data('list_cub_words_full_dataset')
 
@@ -367,7 +373,7 @@ class TestDictionary:
 
         return True
 
-    def make_p_r_f_a_curve(self,prfa_graph_name,tp_fp_graph_name,deets_filename):
+    def make_p_r_f_a_curve(self,array_to_th,lt=False,prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets',metric='metric'):
 
         precision_score_list = []
         recall_score_list = []
@@ -379,7 +385,10 @@ class TestDictionary:
         tn_list = []
         fn_list = []
 
-        lspace = np.logspace(math.log10(min(self.dictionary_words.values())),math.log10(max(self.dictionary_words.values())),1000)
+        if(max(array_to_th)>=1e3):
+            lspace = np.logspace(math.log10(min(array_to_th)),math.log10(max(array_to_th)),1000)
+        else:
+            lspace = np.linspace(min(array_to_th), max(array_to_th), 1000)
 
         total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
 
@@ -394,7 +403,11 @@ class TestDictionary:
         for i in tqdm(lspace):
 
             y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
-            y_pred = (np.array(self.list_full_dset_cuboid_frequencies)<=i)
+
+            if(lt):
+                y_pred = (np.array(array_to_th)<=i)
+            else:
+                y_pred = (np.array(array_to_th)>=i)
 
             cm = confusion_matrix(y_true,y_pred)
 
@@ -434,7 +447,7 @@ class TestDictionary:
 
         print "##########################################################################"
         print "MAX F1:", max(f1_score_list)
-        print "F1 score:", lspace[f1_score_list.index(max(f1_score_list))]
+        print "THRESHOLD:", lspace[f1_score_list.index(max(f1_score_list))]
         print "##########################################################################"
 
         #Plot PRFA curve
@@ -443,16 +456,16 @@ class TestDictionary:
         hfm3, = plt.plot(f1_score_list, label='f1_score')
         hfm4, = plt.plot(accuracy_score_list,label='accuracy_score')
 
-        s_acc = 'max_acc:'+str(format(max(accuracy_score_list),'.2f'))+' at '+ str(int(lspace[accuracy_score_list.index(max(accuracy_score_list))]))
-        s_f1 = 'max_f1:'+str(format(max(f1_score_list),'.2f'))+' at '+ str(int(lspace[f1_score_list.index(max(f1_score_list))]))
-        s_pr = 'max_pr:'+str(format(max(precision_score_list),'.2f'))+' at '+ str(int(lspace[precision_score_list.index(max(precision_score_list))]))
-        s_re = 'max_re:' + str(format(max(recall_score_list),'.2f')) + ' at ' + str(int(lspace[recall_score_list.index(max(recall_score_list))]))
+        s_acc = 'max_acc:'+str(format(max(accuracy_score_list),'.2f'))+' at '+ str(float(lspace[accuracy_score_list.index(max(accuracy_score_list))]))
+        s_f1 = 'max_f1:'+str(format(max(f1_score_list),'.2f'))+' at '+ str(float(lspace[f1_score_list.index(max(f1_score_list))]))
+        s_pr = 'max_pr:'+str(format(max(precision_score_list),'.2f'))+' at '+ str(float(lspace[precision_score_list.index(max(precision_score_list))]))
+        s_re = 'max_re:' + str(format(max(recall_score_list),'.2f')) + ' at ' + str(float(lspace[recall_score_list.index(max(recall_score_list))]))
 
 
         plt.legend(handles=[hfm,hfm2,hfm3,hfm4])
         plt.title('Precision, Recall, F1_Score')
         plt.ylabel('Scores')
-        plt.xlabel('Word frequency threshold')
+        plt.xlabel(metric)
         plt.savefig(os.path.join(self.model_store, prfa_graph_name), bbox_inches='tight')
         plt.close()
 
@@ -472,121 +485,45 @@ class TestDictionary:
         plt.legend(handles=[hfm,hfm2,hfm3,hfm4])
         plt.title('TP,FP,TN,FN')
         plt.ylabel('Values')
-        plt.xlabel('Word frequency threshold')
+        plt.xlabel(metric)
         plt.savefig(os.path.join(self.model_store, tp_fp_graph_name), bbox_inches='tight')
         plt.close()
 
-    def make_p_r_f_a_curve_dss(self,prfa_graph_name_loss,tp_fp_graph_name_loss,deets_filename_loss):
+    def make_p_r_f_curve_word_frequency(self,prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets',xlabel='metric'):
 
-        precision_score_list = []
-        recall_score_list = []
-        f1_score_list = []
-        accuracy_score_list = []
+        self.make_p_r_f_a_curve(self.list_full_dset_cuboid_frequencies,True,
+                                prfa_graph_name,tp_fp_graph_name,deets_filename,xlabel)
 
-        tp_list = []
-        fp_list = []
-        tn_list = []
-        fn_list = []
+        return True
 
-        lspace = np.linspace(min(self.list_of_cub_loss_full_dataset),max(self.list_of_cub_loss_full_dataset),1000)
+    def make_p_r_f_curve_loss_metric(self,prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets',xlabel='metric'):
 
-        total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
+        self.make_p_r_f_a_curve(self.list_of_cub_loss_full_dataset,False,
+                                prfa_graph_name,tp_fp_graph_name,deets_filename,xlabel)
+        return True
 
-        print "#################################################################################"
-        print "TOTAL NUMBER OF TRUE POSITIVES:" , total_num_tp
-        print "TOTAL NUMBER OF SAMPLES TO BE TESTED:",len(self.list_of_cub_anom_gt_full_dataset)
-        print "RATIO:",total_num_tp/(len(self.list_of_cub_anom_gt_full_dataset)+0.0)
-        print "ACC WHEN ALL 0: ", (len(self.list_of_cub_anom_gt_full_dataset) - total_num_tp)/(len(self.list_of_cub_anom_gt_full_dataset)+0.0) * 100
-        print "#################################################################################"
+    def make_prf_curve_dist_metric(self,dmeasure='mean',prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets'):
 
+        if(dmeasure=='mean'):
+            dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1)
 
-        for i in tqdm(lspace):
+        elif(dmeasure=='std'):
+            dmeasure_array = np.std(np.array(self.list_full_dset_dist),axis=1)
 
-            y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
-            y_pred = (np.array(self.list_of_cub_loss_full_dataset)>=i)
+        elif(dmeasure=='meanxloss'):
+            dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1) * np.array(self.list_of_cub_loss_full_dataset)
 
-            cm = confusion_matrix(y_true, y_pred)
+        elif(dmeasure=='stdxloss'):
+            dmeasure_array = np.std(np.array(self.list_full_dset_dist), axis=1) * np.array(self.list_of_cub_loss_full_dataset)
 
-            precision_score_list.append(precision_score(y_true, y_pred) * 100)
-            recall_score_list.append(recall_score(y_true, y_pred) * 100)
-            f1_score_list.append(f1_score(y_true, y_pred) * 100)
-            accuracy_score_list.append(accuracy_score(y_true, y_pred) * 100)
+        else:
+            print "ERROR: DMEASURE MUST BE = mean or std"
+            return False
 
-            TN = cm[0][0]
+        self.make_p_r_f_a_curve(dmeasure_array,False,
+                                prfa_graph_name, tp_fp_graph_name, deets_filename,dmeasure)
 
-            FP = cm[0][1]
-
-            FN = cm[1][0]
-
-            TP = cm[1][1]
-
-            tp_list.append(TP)
-            tn_list.append(TN)
-
-            fn_list.append(FN)
-            fp_list.append(FP)
-
-        print "##########################################################################"
-        print "MAX ACCURACY:", max(accuracy_score_list)
-        print "THRESHOLD:", lspace[accuracy_score_list.index(max(accuracy_score_list))]
-        print "##########################################################################"
-
-        print "##########################################################################"
-        print "MAX PRECISION:", max(precision_score_list)
-        print "THRESHOLD:", lspace[precision_score_list.index(max(precision_score_list))]
-        print "##########################################################################"
-
-        print "##########################################################################"
-        print "MAX RECALL:", max(recall_score_list)
-        print "THRESHOLD:", lspace[recall_score_list.index(max(recall_score_list))]
-        print "##########################################################################"
-
-        print "##########################################################################"
-        print "MAX F1:", max(f1_score_list)
-        print "F1 score:", lspace[f1_score_list.index(max(f1_score_list))]
-        print "##########################################################################"
-
-        # Plot PRFA curve
-        hfm, = plt.plot(precision_score_list, label='precision_score')
-        hfm2, = plt.plot(recall_score_list, label='recall_score')
-        hfm3, = plt.plot(f1_score_list, label='f1_score')
-        hfm4, = plt.plot(accuracy_score_list, label='accuracy_score')
-
-        s_acc = 'max_acc:' + str(format(max(accuracy_score_list), '.2f')) + ' at ' + str(
-            (lspace[accuracy_score_list.index(max(accuracy_score_list))]))
-        s_f1 = 'max_f1:' + str(format(max(f1_score_list), '.2f')) + ' at ' + str(
-            (lspace[f1_score_list.index(max(f1_score_list))]))
-        s_pr = 'max_pr:' + str(format(max(precision_score_list), '.2f')) + ' at ' + str(
-            (lspace[precision_score_list.index(max(precision_score_list))]))
-        s_re = 'max_re:' + str(format(max(recall_score_list), '.2f')) + ' at ' + str(
-            (lspace[recall_score_list.index(max(recall_score_list))]))
-
-        plt.legend(handles=[hfm, hfm2, hfm3, hfm4])
-        plt.title('Precision, Recall, F1_Score')
-        plt.ylabel('Scores')
-        plt.xlabel('Word frequency threshold')
-        plt.savefig(os.path.join(self.model_store, prfa_graph_name_loss), bbox_inches='tight')
-        plt.close()
-
-        f = open(os.path.join(self.model_store, deets_filename_loss), 'a+')
-        f.write(s_acc + '\n')
-        f.write(s_f1 + '\n')
-        f.write(s_pr + '\n')
-        f.write(s_re + '\n')
-        f.close()
-
-        # Plot TPFPcurve
-        hfm, = plt.plot(tp_list, label='N_true_positives')
-        hfm2, = plt.plot(fp_list, label='N_false_positives')
-        hfm3, = plt.plot(tn_list, label='N_true_negatives')
-        hfm4, = plt.plot(fn_list, label='N_false_negatives')
-
-        plt.legend(handles=[hfm, hfm2, hfm3, hfm4])
-        plt.title('TP,FP,TN,FN')
-        plt.ylabel('Values')
-        plt.xlabel('Word frequency threshold')
-        plt.savefig(os.path.join(self.model_store, tp_fp_graph_name_loss), bbox_inches='tight')
-        plt.close()
+        return True
 
     def make_comparitive_plot(self,graph_name,array_to_consider,metric_name=None):
 

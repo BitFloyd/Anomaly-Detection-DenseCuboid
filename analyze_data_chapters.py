@@ -15,7 +15,7 @@ if (socket.gethostname() == 'puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2_128x85/Test'
 
 elif ('gpu' in socket.gethostname()):
     print "############################################"
@@ -60,13 +60,11 @@ else:
 tv = 0.0
 
 if(gs):
-    folder = os.path.join(mainfol,'data_store_greyscale_test_bkgsub'+str(tstrides))
+    folder = os.path.join(mainfol,'ucsd_data_store_greyscale_test_bkgsub'+str(tstrides))
 
 
 else:
-    folder = os.path.join(mainfol,'data_store_test_bkgsub'+str(tstrides))
-
-
+    folder = os.path.join(mainfol,'ucsd_data_store_test_bkgsub'+str(tstrides))
 
 if(not os.path.exists(mainfol)):
     os.mkdir(mainfol)
@@ -156,9 +154,4 @@ with h5py.File(os.path.join(folder, 'data_test_video_anomgt.h5'), "a") as f:
     dset = f.create_dataset('video_anomgt_array_'+str(video_id[0]), data=np.array(list_cuboids_anomaly_full_video))
     print(dset.shape)
 
-
-#
-# np.save(os.path.join(folder,'video_cuboids_array_'+str(video_id[0])+'.npy'),np.array(list_cuboids_full_video))
-# np.save(os.path.join(folder,'video_pixmap_array_'+str(video_id[0])+'.npy'),np.array(list_cuboids_pixmap_full_video))
-# np.save(os.path.join(folder,'video_anomgt_array_'+str(video_id[0])+'.npy'),np.array(list_cuboids_anomaly_full_video))
 

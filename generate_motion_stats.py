@@ -19,7 +19,7 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2_128x85/Test'
 
 elif('gpu' in socket.gethostname()):
     print "############################################"
@@ -27,7 +27,7 @@ elif('gpu' in socket.gethostname()):
     print "############################################"
     verbose = 1
     os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
-    path_videos='/scratch/suu-621-aa/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+    path_videos='/scratch/suu-621-aa/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2_128x85/Test'
 
 else:
     print socket.gethostname()
@@ -36,7 +36,7 @@ else:
     print "############################################"
     verbose = 1
     os.chdir('/gs/project/suu-621-aa/sejacob/densecub/')
-    path_videos = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+    path_videos = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2_128x85/Test'
 
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
@@ -46,27 +46,25 @@ lstm = bool(int(metric['-lstm']))
 test = 1
 
 
-filename = 'chapters_tstrd_'+str(tstrides)+'_gs_'+str(gs)+'_lstm_'+str(lstm)+'_test_'+str(test)+'.txt'
-
 if(lstm):
     ts = 'first'
     ts_pos = 0
-    mainfol = 'chapter_store_lstm_test_ucsd1'
+    mainfol = 'chapter_store_lstm_test'
 
 else:
     ts = 'last'
     ts_pos = -1
-    mainfol = 'chapter_store_conv_test_ucsd1'
+    mainfol = 'chapter_store_conv_test'
 
 
 
 tv = 0.0
 
 if(gs):
-    folder = os.path.join(mainfol, 'data_store_greyscale_test_ucsd1_' + str(tstrides))
+    folder = os.path.join(mainfol, 'analysis_gs')
 
 else:
-    folder = os.path.join(mainfol,'data_store_test_ucsd1'+str(tstrides)+'_anom_20')
+    folder = os.path.join(mainfol,'analysis')
 
 
 if(not os.path.exists(mainfol)):
@@ -85,7 +83,7 @@ train_test = 'Test'
 size_axis = 24
 n_frames = 8
 vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
-                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.1)
+                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.1,bkgsub=True)
 
 
 print "############################"
@@ -141,7 +139,7 @@ print "########################"
 plt.bar(center, hist, align='center', width=width)
 plt.ylabel('Number of samples')
 plt.xlabel('Anomaly Percentage')
-plt.savefig('anom_percentage_histogram_ucsd1.png', bbox_inches='tight')
+plt.savefig('anom_percentage_histogram_ucsd2.png', bbox_inches='tight')
 plt.close()
 
 with open(os.path.join('list_anom_percentage.pkl'), 'wb') as f:
