@@ -85,7 +85,7 @@ def get_variances(cuboids_batch,ts_pos=0,gs=0):
     return np.array(list_mot_hist)
 
 def get_next_relevant_cuboids(vstream,gs=False):
-    _, _, _, cuboids_batch, _ = vstream.get_next_cuboids_from_stream(gs)
+    _, _, _, cuboids_batch, _,_ = vstream.get_next_cuboids_from_stream(gs)
 
     if (len(vstream.seek_dict[vstream.seek]) <= 1):
         cuboids_batch = cuboids_batch[-len(cuboids_batch) / 3:]
@@ -94,9 +94,9 @@ def get_next_relevant_cuboids(vstream,gs=False):
 
 def get_next_relevant_cuboids_test(vstream,gs=False):
 
-    list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, _, _ = vstream.get_next_cuboids_from_stream(gs)
+    list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, _, _ ,list_cuboids_anompercentage = vstream.get_next_cuboids_from_stream(gs)
 
-    return list_cuboids,list_cuboids_pixmap,list_cuboids_anomaly
+    return list_cuboids,list_cuboids_pixmap,list_cuboids_anomaly,list_cuboids_anompercentage
 
 def get_batch_with_motion(batch,thresh_variance,ts_pos=0,gs=0):
 
@@ -140,79 +140,12 @@ def return_relevant_cubs(vstream,thresh_variance,gs=False,ts_pos=0):
     return cuboids_batch
 
 
-def make_test_cuboid_structures(list_cuboids,list_cuboids_pixmap,list_cuboids_anomaly):
-
-    rows = list_cuboids[0].shape[0]
-    cols = list_cuboids[0].shape[1]
-
-
-    cubstructs=[]
-
-   
-
-    for j in range(1, rows - 1):
-        for k in range(1, cols - 1):
-
-            surroundings = []
-
-            surr_idx = 0
-
-            current_cuboid = list_cuboids[1][j, k]
-
-
-            surroundings.append(list_cuboids[surr_idx][j - 1, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j - 1, k])
-            surroundings.append(list_cuboids[surr_idx][j - 1, k + 1])
-
-            surroundings.append(list_cuboids[surr_idx][j, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j, k])
-            surroundings.append(list_cuboids[surr_idx][j, k + 1])
-
-            surroundings.append(list_cuboids[surr_idx][j + 1, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j + 1, k])
-            surroundings.append(list_cuboids[surr_idx][j + 1, k + 1])
-
-
-            surr_idx = 1
-            surroundings.append(list_cuboids[surr_idx][j - 1, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j - 1, k])
-            surroundings.append(list_cuboids[surr_idx][j - 1, k + 1])
-
-            surroundings.append(list_cuboids[surr_idx][j, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j, k + 1])
-
-            surroundings.append(list_cuboids[surr_idx][j + 1, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j + 1, k])
-            surroundings.append(list_cuboids[surr_idx][j + 1, k + 1])
-
-
-            surr_idx = 2
-            surroundings.append(list_cuboids[surr_idx][j - 1, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j - 1, k])
-            surroundings.append(list_cuboids[surr_idx][j - 1, k + 1])
-
-            surroundings.append(list_cuboids[surr_idx][j, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j, k])
-            surroundings.append(list_cuboids[surr_idx][j, k + 1])
-
-            surroundings.append(list_cuboids[surr_idx][j + 1, k - 1])
-            surroundings.append(list_cuboids[surr_idx][j + 1, k])
-            surroundings.append(list_cuboids[surr_idx][j + 1, k + 1])
-
-
-            cub =  Cuboid(current_cuboid,list_cuboids_pixmap[1][j][k],surroundings,list_cuboids_anomaly[1][j][k])
-
-            cubstructs.append(cub)
-
-    return cubstructs
-
-
 def return_cuboid_test(vstream,thresh_variance,gs=False,ts_pos=0):
 
-    list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly = get_next_relevant_cuboids_test(vstream,gs)
+    list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly,list_cuboids_anompercentage = get_next_relevant_cuboids_test(vstream,gs)
 
     if(gs==0):
         for idx,i in enumerate(list_cuboids):
             list_cuboids[idx] = norm_batch(i)
 
-    return list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly
+    return list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly,list_cuboids_anompercentage

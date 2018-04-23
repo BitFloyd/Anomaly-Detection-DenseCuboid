@@ -6,8 +6,6 @@ from data_pkg.data_fns import TestDictionary
 from sys import argv
 import os
 import socket
-import sys
-import re
 import h5py
 
 metric = af.getopts(argv)
@@ -52,31 +50,25 @@ else:
 
 
 
-# batch_size=int(metric['-bs'])
 batch_size=256
-# n_chapters = int(metric['-nch'])
 n_chapters = 0
-# gs = bool(int(metric['-gs']))
 gs = False
-# nic = int(metric['-i'])
 nic = 0
-# tstrides = int(metric['-tstrd'])
 tstrides = 4
-# loss = metric['-loss']
-
+lassign = 0.0
 h_units = int(metric['-h'])
 loss = 'dssim'
 ntrain = int(metric['-ntrain'])
 nclusters = int(metric['-nclust'])
-lamda = float(metric['-lamda'])
-lassign = 0.0
 nocl = bool(int(metric['-nocl']))
 
 
 if(nocl):
     suffix = 'nocl_tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
+    lamda = 0.0
 else:
     suffix = 'tstrd_' + str(tstrides) + '_nic_' + str(nic) + '_chapters_' + str(n_chapters) + '_clusters_' + str(nclusters)
+    lamda = float(metric['-lamda'])
 
 suffix +='_hunits_'+str(h_units)
 
@@ -92,6 +84,8 @@ else:
     data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test', 'data_store_test_bkgsub' + str(tstrides))
     nc=3
 
+
+# Open train dset
 train_dset = h5py.File(os.path.join(folder,'data_train.h5'),'r')
 
 if(n_chapters == 0):
@@ -100,7 +94,6 @@ if(n_chapters == 0):
 if(nic==0):
     nic=n_chapters
 
-train_dset.close()
 
 if(gs):
     suffix += '_greyscale_'
@@ -111,8 +104,6 @@ print "############################"
 print "SET UP MODEL"
 print "############################"
 
-
-
 if('-large' in metric.keys()):
     large = bool(int(metric['-large']))
     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
@@ -121,15 +112,6 @@ if('-large' in metric.keys()):
 
 else:
     large = True
-
-if('-udiw' in metric.keys()):
-    udiw = bool(int(metric['-udiw']))
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print "USE DIST IN WORD CREATION :" , udiw
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-
-else:
-    udiw = False
 
 if('-tlm' in metric.keys()):
     tlm = metric['-tlm']
@@ -140,17 +122,76 @@ if('-tlm' in metric.keys()):
 else:
     tlm = 'dssim'
 
+if('-rev' in metric.keys()):
+
+    reverse = bool(int(metric['-rev']))
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "REVERSE? :" , reverse
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    suffix += '_rev_' + str(reverse)
+
+else:
+    reverse = False
+
 
 suffix += '_large_'+str(large)
 suffix +='_ntrain_'+str(ntrain)
 suffix +='_lamda_'+str(lamda)
-suffix +='_lassign_'+str(lassign)
 
 
-notest = False
+
 
 # Get MODEL
 model_store = 'models/' + suffix
+
+size = 24
+
+ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
+                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
+                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=False,
+                                            reverse=reverse, data_folder=folder,dat_h5=train_dset,large=large)
+
+
+print "############################"
+print "START TRAINING AND STUFF"
+print "############################"
+
+if(nocl):
+    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=100, n_chapters=n_chapters,
+                                        n_train=ntrain, reduce_lr=True, patience_lr=25, factor=1.25)
+
+    ae_model.perform_kmeans(n_chapters=n_chapters)
+    ae_model.kmeans_partial_fit_displacement_plot()
+
+
+else:
+    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
+                            n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
+
+    ae_model.generate_mean_displacement_graph('mean_displacements.png')
+
+
+ae_model.generate_loss_graph('loss_graph.png')
+
+ae_model.create_recons(20)
+
+ae_model.mean_and_samples(n_per_mean=8)
+
+ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
+
+ae_model.decode_means('means_decoded')
+
+ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
+
+train_dset.close()
+
+
+print "################################"
+print "START TESTING"
+print "################################"
+
+notest = False
+udiw = False
 
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 print folder
@@ -161,8 +202,8 @@ if(notest):
     ae_model = None
 else:
     ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
-                                            lr_model=1e-4, lamda=lamda, lamda_assign=lassign, n_gpus=1,gs=gs,notrain=True,
+                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
+                                            lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
                                             reverse=False, data_folder=folder,dat_h5=None,large=large)
 
     ae_model.set_cl_loss(0.0)
@@ -222,6 +263,8 @@ print "MAKE DISTANCE METRIC PLOT"
 print "############################"
 tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
 tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
+tclass.plot_distance_measure_of_samples('distance_target_samples_plot.png','distance')
+tclass.plot_distance_measure_of_samples('distancexloss_'+tlm+'_samples_plot.png','distancexloss')
 
 print "############################"
 print "MAKE NORM ANOM CUBOID PDFS"

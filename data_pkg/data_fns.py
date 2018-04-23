@@ -28,17 +28,20 @@ class TestDictionary:
 
     data_store = None    #Where the test data is stored
 
-    vid = None           #Id of the video being processed ATM -> Always points to the next id to be loaded
-    cubarray = None      #Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
-    amongtarray = None   #Contains anomaly groundtruths of corresponding cuboids in cubarray (shape = cubarray.shape())
-    pixmaparray = None   #Each element contains a tuple of the pixel centres of corresponding cuboid in cubarray
-                         # (shape = cubarray.shape())
+    vid = None              #Id of the video being processed ATM -> Always points to the next id to be loaded
+    cubarray = None         #Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
+    amongtarray = None      #Contains anomaly groundtruths of corresponding cuboids in cubarray (shape = cubarray.shape())
+    anompercentarray = None #Contains the anomaly percentage in the cuboid
+    pixmaparray = None      #Each element contains a tuple of the pixel centres of corresponding cuboid in cubarray
+                            # (shape = cubarray.shape())
 
     cubarray_process_index = None #The index of the set in cubarray that is being processed.
 
     list_of_cub_words_full_dataset = []
     list_of_cub_loss_full_dataset = []
     list_of_cub_anom_gt_full_dataset = []
+    list_of_cub_anomperc_full_dataset = []
+
     list_full_dset_cuboid_frequencies = []
     list_anom_gifs=[]
     list_full_dset_dist = []
@@ -54,6 +57,7 @@ class TestDictionary:
         self.data_vc = data_test_h5[0]
         self.data_va = data_test_h5[1]
         self.data_vp = data_test_h5[2]
+        self.data_ap = data_test_h5[3]
 
         self.use_dist_in_word=use_dist_in_word
         self.round_to=round_to
@@ -103,6 +107,7 @@ class TestDictionary:
             self.cubarray = np.array(self.data_vc.get('video_cuboids_array_'+str(self.vid)))
             self.anomgtarray = np.array(self.data_va.get('video_anomgt_array_' + str(self.vid)))
             self.pixmaparray = np.array(self.data_vp.get('video_pixmap_array_' + str(self.vid)))
+            self.anompercentarray = np.array(self.data_ap.get('video_anomperc_array_'+str(self.vid)))
 
             self.vid+=1
             self.cubarray_process_index = 1
@@ -138,23 +143,26 @@ class TestDictionary:
             sys.stdout.write("\033[F")
             three_rows_cubarray = self.cubarray[self.cubarray_process_index-1:self.cubarray_process_index+2]
             relevant_row_anom_gt = self.anomgtarray[self.cubarray_process_index]
+            relevant_row_anompercentage = self.anompercentarray[self.cubarray_process_index]
             relevant_row_pixmap = self.pixmaparray[self.cubarray_process_index]
 
             self.cubarray_process_index+=1
 
-            return (three_rows_cubarray,relevant_row_anom_gt,relevant_row_pixmap)
+            return (three_rows_cubarray,relevant_row_anom_gt,relevant_row_pixmap,relevant_row_anompercentage)
         else:
             return False
 
-    def create_surroundings(self,three_rows_cubarray,relevant_row_anom_gt,gif=False):
+    def create_surroundings(self,three_rows_cubarray,relevant_row_anom_gt,relevant_row_anompercentage,gif=False):
 
         rows = three_rows_cubarray[0].shape[0]
         cols = three_rows_cubarray[0].shape[1]
 
         list_surrounding_cuboids_from_three_rows = []
         sublist_full_dataset_anom_gt = []
+        sublist_full_dataset_anompercentage = []
         sublist_full_dataset_dssim_loss = []
         sublist_full_dataset_distances = []
+
 
         for j in range(1, rows - 1):
             for k in range(1, cols - 1):
@@ -165,6 +173,7 @@ class TestDictionary:
                 current_cuboid = three_rows_cubarray[1][j, k]
 
                 sublist_full_dataset_anom_gt.append(relevant_row_anom_gt[j,k])
+                sublist_full_dataset_anompercentage.append(relevant_row_anompercentage[j,k])
 
                 if(not gif):
                     if(self.test_loss_metric=='dssim'):
@@ -222,7 +231,7 @@ class TestDictionary:
 
 
         return np.array(list_surrounding_cuboids_from_three_rows), sublist_full_dataset_anom_gt, \
-               sublist_full_dataset_dssim_loss, sublist_full_dataset_distances
+               sublist_full_dataset_dssim_loss, sublist_full_dataset_distances, sublist_full_dataset_anompercentage
 
     def predict_on_surroundings(self,surroundings_from_three_rows):
 
@@ -279,6 +288,7 @@ class TestDictionary:
 
         self.save_h5data('list_dist_measure_full_dataset',self.list_full_dset_dist)
 
+        self.save_h5data('list_cub_anompercentage_full_dataset',self.list_of_cub_anomperc_full_dataset)
 
         return True
 
@@ -289,8 +299,10 @@ class TestDictionary:
         while(next_set_from_cubarray):
 
             surroundings_from_three_rows, sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss,\
-            sublist_full_dataset_distances = self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],
-                                                                             relevant_row_anom_gt=next_set_from_cubarray[1])
+            sublist_full_dataset_distances, sublist_full_dataset_anompercentage = self.create_surroundings(
+                                                                             three_rows_cubarray=next_set_from_cubarray[0],
+                                                                             relevant_row_anom_gt=next_set_from_cubarray[1],
+                                                                             relevant_row_anompercentage=next_set_from_cubarray[3])
 
             predictions = self.predict_on_surroundings(surroundings_from_three_rows)
             words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
@@ -300,6 +312,7 @@ class TestDictionary:
             self.list_of_cub_loss_full_dataset.extend(sublist_full_dataset_dssim_loss)
             self.list_full_dset_dist.extend(sublist_full_dataset_distances)
             self.list_of_cub_words_full_dataset.extend(words_from_preds)
+            self.list_of_cub_anomperc_full_dataset.extend(sublist_full_dataset_anompercentage)
 
             next_set_from_cubarray = self.fetch_next_set_from_cubarray()
 
@@ -529,15 +542,22 @@ class TestDictionary:
 
         y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
 
+        y_perc = np.array(self.list_of_cub_anomperc_full_dataset)
+
         args_arr_sort = np.argsort(array_to_consider)
 
         y_true_arr = y_true[args_arr_sort]
+        y_perc_arr = y_perc[args_arr_sort]
 
         array_to_consider = array_to_consider[args_arr_sort]
 
         colors = ['green', 'red']
 
-        f, (ax1, ax2) = plt.subplots(1, 2, sharex='col', sharey='row', figsize=(40, 30))
+        f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(40, 40))
+
+        ax1 = ax[0,0]
+        ax2 = ax[0,1]
+        ax3 = ax[1,1]
 
         im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
         ax1.set_title('ANOMS:Red, N-ANOMS:Green')
@@ -556,6 +576,14 @@ class TestDictionary:
         ax2.set_ylabel(metric_name)
         ax2.set_xlabel('Cuboid index')
         ax2.grid(True)
+
+        arr_perc = y_perc_arr[y_true_arr==1]
+
+        im3 = ax3.scatter(range(0, len(arr_perc)), arr_perc, c='blue', alpha=0.5)
+        ax3.set_title('ANOMPERC')
+        ax3.set_ylabel(metric_name)
+        ax3.set_xlabel('Cuboid index')
+        ax3.grid(True)
 
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
@@ -581,15 +609,15 @@ class TestDictionary:
         if(dmeasure=='mean'):
             dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1)
 
-        elif(dmeasure=='std'):
-            dmeasure_array = np.std(np.array(self.list_full_dset_dist),axis=1)
-
         elif(dmeasure=='meanxloss'):
             dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1) * np.array(self.list_of_cub_loss_full_dataset)
 
-        elif(dmeasure=='stdxloss'):
-            dmeasure_array = np.std(np.array(self.list_full_dset_dist), axis=1) * np.array(self.list_of_cub_loss_full_dataset)
+        elif(dmeasure=='distance'):
+            dmeasure_array = np.array(self.list_full_dset_dist)[:,0]
 
+        elif(dmeasure=='distancexloss'):
+
+            dmeasure_array = np.array(self.list_full_dset_dist)[:, 0] * np.array(self.list_of_cub_loss_full_dataset)
         else:
             print "ERROR: DMEASURE MUST BE = mean or std"
             return False
@@ -653,7 +681,7 @@ class TestDictionary:
         next_set_from_cubarray = self.fetch_next_set_from_cubarray()
 
         while(next_set_from_cubarray):
-            surroundings_from_three_rows, sublist_full_dataset_anom_gt, _ = \
+            surroundings_from_three_rows, sublist_full_dataset_anom_gt, _ , sublist_full_dataset_distances= \
                 self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],relevant_row_anom_gt=next_set_from_cubarray[1]
                                          ,gif=True)
 
@@ -663,7 +691,7 @@ class TestDictionary:
             else:
                 surroundings_from_three_rows = surroundings_from_three_rows[np.array(sublist_full_dataset_anom_gt)==True]
                 predictions = self.predict_on_surroundings(surroundings_from_three_rows)
-                words_from_preds = self.create_words_from_predictions(predictions)
+                words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
 
                 self.make_gifs_from_surroundings(surroundings_from_three_rows,words_from_preds)
 
@@ -743,7 +771,6 @@ class TestDictionary:
         imageio.mimsave(name, images)
 
         return True
-
 
 class Video_Stream_UCSD:
 
@@ -864,6 +891,8 @@ class Video_Stream_ARTIF:
     list_cuboids = []
     list_cuboids_pixmap = []
     list_cuboids_anomaly = []
+    list_cuboids_anompercentage = []
+
     list_all_cuboids = []
     list_all_cuboids_gt = []
 
@@ -940,7 +969,7 @@ class Video_Stream_ARTIF:
             return np.array([0]),np.array([0]),np.array([0]),np.array([0]),np.array([0])
         else:
 
-            list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, list_all_cuboids, list_all_cuboids_gt = \
+            list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, list_all_cuboids, list_all_cuboids_gt,list_cuboids_anompercentage = \
             make_cuboids_for_stream(self,self.seek_dict[self.seek], self.seek_dict_gt[self.seek], self.size_x, self.size_y,
                                     test_or_train=self.video_train_test, ts_first_last = self.ts_first_or_last,strides=self.strides,gs=gs,anompth=self.anompth,
                                     bkgsub=self.bkgsub)
@@ -951,12 +980,16 @@ class Video_Stream_ARTIF:
             self.list_cuboids_pixmap = copy.copy(list_cuboids_pixmap)
             del(self.list_cuboids_anomaly[:])
             self.list_cuboids_anomaly = copy.copy(list_cuboids_anomaly)
+
+            del(self.list_cuboids_anompercentage[:])
+            self.list_cuboids_anompercentage = copy.copy(list_cuboids_anompercentage)
+
             del(self.list_all_cuboids[:])
             self.list_all_cuboids = copy.copy(list_all_cuboids)
             del(self.list_all_cuboids_gt[:])
             self.list_all_cuboids_gt = copy.copy(list_all_cuboids_gt)
 
-        return list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, np.array(list_all_cuboids), np.array(list_all_cuboids_gt)
+        return list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, np.array(list_all_cuboids), np.array(list_all_cuboids_gt), list_cuboids_anompercentage
 
     def reset_stream(self):
         self.seek = -1
@@ -1005,6 +1038,8 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
     list_cuboids = deque(stream.list_cuboids)
     list_cuboids_pixmap = deque(stream.list_cuboids_pixmap)
     list_cuboids_anomaly = deque(stream.list_cuboids_anomaly)
+    list_cuboids_anompercentage = deque(stream.list_cuboids_anompercentage)
+
     list_all_cuboids = deque(stream.list_all_cuboids)
     list_all_cuboids_gt = deque(stream.list_all_cuboids_gt)
 
@@ -1018,6 +1053,7 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
         list_cuboids_local = []
         list_cuboids_pixmap_local = []
         list_cuboids_anomaly_local = []
+        list_cuboids_anompercentage_local = []
 
         local_collection = imread_collection(list_images[i],as_grey=gs)
 
@@ -1111,6 +1147,8 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
                     cuboid_data = local_collection[start_rows:end_rows, start_cols:end_cols, :]
 
                 anomaly_gt = False
+                anompercentage = 0.0
+
                 if(test_or_train=='Test'):
 
                     if (ts_first_last == 'first'):
@@ -1118,7 +1156,10 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
                     elif (ts_first_last == 'last'):
                         anomaly_gt_sum = np.sum(local_collection_gt[start_rows:end_rows, start_cols:end_cols, :])
 
-                    anompercentage = anomaly_gt_sum/((end_cols-start_cols)*(end_rows-start_rows)*n_channels*n_frames*255.0)
+                    if(gs):
+                        anompercentage = anomaly_gt_sum/((end_cols-start_cols)*(end_rows-start_rows)*n_channels*n_frames)
+                    else:
+                        anompercentage = anomaly_gt_sum / ((end_cols - start_cols) * (end_rows - start_rows) * n_channels * n_frames*255.0)
 
                     if(anompercentage>0.0):
                         list_anom_percentage.append(anompercentage)
@@ -1138,6 +1179,7 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
 
                 list_cuboids_pixmap_local.append((j,k))
                 list_cuboids_anomaly_local.append(anomaly_gt)
+                list_cuboids_anompercentage_local.append(anompercentage)
 
                 if(start):
                     list_all_cuboids_gt.append(anomaly_gt)
@@ -1155,20 +1197,28 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
 
         pixmap_cuboids = np.array(list_cuboids_pixmap_local).reshape((frame_size_y - size_y)/strides + 1, (frame_size_x - size_x)/strides + 1,2)
         anomaly_gt_cuboids = np.array(list_cuboids_anomaly_local).reshape((frame_size_y - size_y)/strides + 1, (frame_size_x - size_x)/strides + 1)
+        anompercentage_cuboids = np.array(list_cuboids_anompercentage_local).reshape((frame_size_y - size_y)/strides + 1, (frame_size_x - size_x)/strides + 1)
 
         if(start):
             list_cuboids.append(array_cuboids)
             list_cuboids_pixmap.append(pixmap_cuboids)
             list_cuboids_anomaly.append(anomaly_gt_cuboids)
+            list_cuboids_anompercentage.append(anompercentage_cuboids)
         else:
             list_cuboids.popleft()
             list_cuboids.append(array_cuboids)
+
             list_cuboids_pixmap.popleft()
             list_cuboids_pixmap.append(pixmap_cuboids)
+
             list_cuboids_anomaly.popleft()
             list_cuboids_anomaly.append(anomaly_gt_cuboids)
 
-    return list(list_cuboids), list(list_cuboids_pixmap), list(list_cuboids_anomaly), list(list_all_cuboids), list(list_all_cuboids_gt)
+            list_cuboids_anompercentage.popleft()
+            list_cuboids_anompercentage.append(anompercentage_cuboids)
+
+
+    return list(list_cuboids), list(list_cuboids_pixmap), list(list_cuboids_anomaly), list(list_all_cuboids), list(list_all_cuboids_gt), list(list_cuboids_anompercentage)
 
 def imread_collection(list_images,as_grey=False):
 

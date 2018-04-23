@@ -18,7 +18,7 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2_128x85/Train'
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train'
 
 elif('gpu' in socket.gethostname()):
     print "############################################"
@@ -42,7 +42,7 @@ strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
 tstrides = int(metric['-tstrd'])
 lstm = bool(int(metric['-lstm']))
-filename = 'chapters_tstrd_'+str(tstrides)+'_gs_'+str(gs)+'_lstm_'+str(lstm)+'.txt'
+
 
 if(lstm):
     ts = 'first'
@@ -57,7 +57,7 @@ else:
 tv = 0.0
 
 if(gs):
-    folder = os.path.join(mainfol, 'ucsd_data_store_greyscale_bkgsub' + str(tstrides))
+    folder = os.path.join(mainfol, 'ucsd2_fdata_store_greyscale_bkgsub' + str(tstrides))
     if(tstrides==2):
         # tv = 0.02
         print "VARIANCE THRESHOLD IS:", tv
@@ -70,7 +70,7 @@ if(gs):
 
 else:
     # tv = 0.0
-    folder = os.path.join(mainfol, 'ucsd_data_store_bksgub' + str(tstrides) + '_' + str(tv))
+    folder = os.path.join(mainfol, 'ucsd2_fdata_store_bksgub' + str(tstrides) + '_' + str(tv))
 
 
 if(not os.path.exists(mainfol)):
@@ -86,7 +86,7 @@ print "############################"
 #Get Data Stream
 train_test = 'Train'
 
-size_axis = 24
+size_axis = 48
 n_frames = 8
 vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
                                 timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,bkgsub=True)
@@ -148,9 +148,6 @@ while True:
 
 
     print "SAVING CHAPTER ID:",str(chapter_id[0])
-    f = open(filename,'a+')
-    f.write('chapter_id: '+str(chapter_id[0])+'=> '+str(length)+'\n')
-    f.close()
 
     chapter_id+=1
     if(vstream.seek+1 == len(vstream.seek_dict.values())):

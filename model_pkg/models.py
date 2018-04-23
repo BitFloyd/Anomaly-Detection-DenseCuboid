@@ -33,10 +33,11 @@ import h5py
 
 class CustomClusterLayer(Layer):
 
-    def __init__(self,loss_fn,means,lamda,n_clusters,hid,**kwargs):
+    def __init__(self,loss_fn,means,lamda,n_clusters,hid,reverse=False,**kwargs):
 
         self.is_placeholder = True
         self.loss_fn=loss_fn
+        self.reverse = reverse
 
         self.means=K.variable(value=K.cast_to_floatx(means),name='means_tensor_in')
         self.lamda=K.variable(value=K.cast_to_floatx(lamda),name='lamda_tensor_in')
@@ -49,7 +50,11 @@ class CustomClusterLayer(Layer):
 
     def custom_loss_clustering(self,x_true, x_pred, encoded_feats):
 
-        loss = K.mean(self.loss_fn(x_true, x_pred))
+        if(self.reverse):
+            loss = K.mean(self.loss_fn(K.reverse(x_true,axes=3), x_pred))
+        else:
+            loss = K.mean(self.loss_fn(x_true, x_pred))
+
         centroids = self.means
 
         M = self.n_clusters
@@ -96,7 +101,7 @@ class CustomClusterLayer_Test(Layer):
     def custom_loss_clustering(self,x_true, x_pred, encoded_feats,assignments):
 
         if(self.reverse):
-            loss = K.mean(self.loss_fn(K.reverse(x_true,axes=1), x_pred))
+            loss = K.mean(self.loss_fn(K.reverse(x_true,axes=0), x_pred))
         else:
             loss = K.mean(self.loss_fn(x_true, x_pred))
 
@@ -514,20 +519,25 @@ class Conv_LSTM_autoencoder:
         self.decoder.save_weights(filepath=os.path.join(self.model_store, 'decoder_weights.h5'))
         self.encoder.save_weights(filepath=os.path.join(self.model_store, 'encoder_weights.h5'))
 
-class Conv_autoencoder_nostream:
+class Super_autoencoder:
 
     means = None
     initial_means = None
     list_mean_disp = []
     loss_list = []
     features_h5 = None
+    features_h5_pre = None
+    y_obj = None
+    ae = None
+    encoder = None
+    decoder = None
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
-                 loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
-                 lamda_assign=0.01, n_gpus=1,gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
-                 large=True, means_tol = 1e-5,means_patience=200,max_fit_tries=500000):
+                 loss='mse', batch_size=64, n_clusters=10, lr_model=1e-4, lamda=0.01,
+                 gs=False, notrain=False, reverse=False, data_folder='data_store',
+                 dat_h5=None,large=True, means_tol=1e-5, means_patience=200, max_fit_tries=500000):
 
-        self.clustering_lr = clustering_lr
+        self.clustering_lr = 1.0
         self.batch_size = batch_size
         self.model_store = model_store
         self.loss = loss
@@ -539,11 +549,10 @@ class Conv_autoencoder_nostream:
         self.h_units = h_units
         self.means = np.zeros((n_clusters, h_units))
         self.cluster_assigns = None
-        self.assignment_lamda = lamda_assign
         self.ntsteps = n_timesteps
         self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=0)
-        self.x_train = [100,10,10]
-        self.gs=gs
+        self.x_train = [100, 10, 10]
+        self.gs = gs
         self.notrain = notrain
         self.reverse = reverse
         self.n_channels = n_channels
@@ -560,170 +569,6 @@ class Conv_autoencoder_nostream:
         if not os.path.exists(self.model_store):
             os.makedirs(self.model_store)
 
-        if (self.large):
-            f1 = 64
-            f2 = 128
-            f3 = 256
-            f4 = 512
-            f5 = 256
-            f6 = 128
-            f7 = 64
-            f8 = 32
-        else:
-            f1 = 16
-            f2 = 32
-            f3 = 64
-            f4 = 256
-            f5 = 128
-            f6 = 64
-            f7 = 32
-            f8 = 16
-
-        # MODEL CREATION
-        inp = Input(shape=(size_y, size_x, n_channels * n_timesteps))
-        x1 = GaussianNoise(0.05)(inp)
-        x1 = Conv2D(f1, (3, 3), padding='same')(x1)
-        x1 = SpatialDropout2D(0.3)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 16x16
-
-        x1 = GaussianNoise(0.03)(x1)
-        x1 = Conv2D(f2, (3, 3), padding='same')(x1)
-        x1 = SpatialDropout2D(0.3)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 8x8
-
-        x1 = GaussianNoise(0.02)(x1)
-        x1 = Conv2D(f3, (3, 3), padding='same')(x1)
-        x1 = SpatialDropout2D(0.3)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 4x4
-
-        x1 = Flatten()(x1)
-        x1 = Dropout(0.3)(x1)
-        x1 = Dense(units=h_units)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        encoder = BatchNormalization()(x1)
-
-        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4)
-        dec2 = LeakyReLU(alpha=0.2)
-        dec3 = Reshape((size_x / 8, size_y / 8, f4))
-
-        dec4 = UpSampling2D(size=(2, 2))
-        dec5 = Conv2D(f5, (3, 3), padding='same')
-        dec6 = LeakyReLU(alpha=0.2)
-        dec7 = BatchNormalization()  # 8x8
-
-        dec8 = UpSampling2D(size=(2, 2))
-        dec9 = Conv2D(f6, (3, 3), padding='same')
-        dec10 = LeakyReLU(alpha=0.2)
-        dec11 = BatchNormalization()  # 16x16
-
-        dec12 = UpSampling2D(size=(2, 2))
-        dec13 = Conv2D(f7, (3, 3), padding='same')
-        dec14 = LeakyReLU(alpha=0.2)
-        dec15 = BatchNormalization()  # 32x32
-
-        dec16 = Conv2D(f8, (3, 3), padding='same')
-        dec17 = LeakyReLU(alpha=0.2)  # 32x32
-
-        recon = Conv2D(n_channels * n_timesteps, (3, 3), activation='sigmoid', padding='same')
-
-        ae1 = dec1(encoder)
-        ae2 = dec2(ae1)
-        ae3 = dec3(ae2)
-        ae4 = dec4(ae3)
-        ae5 = dec5(ae4)
-        ae6 = dec6(ae5)
-        ae7 = dec7(ae6)
-        ae8 = dec8(ae7)
-        ae9 = dec9(ae8)
-        ae10 = dec10(ae9)
-        ae11 = dec11(ae10)
-        ae12 = dec12(ae11)
-        ae13 = dec13(ae12)
-        ae14 = dec14(ae13)
-        ae15 = dec15(ae14)
-        ae16 = dec16(ae15)
-        ae17 = dec17(ae16)
-        ae18 = recon(ae17)
-
-        adam_ae = Adam(lr=self.lr_model)
-        dssim = DSSIMObjective(kernel_size=4)
-
-        if (loss == 'mse'):
-            self.loss_fn = mean_squared_error
-        elif (loss == 'dssim'):
-            self.loss_fn = dssim
-        elif (loss == 'bce'):
-            self.loss_fn = binary_crossentropy
-
-        self.encoder = Model(inputs=[inp], outputs=[encoder])
-
-        if (n_gpus > 1):
-            self.encoder = make_parallel(self.encoder, n_gpus)
-
-        dinp = Input(shape=(h_units,))
-
-        de1 = dec1(dinp)
-        de2 = dec2(de1)
-        de3 = dec3(de2)
-        de4 = dec4(de3)
-        de5 = dec5(de4)
-        de6 = dec6(de5)
-        de7 = dec7(de6)
-        de8 = dec8(de7)
-        de9 = dec9(de8)
-        de10 = dec10(de9)
-        de11 = dec11(de10)
-        de12 = dec12(de11)
-        de13 = dec13(de12)
-        de14 = dec14(de13)
-        de15 = dec15(de14)
-        de16 = dec16(de15)
-        de17 = dec17(de16)
-        de18 = recon(de17)
-
-
-        self.y_obj = CustomClusterLayer(self.loss_fn, self.means, self.lamda, self.n_clusters, h_units)
-
-        y = self.y_obj([inp, ae18, encoder])
-
-        self.decoder = Model(inputs=[dinp], outputs=[de18])
-
-        self.ae = Model(inputs=[inp], outputs=[y])
-
-        if (n_gpus > 1):
-            self.decoder = make_parallel(self.decoder, n_gpus)
-
-        self.ae.compile(optimizer=adam_ae, loss=None)
-
-        if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
-            print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
-            self.ae.load_weights(os.path.join(model_store, 'ae_weights.h5'))
-
-        if (os.path.isfile(os.path.join(model_store, 'decoder_weights.h5'))):
-            print "LOADING DECODER MODEL WEIGHTS FROM WEIGHTS FILE"
-            self.decoder.load_weights(os.path.join(model_store, 'decoder_weights.h5'))
-
-        if (os.path.isfile(os.path.join(model_store, 'encoder_weights.h5'))):
-            print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
-            self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
-
-        if (notrain):
-            # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
-            self.means = np.load(os.path.join(self.model_store, 'means.npy'))
-
-            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
-                self.loss_list = pickle.load(f)
-            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
-                self.list_mean_disp = pickle.load(f)
-
-        self.ae.summary()
-
     def set_x_train(self, id):
         del (self.x_train)
         print "Loading Chapter : ", 'chapter_' + str(id) + '.npy'
@@ -733,6 +578,11 @@ class Conv_autoencoder_nostream:
 
         print "Loading Chapter Feats : ", 'chapter_' + str(id) + '.npy'
         return (np.array(self.features_h5.get('chapter_' + str(id))))
+
+    def set_feats_pre(self, id):
+
+        print "Loading Chapter Feats : ", 'chapter_' + str(id) + '.npy'
+        return (np.array(self.features_h5_pre.get('chapter_' + str(id))))
 
     def set_cl_loss(self,val):
         K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(val))
@@ -765,11 +615,17 @@ class Conv_autoencoder_nostream:
         bef_fit = None
         aft_fit = None
         means_patience = self.means_patience
-        max_fit_tries = n_chapters*10
+        max_fit_tries = n_chapters*500
 
-        # for j in range(0, n_train):
-        #     print "Partial KM phase:",j,'/',n_train-1
-        #
+        for i in range(0,n_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            with h5py.File(os.path.join(self.model_store, 'features_pre.h5'), "a") as f:
+                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
+                print(dset.shape)
+            del feats
+
+        self.features_h5_pre = h5py.File(os.path.join(self.model_store, 'features_pre.h5'), 'r')
 
         while (disp_track < means_patience and fit_tries <= max_fit_tries):
 
@@ -777,8 +633,8 @@ class Conv_autoencoder_nostream:
 
                 if (disp_track >= means_patience or fit_tries > max_fit_tries):
                     break
-                self.set_x_train(i)
-                feats = self.encoder.predict(self.x_train)
+
+                feats = self.set_feats_pre(i)
 
                 if (fit_tries == 0):
                     bef_fit = np.zeros((self.n_clusters,self.h_units))
@@ -810,6 +666,12 @@ class Conv_autoencoder_nostream:
                 print "-------------------------"
 
                 del feats
+
+
+
+        print "FINISH MEANS INITIAL"
+        self.features_h5_pre.close()
+
 
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
 
@@ -859,7 +721,7 @@ class Conv_autoencoder_nostream:
             del self.means
             del self.cluster_assigns
 
-            if (len(self.x_train) > 30000):
+            if (len(self.x_train) > 20000):
                 if (lowest_loss_ever - current_loss > least_loss):
                     loss_track = 0
                     loss_track_lr = 0
@@ -909,6 +771,7 @@ class Conv_autoencoder_nostream:
                     current_loss = history.history['loss'][0]
                     self.loss_list.append(history.history['loss'][0])
 
+                    print "NTRAIN: ", i, '/', n_train
 
                     feats = self.encoder.predict(self.x_train)
 
@@ -925,7 +788,7 @@ class Conv_autoencoder_nostream:
                     del feats
                     del self.cluster_assigns
 
-                    if (len(self.x_train) > 30000):
+                    if (len(self.x_train) > 20000):
                         if (lowest_loss_ever - current_loss > least_loss):
                             loss_track = 0
                             loss_track_lr = 0
@@ -973,6 +836,11 @@ class Conv_autoencoder_nostream:
                 dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
                 print(dset.shape)
             del feats
+
+
+        self.means = np.copy(self.km.cluster_centers_).astype('float64')
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+
 
         return True
 
@@ -1029,7 +897,7 @@ class Conv_autoencoder_nostream:
 
                 K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
 
-                if (len(self.x_train) > 30000):
+                if (len(self.x_train) > 20000):
                     if (lowest_loss_ever - current_loss > least_loss):
                         loss_track = 0
                         loss_track_lr = 0
@@ -1077,6 +945,33 @@ class Conv_autoencoder_nostream:
                 dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
                 print(dset.shape)
             del feats
+
+        self.save_weights()
+
+        return True
+
+    def fit_model_single_chap(self, verbose=1,epochs=15):
+
+        if (self.notrain):
+            return True
+
+        # Make clustering loss weight to 0
+        K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(0.0))
+
+        # start_initial chapters training
+
+        self.set_x_train(0)
+
+        history = self.ae.fit(self.x_train, shuffle=True, epochs=epochs, batch_size=self.batch_size, verbose=verbose)
+
+        self.loss_list.extend(history.history['loss'])
+
+        self.km = KMeans(n_clusters=self.n_clusters)
+
+        self.km.fit(self.encoder.predict(self.x_train))
+
+        self.means = np.copy(self.km.cluster_centers_).astype('float64')
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
 
         self.save_weights()
 
@@ -1235,13 +1130,13 @@ class Conv_autoencoder_nostream:
 
         return True
 
-    def save_gifs(self, input_cuboid, name,custom_msg=None):
+    def save_gifs(self, input_cuboid, name,custom_msg=None,input=False):
 
         for i in range(0, input_cuboid.shape[-1]/self.n_channels):
 
             f, (ax1) = plt.subplots(1, 1)
 
-            idx = (-i - 1) if self.reverse else i
+            idx = (-i - 1) if self.reverse and not input else i
 
             if (self.gs):
                 ax1.imshow(np.uint8(input_cuboid[:,:,idx].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
@@ -1329,6 +1224,8 @@ class Conv_autoencoder_nostream:
 
     def save_gifs_per_cluster_ids(self, n_samples_per_id,total_chaps_trained_on,max_try=100):
 
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START SAVE_GIFS_PER_CLUSTER_IDS"
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -1348,8 +1245,8 @@ class Conv_autoencoder_nostream:
             print "SAVE_PROGRESS:", n_saved_each
 
             idx = np.random.randint(0, total_chaps_trained_on)
+            train_encodings = self.set_feats(idx)
             self.set_x_train(idx)
-            train_encodings = self.encoder.predict(self.x_train)
             assigns = self.get_assigns(self.means, np.array(train_encodings))
             distances = self.get_centroid_distances(self.means,np.array(train_encodings))
 
@@ -1370,7 +1267,7 @@ class Conv_autoencoder_nostream:
                         break
 
                     self.save_gifs(j,os.path.join('cluster_gifs',str(i),str(n_saved_each[i])),
-                                   custom_msg='distance:'+str(distances_in_cluster_i[idx]))
+                                   custom_msg='distance:'+str(distances_in_cluster_i[idx]),input=True)
 
                     n_saved_each[i]+=1
 
@@ -1488,21 +1385,35 @@ class Conv_autoencoder_nostream:
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
 
-    def generate_assignment_graph(self, graph_name, n_chapters, total_chaps_trained):
+    def generate_assignment_graph(self, graph_name,n_chapters):
 
-        feats, assigns = self.get_encodings_and_assigns(n_chapters=n_chapters,
-                                                        total_chaps_trained_on=total_chaps_trained)
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
         list_assigns = []
 
-        for i in range(0, self.n_clusters):
-            list_assigns.append(np.sum(assigns == i))
+        for i in range(0,n_chapters):
 
-        plt.bar(x=range(0, self.n_clusters), height=list_assigns, width=0.25)
+            feats = self.set_feats(i)
+            assigns = self.get_assigns(self.means,feats)
+            list_assigns.extend(assigns.tolist())
+
+        list_assigns = np.array(list_assigns)
+
+        list_assigns_summed = []
+
+        for i in range(0, self.n_clusters):
+            list_assigns_summed.append(np.sum(list_assigns == i))
+
+        plt.bar(x=range(0, self.n_clusters), height=list_assigns_summed, width=0.25)
         plt.title('Cluster Assignments')
         plt.xlabel('Cluster ids')
         plt.ylabel('Number of assignments')
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
+
+        self.features_h5.close()
+
+        return True
 
     def decode_means(self, graph_name):
 
@@ -1583,3 +1494,555 @@ class Conv_autoencoder_nostream:
         plt.close()
 
         return True
+
+class Conv_autoencoder_nostream (Super_autoencoder):
+
+    def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
+                 loss='mse', batch_size=64, n_clusters=10,lr_model=1e-4, lamda=0.01,
+                 gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
+                 large=True, means_tol = 1e-5,means_patience=200,max_fit_tries=500000):
+
+        Super_autoencoder.__init__(self,model_store, size_y=size_y, size_x=size_x, n_channels=n_channels, h_units=h_units, n_timesteps=n_timesteps,
+                 loss=loss, batch_size=batch_size, n_clusters=n_clusters,lr_model=lr_model, lamda=lamda,gs=gs, notrain=notrain,
+                 reverse=reverse, data_folder=data_folder, dat_h5=dat_h5,large=large, means_tol=means_tol,
+                 means_patience=means_patience, max_fit_tries=max_fit_tries)
+
+        if (self.large):
+            f1 = 64
+            f2 = 128
+            f3 = 256
+            f4 = 512
+            f5 = 256
+            f6 = 128
+            f7 = 64
+            f8 = 32
+        else:
+            f1 = 16
+            f2 = 32
+            f3 = 64
+            f4 = 256
+            f5 = 128
+            f6 = 64
+            f7 = 32
+            f8 = 16
+
+        # MODEL CREATION
+        inp = Input(shape=(size_y, size_x, n_channels * n_timesteps))
+        x1 = GaussianNoise(0.05)(inp)
+        x1 = Conv2D(f1, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 16x16
+
+        x1 = GaussianNoise(0.03)(x1)
+        x1 = Conv2D(f2, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 8x8
+
+        x1 = GaussianNoise(0.02)(x1)
+        x1 = Conv2D(f3, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 4x4
+
+        x1 = Flatten()(x1)
+        x1 = Dropout(0.3)(x1)
+        x1 = Dense(units=h_units)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        encoder = BatchNormalization()(x1)
+
+        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4)
+        dec2 = LeakyReLU(alpha=0.2)
+        dec3 = Reshape((size_x / 8, size_y / 8, f4))
+
+        dec4 = UpSampling2D(size=(2, 2))
+        dec5 = Conv2D(f5, (3, 3), padding='same')
+        dec6 = LeakyReLU(alpha=0.2)
+        dec7 = BatchNormalization()  # 8x8
+
+        dec8 = UpSampling2D(size=(2, 2))
+        dec9 = Conv2D(f6, (3, 3), padding='same')
+        dec10 = LeakyReLU(alpha=0.2)
+        dec11 = BatchNormalization()  # 16x16
+
+        dec12 = UpSampling2D(size=(2, 2))
+        dec13 = Conv2D(f7, (3, 3), padding='same')
+        dec14 = LeakyReLU(alpha=0.2)
+        dec15 = BatchNormalization()  # 32x32
+
+        dec16 = Conv2D(f8, (3, 3), padding='same')
+        dec17 = LeakyReLU(alpha=0.2)  # 32x32
+
+        recon = Conv2D(n_channels * n_timesteps, (3, 3), activation='sigmoid', padding='same')
+
+        ae1 = dec1(encoder)
+        ae2 = dec2(ae1)
+        ae3 = dec3(ae2)
+        ae4 = dec4(ae3)
+        ae5 = dec5(ae4)
+        ae6 = dec6(ae5)
+        ae7 = dec7(ae6)
+        ae8 = dec8(ae7)
+        ae9 = dec9(ae8)
+        ae10 = dec10(ae9)
+        ae11 = dec11(ae10)
+        ae12 = dec12(ae11)
+        ae13 = dec13(ae12)
+        ae14 = dec14(ae13)
+        ae15 = dec15(ae14)
+        ae16 = dec16(ae15)
+        ae17 = dec17(ae16)
+        ae18 = recon(ae17)
+
+        adam_ae = Adam(lr=self.lr_model)
+        dssim = DSSIMObjective(kernel_size=8)
+
+        if (loss == 'mse'):
+            self.loss_fn = mean_squared_error
+        elif (loss == 'dssim'):
+            self.loss_fn = dssim
+        elif (loss == 'bce'):
+            self.loss_fn = binary_crossentropy
+
+        self.encoder = Model(inputs=[inp], outputs=[encoder])
+
+
+        dinp = Input(shape=(h_units,))
+
+        de1 = dec1(dinp)
+        de2 = dec2(de1)
+        de3 = dec3(de2)
+        de4 = dec4(de3)
+        de5 = dec5(de4)
+        de6 = dec6(de5)
+        de7 = dec7(de6)
+        de8 = dec8(de7)
+        de9 = dec9(de8)
+        de10 = dec10(de9)
+        de11 = dec11(de10)
+        de12 = dec12(de11)
+        de13 = dec13(de12)
+        de14 = dec14(de13)
+        de15 = dec15(de14)
+        de16 = dec16(de15)
+        de17 = dec17(de16)
+        de18 = recon(de17)
+
+
+        self.y_obj = CustomClusterLayer(self.loss_fn, self.means, self.lamda, self.n_clusters, h_units,reverse=reverse)
+
+        y = self.y_obj([inp, ae18, encoder])
+
+        self.decoder = Model(inputs=[dinp], outputs=[de18])
+
+        self.ae = Model(inputs=[inp], outputs=[y])
+
+        self.ae.compile(optimizer=adam_ae, loss=None)
+
+        if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
+            print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.ae.load_weights(os.path.join(model_store, 'ae_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'decoder_weights.h5'))):
+            print "LOADING DECODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.decoder.load_weights(os.path.join(model_store, 'decoder_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'encoder_weights.h5'))):
+            print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
+
+        if (notrain):
+            # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
+            self.means = np.load(os.path.join(self.model_store, 'means.npy'))
+
+            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                self.loss_list = pickle.load(f)
+            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                self.list_mean_disp = pickle.load(f)
+
+        self.ae.summary()
+
+class Conv_autoencoder_nostream_UCSD_noh(Super_autoencoder):
+
+
+    def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, n_timesteps=5,
+                 loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
+                 lamda_assign=0.01, gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
+                 large=True, means_tol = 1e-5,means_patience=200,max_fit_tries=500000):
+
+        if (large):
+            f1 = 64
+            f2 = 128
+            f3 = 256
+            f5 = 256
+            f6 = 128
+            f7 = 64
+            f8 = 32
+        else:
+            f1 = 16
+            f2 = 32
+            f5 = 128
+            f6 = 64
+            f7 = 32
+            f8 = 16
+
+
+
+        self.h_units = (f3/8)*(size_x/(2**4))*(size_x/(2**4))
+
+        Super_autoencoder.__init__(self, model_store, size_y=size_y, size_x=size_x, n_channels=n_channels,
+                                   h_units=self.h_units, n_timesteps=n_timesteps,
+                                   loss=loss, batch_size=batch_size, n_clusters=n_clusters,
+                                   lr_model=lr_model, lamda=lamda, gs=gs, notrain=notrain, reverse=reverse,
+                                   data_folder=data_folder,
+                                   dat_h5=dat_h5, large=large, means_tol=means_tol, means_patience=means_patience,
+                                   max_fit_tries=max_fit_tries)
+
+        self.means = np.zeros((n_clusters, self.h_units))
+
+        # MODEL CREATION
+        inp = Input(shape=(size_y, size_x, n_channels * n_timesteps))
+        x1 = GaussianNoise(0.05)(inp)
+        x1 = Conv2D(f1, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 24x24
+
+        x1 = GaussianNoise(0.03)(x1)
+        x1 = Conv2D(f2, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 12x12
+
+        x1 = GaussianNoise(0.02)(x1)
+        x1 = Conv2D(f3, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 6x6
+
+        x1 = GaussianNoise(0.02)(x1)
+        x1 = Conv2D(f3/8, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
+
+        encoder = Flatten()(x1)
+
+        dec3 = Reshape((size_x / 16, size_y / 16, f3/8)) #3x3
+
+        dec4 = UpSampling2D(size=(2, 2))
+        dec5 = Conv2D(f5, (3, 3), padding='same')
+        dec6 = LeakyReLU(alpha=0.2)
+        dec7 = BatchNormalization()  # 6x6
+
+        dec8 = UpSampling2D(size=(2, 2))
+        dec9 = Conv2D(f5, (3, 3), padding='same')
+        dec10 = LeakyReLU(alpha=0.2)
+        dec11 = BatchNormalization()  #12x12
+
+        dec12 = UpSampling2D(size=(2, 2))
+        dec13 = Conv2D(f6, (3, 3), padding='same')
+        dec14 = LeakyReLU(alpha=0.2)
+        dec15 = BatchNormalization()  #24x24
+
+        dec16 = UpSampling2D(size=(2, 2))
+        dec17 = Conv2D(f7, (3, 3), padding='same')
+        dec18 = LeakyReLU(alpha=0.2)
+        dec19 = BatchNormalization()  #48x48
+
+        dec20 = Conv2D(f8, (3, 3), padding='same')
+        dec21 = LeakyReLU(alpha=0.2)
+        recon = Conv2D(n_channels * n_timesteps, (3, 3), activation='sigmoid', padding='same') #48x48
+
+        ae3 = dec3(encoder)
+        ae4 = dec4(ae3)
+        ae5 = dec5(ae4)
+        ae6 = dec6(ae5)
+        ae7 = dec7(ae6)
+        ae8 = dec8(ae7)
+        ae9 = dec9(ae8)
+        ae10 = dec10(ae9)
+        ae11 = dec11(ae10)
+        ae12 = dec12(ae11)
+        ae13 = dec13(ae12)
+        ae14 = dec14(ae13)
+        ae15 = dec15(ae14)
+        ae16 = dec16(ae15)
+        ae17 = dec17(ae16)
+        ae18 = dec18(ae17)
+        ae19 = dec19(ae18)
+        ae20 = dec20(ae19)
+        ae21 = dec21(ae20)
+        ae22 = recon(ae21)
+
+        adam_ae = Adam(lr=self.lr_model)
+        dssim = DSSIMObjective(kernel_size=8)
+
+        if (loss == 'mse'):
+            self.loss_fn = mean_squared_error
+        elif (loss == 'dssim'):
+            self.loss_fn = dssim
+        elif (loss == 'bce'):
+            self.loss_fn = binary_crossentropy
+
+        self.encoder = Model(inputs=[inp], outputs=[encoder])
+
+        dinp = Input(shape=(self.h_units,))
+
+
+        de3 = dec3(dinp)
+        de4 = dec4(de3)
+        de5 = dec5(de4)
+        de6 = dec6(de5)
+        de7 = dec7(de6)
+        de8 = dec8(de7)
+        de9 = dec9(de8)
+        de10 = dec10(de9)
+        de11 = dec11(de10)
+        de12 = dec12(de11)
+        de13 = dec13(de12)
+        de14 = dec14(de13)
+        de15 = dec15(de14)
+        de16 = dec16(de15)
+        de17 = dec17(de16)
+        de18 = dec18(de17)
+        de19 = dec19(de18)
+        de20 = dec20(de19)
+        de21 = dec21(de20)
+        de22 = recon(de21)
+
+
+        self.y_obj = CustomClusterLayer(self.loss_fn, self.means, self.lamda, self.n_clusters, self.h_units,reverse=reverse)
+
+        y = self.y_obj([inp, ae22, encoder])
+
+        self.decoder = Model(inputs=[dinp], outputs=[de22])
+
+        self.ae = Model(inputs=[inp], outputs=[y])
+
+        self.ae.compile(optimizer=adam_ae, loss=None)
+
+
+        if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
+            print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.ae.load_weights(os.path.join(model_store, 'ae_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'decoder_weights.h5'))):
+            print "LOADING DECODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.decoder.load_weights(os.path.join(model_store, 'decoder_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'encoder_weights.h5'))):
+            print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
+
+        if (notrain):
+            # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
+            self.means = np.load(os.path.join(self.model_store, 'means.npy'))
+
+            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                self.loss_list = pickle.load(f)
+            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                self.list_mean_disp = pickle.load(f)
+
+        self.ae.summary()
+
+class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
+
+
+    def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
+                 loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
+                 lamda_assign=0.01, gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
+                 large=True, means_tol = 1e-5,means_patience=200,max_fit_tries=500000):
+
+        Super_autoencoder.__init__(self, model_store, size_y=size_y, size_x=size_x, n_channels=n_channels,
+                                   h_units=h_units, n_timesteps=n_timesteps,
+                                   loss=loss, batch_size=batch_size, n_clusters=n_clusters,
+                                   lr_model=lr_model, lamda=lamda, gs=gs, notrain=notrain, reverse=reverse,
+                                   data_folder=data_folder,
+                                   dat_h5=dat_h5, large=large, means_tol=means_tol, means_patience=means_patience,
+                                   max_fit_tries=max_fit_tries)
+
+        if (self.large):
+            f1 = 64
+            f2 = 128
+            f3 = 256
+            f4 = 512
+            f5 = 256
+            f6 = 128
+            f7 = 64
+            f8 = 32
+        else:
+            f1 = 16
+            f2 = 32
+            f3 = 64
+            f4 = 256
+            f5 = 128
+            f6 = 64
+            f7 = 32
+            f8 = 16
+
+        # MODEL CREATION
+        inp = Input(shape=(size_y, size_x, n_channels * n_timesteps))
+        x1 = GaussianNoise(0.05)(inp)
+        x1 = Conv2D(f1, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 24x24
+
+        x1 = GaussianNoise(0.03)(x1)
+        x1 = Conv2D(f2, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 12x12
+
+        x1 = GaussianNoise(0.02)(x1)
+        x1 = Conv2D(f3, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 6x6
+
+        x1 = GaussianNoise(0.02)(x1)
+        x1 = Conv2D(f3, (3, 3), padding='same')(x1)
+        x1 = SpatialDropout2D(0.3)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        x1 = BatchNormalization()(x1)
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
+
+        x1 = Flatten()(x1)
+        x1 = Dropout(0.3)(x1)
+        x1 = Dense(units=h_units)(x1)
+        x1 = LeakyReLU(alpha=0.2)(x1)
+        encoder = BatchNormalization()(x1)
+
+        dec1 = Dense(units=(size_y / 16) * (size_x / 16) * f4)
+        dec2 = LeakyReLU(alpha=0.2)
+        dec3 = Reshape((size_x / 16, size_y / 16, f4)) #3x3
+
+        dec4 = UpSampling2D(size=(2, 2))
+        dec5 = Conv2D(f5, (3, 3), padding='same')
+        dec6 = LeakyReLU(alpha=0.2)
+        dec7 = BatchNormalization()  # 6x6
+
+        dec8 = UpSampling2D(size=(2, 2))
+        dec9 = Conv2D(f5, (3, 3), padding='same')
+        dec10 = LeakyReLU(alpha=0.2)
+        dec11 = BatchNormalization()  #12x12
+
+        dec12 = UpSampling2D(size=(2, 2))
+        dec13 = Conv2D(f6, (3, 3), padding='same')
+        dec14 = LeakyReLU(alpha=0.2)
+        dec15 = BatchNormalization()  #24x24
+
+        dec16 = UpSampling2D(size=(2, 2))
+        dec17 = Conv2D(f7, (3, 3), padding='same')
+        dec18 = LeakyReLU(alpha=0.2)
+        dec19 = BatchNormalization()  #48x48
+
+        dec20 = Conv2D(f8, (3, 3), padding='same')
+        dec21 = LeakyReLU(alpha=0.2)
+        recon = Conv2D(n_channels * n_timesteps, (3, 3), activation='sigmoid', padding='same') #48x48
+
+        ae1 = dec1(encoder)
+        ae2 = dec2(ae1)
+        ae3 = dec3(ae2)
+        ae4 = dec4(ae3)
+        ae5 = dec5(ae4)
+        ae6 = dec6(ae5)
+        ae7 = dec7(ae6)
+        ae8 = dec8(ae7)
+        ae9 = dec9(ae8)
+        ae10 = dec10(ae9)
+        ae11 = dec11(ae10)
+        ae12 = dec12(ae11)
+        ae13 = dec13(ae12)
+        ae14 = dec14(ae13)
+        ae15 = dec15(ae14)
+        ae16 = dec16(ae15)
+        ae17 = dec17(ae16)
+        ae18 = dec18(ae17)
+        ae19 = dec19(ae18)
+        ae20 = dec20(ae19)
+        ae21 = dec21(ae20)
+        ae22 = recon(ae21)
+
+        adam_ae = Adam(lr=self.lr_model)
+        dssim = DSSIMObjective(kernel_size=8)
+
+        if (loss == 'mse'):
+            self.loss_fn = mean_squared_error
+        elif (loss == 'dssim'):
+            self.loss_fn = dssim
+        elif (loss == 'bce'):
+            self.loss_fn = binary_crossentropy
+
+        self.encoder = Model(inputs=[inp], outputs=[encoder])
+
+        dinp = Input(shape=(h_units,))
+
+        de1 = dec1(dinp)
+        de2 = dec2(de1)
+        de3 = dec3(de2)
+        de4 = dec4(de3)
+        de5 = dec5(de4)
+        de6 = dec6(de5)
+        de7 = dec7(de6)
+        de8 = dec8(de7)
+        de9 = dec9(de8)
+        de10 = dec10(de9)
+        de11 = dec11(de10)
+        de12 = dec12(de11)
+        de13 = dec13(de12)
+        de14 = dec14(de13)
+        de15 = dec15(de14)
+        de16 = dec16(de15)
+        de17 = dec17(de16)
+        de18 = dec18(de17)
+        de19 = dec19(de18)
+        de20 = dec20(de19)
+        de21 = dec21(de20)
+        de22 = recon(de21)
+
+
+        self.y_obj = CustomClusterLayer(self.loss_fn, self.means, self.lamda, self.n_clusters, h_units,reverse=reverse)
+
+        y = self.y_obj([inp, ae22, encoder])
+
+        self.decoder = Model(inputs=[dinp], outputs=[de22])
+
+        self.ae = Model(inputs=[inp], outputs=[y])
+
+        self.ae.compile(optimizer=adam_ae, loss=None)
+
+        if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
+            print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.ae.load_weights(os.path.join(model_store, 'ae_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'decoder_weights.h5'))):
+            print "LOADING DECODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.decoder.load_weights(os.path.join(model_store, 'decoder_weights.h5'))
+
+        if (os.path.isfile(os.path.join(model_store, 'encoder_weights.h5'))):
+            print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
+            self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
+
+        if (notrain):
+            # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
+            self.means = np.load(os.path.join(self.model_store, 'means.npy'))
+
+            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                self.loss_list = pickle.load(f)
+            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                self.list_mean_disp = pickle.load(f)
+
+        self.ae.summary()

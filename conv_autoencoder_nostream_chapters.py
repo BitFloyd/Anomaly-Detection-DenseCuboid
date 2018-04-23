@@ -18,12 +18,14 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
+
     # import tensorflow as tf
     # from keras.backend.tensorflow_backend import set_session
     #
     # config = tf.ConfigProto()
     # config.gpu_options.per_process_gpu_memory_fraction = 0.5
     # set_session(tf.Session(config=config))
+
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
     data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
 
@@ -102,6 +104,16 @@ print "############################"
 print "SET UP MODEL"
 print "############################"
 
+if('-rev' in metric.keys()):
+
+    reverse = bool(int(metric['-rev']))
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "REVERSE? :" , reverse
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    suffix += '_rev_' + str(reverse)
+
+else:
+    reverse = False
 
 
 if('-large' in metric.keys()):
@@ -127,7 +139,7 @@ size = 24
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters, clustering_lr=1,
                                             lr_model=1e-4, lamda=lamda, lamda_assign=lassign, n_gpus=1,gs=gs,notrain=False,
-                                            reverse=False, data_folder=folder,dat_h5=train_dset,large=large)
+                                            reverse=reverse, data_folder=folder,dat_h5=train_dset,large=large)
 
 
 print "############################"
@@ -138,6 +150,9 @@ if(nocl):
     ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=100, n_chapters=n_chapters,
                                         n_train=ntrain, reduce_lr=True, patience_lr=25, factor=1.25)
 
+    ae_model.perform_kmeans(n_chapters=n_chapters)
+    ae_model.kmeans_partial_fit_displacement_plot()
+
 
 else:
     ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
@@ -146,20 +161,17 @@ else:
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 
-ae_model.perform_kmeans(n_chapters=n_chapters)
-
-ae_model.kmeans_partial_fit_displacement_plot()
-
 ae_model.generate_loss_graph('loss_graph.png')
 
 ae_model.create_recons(20)
 
 ae_model.mean_and_samples(n_per_mean=8)
 
-ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=10,total_chaps_trained=n_chapters)
+ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
 
 ae_model.decode_means('means_decoded')
 
-ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=100)
+ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
 
 train_dset.close()
+
