@@ -587,7 +587,7 @@ class TestDictionary:
 
         im3 = ax3.scatter(range(0, len(arr_perc)), arr_perc, c='blue', alpha=0.5)
         ax3.set_title('ANOMPERC')
-        ax3.set_ylabel(metric_name)
+        ax3.set_ylabel('percent of anomaly pixels in cuboid')
         ax3.set_xlabel('Cuboid index')
         ax3.grid(True)
 
