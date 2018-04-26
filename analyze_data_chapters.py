@@ -129,7 +129,7 @@ while True:
         list_cuboids_full_video=list_cuboids
         list_cuboids_pixmap_full_video=list_cuboids_pixmap
         list_cuboids_anomaly_full_video=list_cuboids_anomaly
-        list_cuboids_anompercentage_full_video = list_cuboids_anompercentage_full_video
+        list_cuboids_anompercentage_full_video = list_cuboids_anompercentage
 
 
     if(vstream.seek+1 == len(vstream.seek_dict.values())):

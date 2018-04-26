@@ -1082,6 +1082,7 @@ class Super_autoencoder:
 
     def create_recons(self, n_recons):
 
+        print "CREATING RECONSTRUCTIONS"
         self.set_x_train(np.random.randint(0,10))
 
         for i in range(0, n_recons):
@@ -1097,6 +1098,9 @@ class Super_autoencoder:
         input_cuboid = input_cuboid[0]
         output_cuboid = output_cuboid[0]
 
+        if (self.reverse):
+            output_cuboid = np.flip(output_cuboid, axis=2)
+
         for i in range(0, input_cuboid.shape[-1]/self.n_channels):
 
             f, (ax1, ax2) = plt.subplots(2, 1)
@@ -1109,12 +1113,10 @@ class Super_autoencoder:
             ax1.set_title('Input Cuboid')
             ax1.set_axis_off()
 
-            idx = (-i - 1) if self.reverse else i
-
             if (self.gs):
-                ax2.imshow(np.uint8(output_cuboid[:,:,idx].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
+                ax2.imshow(np.uint8(output_cuboid[:,:,i].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
             else:
-                ax2.imshow(np.uint8(output_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels]*255.0),cmap='gist_gray')
+                ax2.imshow(np.uint8(output_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels]*255.0),cmap='gist_gray')
             ax2.set_title('Output Cuboid')
             ax2.set_axis_off()
 
@@ -1132,16 +1134,17 @@ class Super_autoencoder:
 
     def save_gifs(self, input_cuboid, name,custom_msg=None,input=False):
 
+        if(self.reverse and not input):
+            input_cuboid = np.flip(input_cuboid,axis=2)
+
         for i in range(0, input_cuboid.shape[-1]/self.n_channels):
 
             f, (ax1) = plt.subplots(1, 1)
 
-            idx = (-i - 1) if self.reverse and not input else i
-
             if (self.gs):
-                ax1.imshow(np.uint8(input_cuboid[:,:,idx].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
+                ax1.imshow(np.uint8(input_cuboid[:,:,i].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
             else:
-                ax1.imshow(np.uint8(input_cuboid[:,:,idx*self.n_channels:(idx+1)*self.n_channels]*255.0),cmap='gist_gray')
+                ax1.imshow(np.uint8(input_cuboid[:,:,i*self.n_channels:(i+1)*self.n_channels]*255.0),cmap='gist_gray')
 
             if(custom_msg):
                 ax1.set_title(custom_msg)
@@ -1447,14 +1450,16 @@ class Super_autoencoder:
 
             f, axarr = plt.subplots(len(points) / 3, 3)
             plt.suptitle('Centroid and Nearby Sampling (features) Reconstructed')
-            idx = (-i - 1) if self.reverse else i
+
+            if self.reverse:
+                decoded = np.flip(decoded,axis=3)
 
             for j in range(0, len(points) / 3):
                 for k in range(0, 3):
                     if (self.gs):
-                        axarr[j,k].imshow(np.uint8(decoded[j*3+k,:,:,idx].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
+                        axarr[j,k].imshow(np.uint8(decoded[j*3+k,:,:,i].reshape(self.size_y, self.size_x)*255.0),cmap='gist_gray')
                     else:
-                        axarr[j,k].imshow(np.uint8(decoded[j*3+k,:,:,idx*self.n_channels:(idx+1)*self.n_channels]*255.0),cmap='gist_gray')
+                        axarr[j,k].imshow(np.uint8(decoded[j*3+k,:,:,i*self.n_channels:(i+1)*self.n_channels]*255.0),cmap='gist_gray')
 
                     if(j*3+k==0):
                         axarr[j,k].set_title('Mean Cuboid')

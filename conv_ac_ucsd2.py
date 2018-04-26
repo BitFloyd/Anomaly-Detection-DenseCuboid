@@ -231,7 +231,7 @@ else:
                                                            n_channels=1, h_units=h_units,
                                                            n_timesteps=8, loss=loss, batch_size=batch_size,
                                                            n_clusters=nclusters,
-                                                           lr_model=1e-4, lamda=lamda, gs=gs,
+                                                           lr_model=1e-3, lamda=lamda, gs=gs,
                                                            notrain=True,
                                                            reverse=reverse, data_folder=folder, dat_h5=train_dset,
                                                            large=large)
@@ -240,7 +240,7 @@ else:
                                                              n_channels=1,
                                                              n_timesteps=8, loss=loss, batch_size=batch_size,
                                                              n_clusters=nclusters,
-                                                             lr_model=1e-4, lamda=lamda, gs=gs,
+                                                             lr_model=1e-3, lamda=lamda, gs=gs,
                                                              notrain=True,
                                                              reverse=reverse, data_folder=folder, dat_h5=train_dset,
                                                              large=large)

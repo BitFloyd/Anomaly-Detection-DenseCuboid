@@ -17,12 +17,12 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    # import tensorflow as tf
-    # from keras.backend.tensorflow_backend import set_session
-    #
-    # config = tf.ConfigProto()
-    # config.gpu_options.per_process_gpu_memory_fraction = 0.5
-    # set_session(tf.Session(config=config))
+    import tensorflow as tf
+    from keras.backend.tensorflow_backend import set_session
+
+    config = tf.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 0.65
+    set_session(tf.Session(config=config))
 
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
     data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
@@ -183,6 +183,7 @@ ae_model.decode_means('means_decoded')
 
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
 
+del ae_model
 train_dset.close()
 
 
@@ -212,8 +213,9 @@ else:
 data_h5_vc = h5py.File(os.path.join(data_store,'data_test_video_cuboids.h5'))
 data_h5_va = h5py.File(os.path.join(data_store,'data_test_video_anomgt.h5'))
 data_h5_vp = h5py.File(os.path.join(data_store,'data_test_video_pixmap.h5'))
+data_h5_ap = h5py.File(os.path.join(data_store,'data_test_video_anomperc.h5'))
 
-tclass = TestDictionary(ae_model,data_store=data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp],
+tclass = TestDictionary(ae_model,data_store=data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw)
 
 
@@ -265,7 +267,6 @@ tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
 tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
 tclass.plot_distance_measure_of_samples('distance_target_samples_plot.png','distance')
 tclass.plot_distance_measure_of_samples('distancexloss_'+tlm+'_samples_plot.png','distancexloss')
-
 print "############################"
 print "MAKE NORM ANOM CUBOID PDFS"
 print "############################"

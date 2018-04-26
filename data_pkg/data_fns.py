@@ -94,6 +94,8 @@ class TestDictionary:
 
             self.list_full_dset_dist = self.load_h5data('list_dist_measure_full_dataset')
 
+            self.list_of_cub_anomperc_full_dataset = self.load_h5data('list_cub_anompercentage_full_dataset')
+
             if(os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.h5'))):
                 self.list_full_dset_cuboid_frequencies = self.load_h5data('list_cub_frequencies_full_dataset')
 
@@ -105,9 +107,13 @@ class TestDictionary:
             print "LOADING VIDEO ARRAY ", self.vid
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$"
             self.cubarray = np.array(self.data_vc.get('video_cuboids_array_'+str(self.vid)))
+            print self.cubarray.shape
             self.anomgtarray = np.array(self.data_va.get('video_anomgt_array_' + str(self.vid)))
+            print self.anomgtarray.shape
             self.pixmaparray = np.array(self.data_vp.get('video_pixmap_array_' + str(self.vid)))
+            print self.pixmaparray.shape
             self.anompercentarray = np.array(self.data_ap.get('video_anomperc_array_'+str(self.vid)))
+            print self.anompercentarray.shape
 
             self.vid+=1
             self.cubarray_process_index = 1
@@ -553,7 +559,7 @@ class TestDictionary:
 
         colors = ['green', 'red']
 
-        f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(40, 40))
+        f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(80, 80))
 
         ax1 = ax[0,0]
         ax2 = ax[0,1]
@@ -622,7 +628,7 @@ class TestDictionary:
             print "ERROR: DMEASURE MUST BE = mean or std"
             return False
 
-        self.make_comparitive_plot(distance_measure_samples_graph_name,dmeasure_array,'distance-measure')
+        self.make_comparitive_plot(distance_measure_samples_graph_name,dmeasure_array,metric_name=dmeasure)
 
         return True
 
