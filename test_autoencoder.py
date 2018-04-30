@@ -139,8 +139,6 @@ suffix +='_ntrain_'+str(ntrain)
 suffix +='_lamda_'+str(lamda)
 
 
-
-
 # Get MODEL
 model_store = 'models/' + suffix
 

@@ -20,13 +20,227 @@ import h5py
 
 list_anom_percentage = []
 
+class TrainDictionary:
+
+    model = None
+    dictionary_words = {}
+    means = None
+
+    data_store = None  # Where the train data is stored in spatiotemporal format
+
+    vid = None         # Id of the video being processed ATM -> Always points to the next id to be loaded
+    cubarray = None    # Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
+
+    cubarray_process_index = None  # The index of the set in cubarray that is being processed.
+
+
+    def __init__(self, model, data_store, data_train_h5=None, model_store=None):
+
+        self.timesteps = 8
+        self.data_store = data_store
+        self.data_vc = data_train_h5
+        self.model_enc = model.encoder
+        self.model_ae = model.ae
+        self.model_store = model.model_store
+
+        self.means = model.means  # means of each cluster learned by the model
+        self.vid = 1
+        self.model_store = model_store
+
+
+
+    def load_data(self):
+
+        # print os.path.join(self.data_store,'video_cuboids_array_'+str(self.vid)+'.npy')
+        if ('video_cuboids_array_' + str(self.vid) in self.data_vc.keys()):
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            print "LOADING VIDEO ARRAY ", self.vid
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            self.cubarray = np.array(self.data_vc.get('video_cuboids_array_' + str(self.vid)))
+            print self.cubarray.shape
+
+            self.vid += 1
+            self.cubarray_process_index = 1
+            return True
+
+        else:
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            print "VIDEOS FINISHED"
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            return False
+
+    def save_h5data(self, name, content):
+
+        with h5py.File(os.path.join(self.model_store, name + '.h5'), "a") as f:
+            if (name in f.keys()):
+                del f[name]
+
+            dset = f.create_dataset(name, data=content)
+
+        return True
+
+    def load_h5data(self, name):
+        dset = h5py.File(os.path.join(self.model_store, name + '.h5'), 'r')
+        content = list(dset.get(name))
+        dset.close()
+        return content
+
+    def fetch_next_set_from_cubarray(self):
+        # returns 3 things. 3 rows of cubarray, The relevant row of anomaly_gt and the relevant row of  pixmap
+        if (self.cubarray_process_index < len(self.cubarray) - 1):
+            print self.cubarray_process_index, '/', len(self.cubarray) - 1
+            sys.stdout.write("\033[F")
+            three_rows_cubarray = self.cubarray[self.cubarray_process_index - 1:self.cubarray_process_index + 2]
+            self.cubarray_process_index += 1
+
+            return three_rows_cubarray
+        else:
+            return False
+
+    def create_surroundings(self, three_rows_cubarray):
+
+        rows = three_rows_cubarray[0].shape[0]
+        cols = three_rows_cubarray[0].shape[1]
+
+        list_surrounding_cuboids_from_three_rows = []
+
+        for j in range(1, rows - 1):
+            for k in range(1, cols - 1):
+                surroundings = []
+
+                surr_idx = 0
+
+                current_cuboid = three_rows_cubarray[1][j, k]
+
+                surroundings.append(current_cuboid)
+
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
+
+                surr_idx = 1
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
+
+                surr_idx = 2
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j - 1, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j, k + 1])
+
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k - 1])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
+                surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
+
+        return np.array(list_surrounding_cuboids_from_three_rows)
+
+    def predict_on_surroundings(self, surroundings_from_three_rows):
+
+        list_predictions = []
+
+        for i in range(0, len(surroundings_from_three_rows)):
+            list_predictions.append(self.model_enc.predict(surroundings_from_three_rows[i]))
+
+        return np.array(list_predictions)
+
+    def create_words_from_predictions(self, predictions):
+
+        list_words = []
+
+        for i in range(0, len(predictions)):
+            x = predictions[i]
+            dist = cdist(x, self.means)
+            word = tuple(np.argmin(dist, 1))
+            list_words.append(word)
+
+        return list_words
+
+    def update_dict_with_words(self, words_from_preds):
+
+        for i in words_from_preds:
+
+            if (self.dictionary_words.has_key(i)):
+                self.dictionary_words[i] += 1
+            else:
+                self.dictionary_words[i] = 1
+
+        return True
+
+    def update_dict_from_data(self):
+
+        while (self.load_data()):
+            self.update_dict_from_video()
+
+        self.save_h5data('dictionary_keys', self.dictionary_words.keys())
+        self.save_h5data('dictionary_values', self.dictionary_words.values())
+
+        return True
+
+    def update_dict_from_video(self):
+
+        next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+        while (next_set_from_cubarray):
+            surroundings_from_three_rows = self.create_surroundings(three_rows_cubarray=next_set_from_cubarray)
+
+            predictions = self.predict_on_surroundings(surroundings_from_three_rows)
+            words_from_preds = self.create_words_from_predictions(predictions)
+            self.update_dict_with_words(words_from_preds)
+
+            next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+        return True
+
+    def print_details_and_plot(self, graph_name_frq, graph_name_loss):
+
+        print "########################################"
+        print "MAXIMUM FREQUENCY OF WORDS:"
+        print max(self.dictionary_words.values())
+        print "########################################"
+
+        print "########################################"
+        print "MINIMUM FREQUENCY OF WORDS:"
+        print min(self.dictionary_words.values())
+        print "########################################"
+
+
+        hfm, = plt.plot(self.dictionary_words.values(), label='frequency_words')
+        plt.legend(handles=[hfm])
+        plt.title('Word Frequency')
+        plt.xlabel('Word_index')
+        plt.ylabel('Frequency')
+        plt.savefig(os.path.join(self.model_store, graph_name_frq), bbox_inches='tight')
+        plt.close()
+
+
+        return True
+
 class TestDictionary:
 
     model = None
     dictionary_words = {}
     means = None
 
-    data_store = None    #Where the test data is stored
+    data_store = None       #Where the test data is stored
 
     vid = None              #Id of the video being processed ATM -> Always points to the next id to be loaded
     cubarray = None         #Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
