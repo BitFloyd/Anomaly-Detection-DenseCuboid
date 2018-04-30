@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/analyze_data_chapters.py" afterPath="$PROJECT_DIR$/analyze_data_chapters.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conv_ac_ucsd2.py" afterPath="$PROJECT_DIR$/conv_ac_ucsd2.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_pkg/data_fns.py" afterPath="$PROJECT_DIR$/data_pkg/data_fns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_autoencoder.py" afterPath="$PROJECT_DIR$/test_autoencoder.py" />
     </list>
@@ -27,12 +24,60 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="247">
+              <caret line="1078" column="0" lean-forward="false" selection-start-line="1078" selection-start-column="0" selection-end-line="1078" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#1273#2944#0" expanded="false" />
+                <element signature="e#2688#2944#0" expanded="false" />
+                <element signature="e#2989#5154#0" expanded="false" />
+                <element signature="e#5190#18918#0" expanded="false" />
+                <element signature="e#19529#20577#0" expanded="false" />
+                <element signature="e#20618#20773#0" expanded="false" />
+                <element signature="e#20813#20946#0" expanded="false" />
+                <element signature="e#20990#21127#0" expanded="false" />
+                <element signature="e#21168#21245#0" expanded="false" />
+                <element signature="e#21473#30770#0" expanded="false" />
+                <element signature="e#30992#34753#0" expanded="false" />
+                <element signature="e#34822#35529#0" expanded="false" />
+                <element signature="e#35581#38313#0" expanded="false" />
+                <element signature="e#39307#39412#0" expanded="false" />
+                <element signature="e#39475#39600#0" expanded="false" />
+                <element signature="e#39663#39966#0" expanded="false" />
+                <element signature="e#40016#40265#0" expanded="false" />
+                <element signature="e#40324#41843#0" expanded="false" />
+                <element signature="e#41927#42998#0" expanded="false" />
+                <element signature="e#43036#43308#0" expanded="false" />
+                <element signature="e#43366#43770#0" expanded="false" />
+                <element signature="e#43843#44801#0" expanded="false" />
+                <element signature="e#44889#45441#0" expanded="false" />
+                <element signature="e#45546#47692#0" expanded="false" />
+                <element signature="e#47780#49177#0" expanded="false" />
+                <element signature="e#49267#50714#0" expanded="false" />
+                <element signature="e#50767#51431#0" expanded="false" />
+                <element signature="e#51502#52322#0" expanded="false" />
+                <element signature="e#52397#53246#0" expanded="false" />
+                <element signature="e#53297#53469#0" expanded="false" />
+                <element signature="e#53523#54041#0" expanded="false" />
+                <element signature="e#54104#55561#0" expanded="false" />
+                <element signature="e#55624#56304#0" expanded="false" />
+                <element signature="e#56364#62725#0" expanded="false" />
+                <element signature="e#62794#69745#0" expanded="false" />
+                <element signature="e#69812#77037#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="888">
-              <caret line="193" column="14" lean-forward="false" selection-start-line="193" selection-start-column="14" selection-end-line="193" selection-end-column="14" />
+            <state relative-caret-position="3366">
+              <caret line="187" column="27" lean-forward="false" selection-start-line="187" selection-start-column="9" selection-end-line="187" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -84,8 +129,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/vae.py" />
-        <option value="$PROJECT_DIR$/cifar_test.py" />
         <option value="$PROJECT_DIR$/mnist_test.py" />
         <option value="$PROJECT_DIR$/cifar_cl_test.py" />
         <option value="$PROJECT_DIR$/mnist_cl_test.py" />
@@ -130,11 +173,13 @@
         <option value="$PROJECT_DIR$/anomperc_data_chapters.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
-        <option value="$PROJECT_DIR$/model_pkg/models.py" />
-        <option value="$PROJECT_DIR$/analyze_data_chapters.py" />
         <option value="$PROJECT_DIR$/analyze_data_chapters_ap.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
+        <option value="$PROJECT_DIR$/analyze_data_chapters.py" />
+        <option value="$PROJECT_DIR$/analyze_ucsd.py" />
+        <option value="$PROJECT_DIR$/test_mbdl.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
+        <option value="$PROJECT_DIR$/model_pkg/models.py" />
       </list>
     </option>
   </component>
@@ -145,10 +190,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1599" />
+    <option name="x" value="-1" />
     <option name="y" value="-11" />
-    <option name="width" value="1922" />
-    <option name="height" value="1092" />
+    <option name="width" value="1602" />
+    <option name="height" value="912" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -168,7 +213,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -183,6 +227,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -608,7 +653,21 @@
       <option name="project" value="LOCAL" />
       <updated>1524518186462</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="streamline autoencoder process to one single python script.">
+      <created>1524775187295</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1524775187295</updated>
+    </task>
+    <task id="LOCAL-00021" summary="fix graphing label anomperc to anomperc">
+      <created>1524775259825</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1524775259825</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -621,26 +680,26 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1599" y="-11" width="1922" height="1092" extended-state="6" />
+    <frame x="-1" y="-11" width="1602" height="912" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.06422018" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.76350665" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2059925" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.598369" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42813456" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13854167" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.185625" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41573033" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296875" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12334353" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960325" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958803" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -692,7 +751,9 @@
     <MESSAGE value="Separate kmeans from training and make test more modular." />
     <MESSAGE value="ucsd2 fixed and tested" />
     <MESSAGE value="added anomaly percentage factor to be graphed to see the effect." />
-    <option name="LAST_COMMIT_MESSAGE" value="added anomaly percentage factor to be graphed to see the effect." />
+    <MESSAGE value="streamline autoencoder process to one single python script." />
+    <MESSAGE value="fix graphing label anomperc to anomperc" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix graphing label anomperc to anomperc" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -703,13 +764,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="112" />
+      <option name="time" value="114" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/fashion_mnist_km_assign_cl_test.py" />
-    <entry file="file://$PROJECT_DIR$/fashion_mnist_km_cl_test.py" />
     <entry file="file://$PROJECT_DIR$/mnist_km_cl_test.py" />
     <entry file="file://$PROJECT_DIR$/mnist_km_assign_cl_test.py" />
     <entry file="file://$PROJECT_DIR$/functionals_pkg/ssim_fns.py">
@@ -892,54 +951,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/anomperc_data_chapters.py" />
     <entry file="file://$PROJECT_DIR$/analyze_data_chapters_ap.py" />
-    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="521" column="24" lean-forward="true" selection-start-line="521" selection-start-column="24" selection-end-line="521" selection-end-column="24" />
-          <folding>
-            <element signature="e#1249#2920#0" expanded="false" />
-            <element signature="e#2664#2920#0" expanded="false" />
-            <element signature="e#2965#5130#0" expanded="false" />
-            <element signature="e#5166#18894#0" expanded="false" />
-            <element signature="e#19505#20512#0" expanded="false" />
-            <element signature="e#21408#30705#0" expanded="false" />
-            <element signature="e#30927#34688#0" expanded="false" />
-            <element signature="e#34757#35464#0" expanded="false" />
-            <element signature="e#35517#38250#0" expanded="false" />
-            <element signature="e#38302#38407#0" expanded="false" />
-            <element signature="e#38470#38595#0" expanded="false" />
-            <element signature="e#38658#38961#0" expanded="false" />
-            <element signature="e#39011#39260#0" expanded="false" />
-            <element signature="e#39319#40838#0" expanded="false" />
-            <element signature="e#40922#41993#0" expanded="false" />
-            <element signature="e#42031#42303#0" expanded="false" />
-            <element signature="e#42361#42765#0" expanded="false" />
-            <element signature="e#42838#43796#0" expanded="false" />
-            <element signature="e#43884#44436#0" expanded="false" />
-            <element signature="e#44541#46687#0" expanded="false" />
-            <element signature="e#46775#48172#0" expanded="false" />
-            <element signature="e#48262#49709#0" expanded="false" />
-            <element signature="e#49762#50426#0" expanded="false" />
-            <element signature="e#50497#51317#0" expanded="false" />
-            <element signature="e#51392#52241#0" expanded="false" />
-            <element signature="e#52292#52464#0" expanded="false" />
-            <element signature="e#52518#53036#0" expanded="false" />
-            <element signature="e#53099#54556#0" expanded="false" />
-            <element signature="e#54619#55299#0" expanded="false" />
-            <element signature="e#55359#61322#0" expanded="false" />
-            <element signature="e#61391#67944#0" expanded="false" />
-            <element signature="e#68011#74838#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/analyze_data_chapters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="119" column="4" lean-forward="false" selection-start-line="119" selection-start-column="4" selection-end-line="119" selection-end-column="87" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3510">
@@ -949,15 +960,77 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="20" column="25" lean-forward="true" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
+        <state relative-caret-position="90">
+          <caret line="22" column="21" lean-forward="false" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analyze_ucsd.py" />
+    <entry file="file://$PROJECT_DIR$/analyze_data_chapters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1692">
+          <caret line="136" column="0" lean-forward="false" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_mbdl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="1078" column="0" lean-forward="false" selection-start-line="1078" selection-start-column="0" selection-end-line="1078" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#1273#2944#0" expanded="false" />
+            <element signature="e#2688#2944#0" expanded="false" />
+            <element signature="e#2989#5154#0" expanded="false" />
+            <element signature="e#5190#18918#0" expanded="false" />
+            <element signature="e#19529#20577#0" expanded="false" />
+            <element signature="e#20618#20773#0" expanded="false" />
+            <element signature="e#20813#20946#0" expanded="false" />
+            <element signature="e#20990#21127#0" expanded="false" />
+            <element signature="e#21168#21245#0" expanded="false" />
+            <element signature="e#21473#30770#0" expanded="false" />
+            <element signature="e#30992#34753#0" expanded="false" />
+            <element signature="e#34822#35529#0" expanded="false" />
+            <element signature="e#35581#38313#0" expanded="false" />
+            <element signature="e#39307#39412#0" expanded="false" />
+            <element signature="e#39475#39600#0" expanded="false" />
+            <element signature="e#39663#39966#0" expanded="false" />
+            <element signature="e#40016#40265#0" expanded="false" />
+            <element signature="e#40324#41843#0" expanded="false" />
+            <element signature="e#41927#42998#0" expanded="false" />
+            <element signature="e#43036#43308#0" expanded="false" />
+            <element signature="e#43366#43770#0" expanded="false" />
+            <element signature="e#43843#44801#0" expanded="false" />
+            <element signature="e#44889#45441#0" expanded="false" />
+            <element signature="e#45546#47692#0" expanded="false" />
+            <element signature="e#47780#49177#0" expanded="false" />
+            <element signature="e#49267#50714#0" expanded="false" />
+            <element signature="e#50767#51431#0" expanded="false" />
+            <element signature="e#51502#52322#0" expanded="false" />
+            <element signature="e#52397#53246#0" expanded="false" />
+            <element signature="e#53297#53469#0" expanded="false" />
+            <element signature="e#53523#54041#0" expanded="false" />
+            <element signature="e#54104#55561#0" expanded="false" />
+            <element signature="e#55624#56304#0" expanded="false" />
+            <element signature="e#56364#62725#0" expanded="false" />
+            <element signature="e#62794#69745#0" expanded="false" />
+            <element signature="e#69812#77037#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="888">
-          <caret line="193" column="14" lean-forward="false" selection-start-line="193" selection-start-column="14" selection-end-line="193" selection-end-column="14" />
+        <state relative-caret-position="3366">
+          <caret line="187" column="27" lean-forward="false" selection-start-line="187" selection-start-column="9" selection-end-line="187" selection-end-column="27" />
           <folding />
         </state>
       </provider>

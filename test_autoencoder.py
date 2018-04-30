@@ -169,6 +169,8 @@ else:
                             n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
 
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
+    ae_model.perform_kmeans(n_chapters=n_chapters)
+    ae_model.kmeans_partial_fit_displacement_plot()
 
 
 ae_model.generate_loss_graph('loss_graph.png')
@@ -182,6 +184,8 @@ ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
 ae_model.decode_means('means_decoded')
 
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
+
+ae_model.perform_dict_learn(n_chapters=n_chapters)
 
 del ae_model
 train_dset.close()

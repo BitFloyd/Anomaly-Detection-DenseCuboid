@@ -10,6 +10,7 @@ import tensorflow as tf
 from tqdm import tqdm
 from sklearn.utils import shuffle
 from sklearn.cluster import KMeans,MiniBatchKMeans
+from sklearn.decomposition import DictionaryLearning
 from keras.optimizers import RMSprop
 from keras.layers import Input, Dense, Lambda, Reshape, GaussianNoise, Conv2D, SpatialDropout2D, LeakyReLU
 from keras.layers import Dropout, MaxPooling2D, Layer, merge, AveragePooling2D
@@ -22,7 +23,7 @@ from keras.losses import mean_squared_error,binary_crossentropy
 from keras.utils import plot_model
 from keras_contrib.losses import DSSIMObjective
 import os
-from keras.datasets import cifar10,mnist
+import time
 from scipy.spatial.distance import cdist
 from sklearn.manifold import TSNE
 import keras.backend as K
@@ -551,6 +552,7 @@ class Super_autoencoder:
         self.cluster_assigns = None
         self.ntsteps = n_timesteps
         self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=0)
+        self.dict = DictionaryLearning()
         self.x_train = [100, 10, 10]
         self.gs = gs
         self.notrain = notrain
@@ -977,7 +979,6 @@ class Super_autoencoder:
 
         return True
 
-
     def perform_kmeans(self,n_chapters):
 
         if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
@@ -1017,9 +1018,9 @@ class Super_autoencoder:
 
                         if(k+self.means_batch<len(feats)):
                             self.km.partial_fit(feats[k:k+self.means_batch])
-
                         else:
                             self.km.partial_fit(feats[k:])
+
                     excep_flag = 0
 
                 except:
@@ -1053,8 +1054,40 @@ class Super_autoencoder:
 
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
         np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+        self.features_h5.close()
+
+        return True
+
+    def perform_dict_learn(self,n_chapters):
+
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, n_chapters):
+            f_arr = self.set_feats(id)
+            list_feats.extend(f_arr.tolist())
+            del f_arr
 
         self.features_h5.close()
+
+        list_feats = np.array(list_feats)
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "START DICTIONARY FITTING"
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        self.dict = DictionaryLearning(n_components=int(0.05*len(list_feats)),max_iter=int(1e5),verbose=1,n_jobs=-1)
+
+        start = time.time()
+        self.dict.fit(list_feats)
+        end = time.time()
+
+        print "TIME TAKEN:",(end - start) / 3600.0, "HOURS"
+
+        print "N_BASIS_COMPONENTS:", self.dict.components_.shape[0]
+
+        pickle.dump(self.dict, open('basis_dict.pkl', 'wb'))
 
         return True
 
@@ -1664,10 +1697,18 @@ class Conv_autoencoder_nostream (Super_autoencoder):
             # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
             self.means = np.load(os.path.join(self.model_store, 'means.npy'))
 
-            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
-                self.loss_list = pickle.load(f)
-            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
-                self.list_mean_disp = pickle.load(f)
+            if(os.path.isfile(os.path.join(self.model_store, 'losslist.pkl'))):
+                with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                    self.loss_list = pickle.load(f)
+
+            if (os.path.isfile(os.path.join(self.model_store, 'meandisp.pkl'))):
+                with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                    self.list_mean_disp = pickle.load(f)
+
+            if (os.path.isfile(os.path.join(self.model_store, 'basis_dict.pkl'))):
+                with open(os.path.join(self.model_store, 'basis_dict.pkl'), 'rb') as f:
+                    self.dict = pickle.load(f)
+
 
         self.ae.summary()
 
@@ -1852,10 +1893,17 @@ class Conv_autoencoder_nostream_UCSD_noh(Super_autoencoder):
             # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
             self.means = np.load(os.path.join(self.model_store, 'means.npy'))
 
-            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
-                self.loss_list = pickle.load(f)
-            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
-                self.list_mean_disp = pickle.load(f)
+            if (os.path.isfile(os.path.join(self.model_store, 'losslist.pkl'))):
+                with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                    self.loss_list = pickle.load(f)
+
+            if (os.path.isfile(os.path.join(self.model_store, 'meandisp.pkl'))):
+                with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                    self.list_mean_disp = pickle.load(f)
+
+            if (os.path.isfile(os.path.join(self.model_store, 'basis_dict.pkl'))):
+                with open(os.path.join(self.model_store, 'basis_dict.pkl'), 'rb') as f:
+                    self.dict = pickle.load(f)
 
         self.ae.summary()
 
@@ -2045,9 +2093,16 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
             # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
             self.means = np.load(os.path.join(self.model_store, 'means.npy'))
 
-            with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
-                self.loss_list = pickle.load(f)
-            with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
-                self.list_mean_disp = pickle.load(f)
+            if (os.path.isfile(os.path.join(self.model_store, 'losslist.pkl'))):
+                with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:
+                    self.loss_list = pickle.load(f)
+
+            if (os.path.isfile(os.path.join(self.model_store, 'meandisp.pkl'))):
+                with open(os.path.join(self.model_store, 'meandisp.pkl'), 'rb') as f:
+                    self.list_mean_disp = pickle.load(f)
+
+            if (os.path.isfile(os.path.join(self.model_store, 'basis_dict.pkl'))):
+                with open(os.path.join(self.model_store, 'basis_dict.pkl'), 'rb') as f:
+                    self.dict = pickle.load(f)
 
         self.ae.summary()
