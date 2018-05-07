@@ -2,6 +2,7 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import keras_contrib.backend as KC
@@ -26,6 +27,8 @@ import os
 import time
 from scipy.spatial.distance import cdist
 from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler,Normalizer
+import seaborn as sns
 import keras.backend as K
 from keras.objectives import *
 import h5py
@@ -744,6 +747,9 @@ class Super_autoencoder:
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                     K.set_value(self.ae.optimizer.lr, lr / factor)
                     lr = lr / factor
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                    print "REDUCING_LR TO:", lr
+                    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 
                 if (earlystopping and loss_track > patience):
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
@@ -920,6 +926,9 @@ class Super_autoencoder:
                         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                         K.set_value(self.ae.optimizer.lr, lr / factor)
                         lr = lr / factor
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                        print "REDUCING_LR TO:", lr
+                        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 
                     if (earlystopping and loss_track > patience):
                         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
@@ -979,7 +988,7 @@ class Super_autoencoder:
 
         return True
 
-    def perform_kmeans(self,n_chapters):
+    def perform_kmeans_partial(self,n_chapters):
 
         if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
             os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
@@ -1058,6 +1067,42 @@ class Super_autoencoder:
 
         return True
 
+    def perform_kmeans(self,n_chapters):
+
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, n_chapters):
+            f_arr = self.set_feats(id)
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        self.features_h5.close()
+
+        list_feats = np.array(list_feats)
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "START KMEANS FITTING"
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        del self.km
+        self.km =KMeans(n_clusters=self.n_clusters, max_iter=int(1e3),verbose=1,n_jobs=-1)
+
+        start = time.time()
+        self.km.fit(list_feats)
+        end = time.time()
+
+        print "TIME TAKEN:",(end - start) / 3600.0, "HOURS"
+
+        self.means = np.copy(self.km.cluster_centers_).astype('float64')
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+
+
+        pickle.dump(self.km, open('kmeans_obj.pkl', 'wb'))
+
+        return True
+
     def perform_dict_learn(self,n_chapters):
 
         self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
@@ -1077,7 +1122,7 @@ class Super_autoencoder:
         print "START DICTIONARY FITTING"
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
-        self.dict = DictionaryLearning(n_components=int(0.05*len(list_feats)),max_iter=int(1e5),verbose=1,n_jobs=-1)
+        self.dict = DictionaryLearning(n_components=int(1e-4*len(list_feats)),verbose=1,n_jobs=-1)
 
         start = time.time()
         self.dict.fit(list_feats)
@@ -1087,9 +1132,54 @@ class Super_autoencoder:
 
         print "N_BASIS_COMPONENTS:", self.dict.components_.shape[0]
 
-        pickle.dump(self.dict, open('basis_dict.pkl', 'wb'))
+        pickle.dump(self.dict, open(os.path.join(self.model_store,'basis_dict.pkl'), 'wb'))
 
         return True
+
+    def perform_feature_space_analysis(self):
+
+        features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, len(features_h5)):
+            f_arr = np.array(features_h5.get('chapter_' + str(id)))
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        features_h5.close()
+
+        list_feats = np.array(list_feats)
+
+        pdf_name = os.path.join(self.model_store, 'features_kde.pdf')
+
+        rows_plots = (list_feats.shape[1]/8)
+
+        with PdfPages(pdf_name) as pdf:
+
+            for j in range(0, 3):
+
+                fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
+
+                if (j == 0):
+                    list_feats_to_plot = list_feats
+                    plt.suptitle('Features as is without any scaling')
+                elif (j == 1):
+                    sc = Normalizer()
+                    list_feats_to_plot = sc.fit_transform(list_feats)
+                    plt.suptitle('Features - Normalized')
+                else:
+                    sc = StandardScaler()
+                    list_feats_to_plot = sc.fit_transform(list_feats)
+                    plt.suptitle('Features - Scaled')
+
+                for i in range(0, list_feats_to_plot.shape[1]):
+                    ax[int(i / rows_plots)][i % 8].set_title('feature: ' + str(i + 1))
+                    sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
+                                 ax=ax[int(i / rows_plots)][i % 8])
+
+                pdf.savefig()  # saves the current figure into a pdf page
+                plt.close()
 
     def get_assigns(self, means, feats):
 

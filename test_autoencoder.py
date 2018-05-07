@@ -2,7 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary
+from data_pkg.data_fns import TestDictionary,TrainDictionary
 from sys import argv
 import os
 import socket
@@ -17,14 +17,12 @@ if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    import tensorflow as tf
-    from keras.backend.tensorflow_backend import set_session
-
-    config = tf.ConfigProto()
-    config.gpu_options.per_process_gpu_memory_fraction = 0.65
-    set_session(tf.Session(config=config))
-
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
+    # import tensorflow as tf
+    # from keras.backend.tensorflow_backend import set_session
+    #
+    # config = tf.ConfigProto()
+    # config.gpu_options.per_process_gpu_memory_fraction = 0.65
+    # set_session(tf.Session(config=config))
     data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
 
 elif('gpu' in socket.gethostname()):
@@ -33,9 +31,7 @@ elif('gpu' in socket.gethostname()):
     print "############################################"
     verbose = 1
     os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
-    path_videos='/scratch/suu-621-aa/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
     data_store_suffix = '/scratch/suu-621-aa/ANOMALY/densecub'
-    n_gpus = int(metric['-ngpu'])
 
 else:
     print socket.gethostname()
@@ -44,10 +40,7 @@ else:
     print "############################################"
     verbose = 1
     os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
-    path_videos = '/gs/project/suu-621-aa/sejacob/data/art_videos_prob_0.01/artif_videos_128x128'
     data_store_suffix = '/gs/scratch/sejacob/densecub'
-    n_gpus = int(metric['-ngpu'])
-
 
 
 batch_size=256
@@ -74,19 +67,19 @@ suffix +='_hunits_'+str(h_units)
 
 if(gs):
 
-    folder = os.path.join(data_store_suffix,'chapter_store_conv','data_store_greyscale_bkgsub'+str(tstrides))
-    data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test','data_store_greyscale_test_bkgsub' + str(tstrides))
+    train_folder = os.path.join(data_store_suffix,'chapter_store_conv','triangle_data_store_greyscale_bkgsub'+str(tstrides))
+    test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test','triangle_data_store_greyscale_test_bkgsub' + str(tstrides))
     nc=1
 
 else:
 
-    folder = os.path.join(data_store_suffix,'chapter_store_conv', 'data_store_bksgub' + str(tstrides) + '_0.0')
-    data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test', 'data_store_test_bkgsub' + str(tstrides))
+    train_folder = os.path.join(data_store_suffix,'chapter_store_conv', 'triangle_data_store_bksgub' + str(tstrides))
+    test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test', 'triangle_data_store_test_bkgsub' + str(tstrides))
     nc=3
 
 
 # Open train dset
-train_dset = h5py.File(os.path.join(folder,'data_train.h5'),'r')
+train_dset = h5py.File(os.path.join(train_folder,'data_train.h5'),'r')
 
 if(n_chapters == 0):
     n_chapters=len(train_dset.keys())
@@ -143,11 +136,12 @@ suffix +='_lamda_'+str(lamda)
 model_store = 'models/' + suffix
 
 size = 24
+notrain = False
 
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=False,
-                                            reverse=reverse, data_folder=folder,dat_h5=train_dset,large=large)
+                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
+                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
 
 
 print "############################"
@@ -155,38 +149,55 @@ print "START TRAINING AND STUFF"
 print "############################"
 
 if(nocl):
-    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=100, n_chapters=n_chapters,
-                                        n_train=ntrain, reduce_lr=True, patience_lr=25, factor=1.25)
-
-    ae_model.perform_kmeans(n_chapters=n_chapters)
-    ae_model.kmeans_partial_fit_displacement_plot()
+    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=200, n_chapters=n_chapters,
+                                        n_train=ntrain, reduce_lr=True, patience_lr=50, factor=1.25)
 
 
 else:
-    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
-                            n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
-
+    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=200,n_chapters=n_chapters,
+                            n_train=ntrain, reduce_lr = True, patience_lr=50 , factor=1.25)
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
-    ae_model.perform_kmeans(n_chapters=n_chapters)
-    ae_model.kmeans_partial_fit_displacement_plot()
 
 
+
+ae_model.perform_kmeans(n_chapters=n_chapters)
+ae_model.perform_dict_learn(n_chapters=n_chapters)
 ae_model.generate_loss_graph('loss_graph.png')
-
 ae_model.create_recons(20)
-
 ae_model.mean_and_samples(n_per_mean=8)
-
 ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
-
 ae_model.decode_means('means_decoded')
-
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
-
 ae_model.perform_dict_learn(n_chapters=n_chapters)
 
-del ae_model
+
 train_dset.close()
+
+print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+print "CREATE AND SAVE DICTIONARY OF WORD FREQUENCIES FROM TRAINING DATA"
+print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+#Get Train cuboids
+data_h5_vc = h5py.File(os.path.join(train_folder,'data_train_video_cuboids.h5'))
+
+train_dict = TrainDictionary(ae_model,data_train_h5=data_h5_vc,model_store=model_store)
+
+print "############################"
+print "CREATING DICTIONARY FROM TRAINING DATA"
+print "############################"
+train_dict.update_dict_from_data()
+
+print "############################"
+print "PRINTING DEETS AND PLOT FREQUENCY"
+print "############################"
+train_dict.print_details_and_plot('word_frequency_in_dict.png')
+
+
+data_h5_vc.close()
+del TrainDictionary
+
+
+del ae_model
 
 
 print "################################"
@@ -194,11 +205,11 @@ print "START TESTING"
 print "################################"
 
 notest = False
-udiw = False
+udiw=False
 
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-print folder
-print data_store
+print train_folder
+print test_data_store
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
 if(notest):
@@ -207,29 +218,29 @@ else:
     ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
-                                            reverse=False, data_folder=folder,dat_h5=None,large=large)
+                                            reverse=False, data_folder=train_folder,dat_h5=None,large=large)
 
     ae_model.set_cl_loss(0.0)
 
 #Get Test class
-data_h5_vc = h5py.File(os.path.join(data_store,'data_test_video_cuboids.h5'))
-data_h5_va = h5py.File(os.path.join(data_store,'data_test_video_anomgt.h5'))
-data_h5_vp = h5py.File(os.path.join(data_store,'data_test_video_pixmap.h5'))
-data_h5_ap = h5py.File(os.path.join(data_store,'data_test_video_anomperc.h5'))
+data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
+data_h5_va = h5py.File(os.path.join(test_data_store,'data_test_video_anomgt.h5'))
+data_h5_vp = h5py.File(os.path.join(test_data_store,'data_test_video_pixmap.h5'))
+data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5'))
 
-tclass = TestDictionary(ae_model,data_store=data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
-                        notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw)
+
+use_basis_dict = True
+
+tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
+                        notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
+                        use_basis_dict=use_basis_dict)
 
 
 print "############################"
 print "UPDATING DICT FROM DATA"
 print "############################"
-tclass.update_dict_from_data()
+tclass.process_data()
 
-print "############################"
-print "PRINTING DEETS AND PLOT FREQUENCY"
-print "############################"
-tclass.print_details_and_plot('word_frequency_udiw_'+str(udiw)+'.png',tlm+'_recon_losses.png')
 
 print "############################"
 print "MAKE LIST OF FULL CUBOID DATASET FREQUENCIES"
@@ -262,6 +273,14 @@ print "MAKE LOSS SAMPLES PLOT"
 print "############################"
 tclass.plot_loss_of_samples('loss_'+tlm+'_samples_plot.png')
 
+
+if(use_basis_dict):
+
+    print "############################"
+    print "MAKE BASIS_DICT_RECON SAMPLES PLOT"
+    print "############################"
+    tclass.plot_basis_dict_recon_measure_of_samples('basis_dict_recon_error_samples_plot.png')
+
 print "############################"
 print "MAKE DISTANCE METRIC PLOT"
 print "############################"
@@ -273,3 +292,8 @@ print "############################"
 print "MAKE NORM ANOM CUBOID PDFS"
 print "############################"
 tclass.create_distance_metric_pdfs(1000)
+
+data_h5_vc.close()
+data_h5_va.close()
+data_h5_vp.close()
+data_h5_ap.close()

@@ -34,10 +34,9 @@ class TrainDictionary:
     cubarray_process_index = None  # The index of the set in cubarray that is being processed.
 
 
-    def __init__(self, model, data_store, data_train_h5=None, model_store=None):
+    def __init__(self, model, data_train_h5=None, model_store=None):
 
         self.timesteps = 8
-        self.data_store = data_store
         self.data_vc = data_train_h5
         self.model_enc = model.encoder
         self.model_ae = model.ae
@@ -86,16 +85,16 @@ class TrainDictionary:
         return content
 
     def fetch_next_set_from_cubarray(self):
-        # returns 3 things. 3 rows of cubarray, The relevant row of anomaly_gt and the relevant row of  pixmap
+
         if (self.cubarray_process_index < len(self.cubarray) - 1):
             print self.cubarray_process_index, '/', len(self.cubarray) - 1
             sys.stdout.write("\033[F")
             three_rows_cubarray = self.cubarray[self.cubarray_process_index - 1:self.cubarray_process_index + 2]
             self.cubarray_process_index += 1
 
-            return three_rows_cubarray
+            return three_rows_cubarray,True
         else:
-            return False
+            return None,False
 
     def create_surroundings(self, three_rows_cubarray):
 
@@ -151,6 +150,8 @@ class TrainDictionary:
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
 
+                list_surrounding_cuboids_from_three_rows.append(np.array(surroundings))
+
         return np.array(list_surrounding_cuboids_from_three_rows)
 
     def predict_on_surroundings(self, surroundings_from_three_rows):
@@ -197,20 +198,19 @@ class TrainDictionary:
 
     def update_dict_from_video(self):
 
-        next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+        next_set_from_cubarray,stats = self.fetch_next_set_from_cubarray()
 
-        while (next_set_from_cubarray):
+        while (stats):
             surroundings_from_three_rows = self.create_surroundings(three_rows_cubarray=next_set_from_cubarray)
-
             predictions = self.predict_on_surroundings(surroundings_from_three_rows)
             words_from_preds = self.create_words_from_predictions(predictions)
             self.update_dict_with_words(words_from_preds)
 
-            next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+            next_set_from_cubarray,stats = self.fetch_next_set_from_cubarray()
 
         return True
 
-    def print_details_and_plot(self, graph_name_frq, graph_name_loss):
+    def print_details_and_plot(self, graph_name_frq):
 
         print "########################################"
         print "MAXIMUM FREQUENCY OF WORDS:"
@@ -260,7 +260,7 @@ class TestDictionary:
     list_anom_gifs=[]
     list_full_dset_dist = []
 
-    def __init__(self,model,data_store,data_test_h5=None,notest=False,model_store=None,test_loss_metric='dssim',use_dist_in_word=False,round_to=1):
+    def __init__(self,model,data_store,data_test_h5=None,notest=False,model_store=None,test_loss_metric='dssim',use_dist_in_word=False,round_to=1,use_basis_dict=False):
 
         self.notest = notest
 
@@ -276,10 +276,30 @@ class TestDictionary:
         self.use_dist_in_word=use_dist_in_word
         self.round_to=round_to
 
+        self.model_store = model_store
+        self.image_store = os.path.join(model_store,'test_images')
+
+        if(not os.path.exists(self.image_store)):
+            os.mkdir(self.image_store)
+
+        keys = self.load_h5data('dictionary_keys')
+        keys_tuples = [tuple(i) for i in keys]
+
+        self.dictionary_words = dict(zip(keys_tuples, self.load_h5data('dictionary_values')))
+
+        self.use_basis_dict = use_basis_dict
+
+        if(self.use_basis_dict):
+            self.basis_dict = pickle.load(open(os.path.join(self.model_store,'basis_dict.pkl'), 'rb'))
+            self.basis_dict_comp = self.basis_dict.components_
+            self.list_of_dict_recon_full_dataset=[]
+
+        del keys
+        del keys_tuples
+
         if(not notest):
             self.model_enc = model.encoder
             self.model_ae = model.ae
-            self.model_store = model.model_store
 
             self.means = model.means  #means of each cluster learned by the model
 
@@ -290,16 +310,6 @@ class TestDictionary:
 
             self.n_channels = 3
 
-            self.model_store = model_store
-
-            keys = self.load_h5data('dictionary_keys')
-            keys_tuples = [tuple(i) for i in keys]
-
-            self.dictionary_words = dict(zip(keys_tuples,self.load_h5data('dictionary_values')))
-
-            del keys
-            del keys_tuples
-
             self.list_of_cub_words_full_dataset = self.load_h5data('list_cub_words_full_dataset')
 
             self.list_of_cub_anom_gt_full_dataset = self.load_h5data('list_cub_anomgt_full_dataset')
@@ -309,6 +319,9 @@ class TestDictionary:
             self.list_full_dset_dist = self.load_h5data('list_dist_measure_full_dataset')
 
             self.list_of_cub_anomperc_full_dataset = self.load_h5data('list_cub_anompercentage_full_dataset')
+
+            if(self.use_basis_dict):
+                self.list_of_dict_recon_full_dataset = self.load_h5data('list_of_dict_recon_full_dataset')
 
             if(os.path.exists(os.path.join(self.model_store, 'list_cub_frequencies_full_dataset.h5'))):
                 self.list_full_dset_cuboid_frequencies = self.load_h5data('list_cub_frequencies_full_dataset')
@@ -443,11 +456,17 @@ class TestDictionary:
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
 
-                d = np.min(cdist(self.model_enc.predict(np.array(surroundings)),self.means),axis=1)
+                encoded = self.model_enc.predict(np.array(surroundings))
+
+                d = np.min(cdist(encoded,self.means),axis=1)
 
                 sublist_full_dataset_distances.append(d)
 
                 list_surrounding_cuboids_from_three_rows.append(np.array(surroundings))
+
+                if(self.use_basis_dict):
+                    recon = np.dot(self.basis_dict.transform(encoded[0:1]),self.basis_dict_comp)
+                    self.list_of_dict_recon_full_dataset.append(np.linalg.norm(x=(encoded[0:1]-recon)))
 
 
         return np.array(list_surrounding_cuboids_from_three_rows), sublist_full_dataset_anom_gt, \
@@ -492,13 +511,14 @@ class TestDictionary:
 
         return True
 
-    def update_dict_from_data(self):
+    def process_data(self):
 
         while (self.load_data()):
-            self.update_dict_from_video()
+            self.process_video()
 
-        self.save_h5data('dictionary_keys',self.dictionary_words.keys())
-        self.save_h5data('dictionary_values',self.dictionary_words.values())
+
+        # self.save_h5data('dictionary_keys',self.dictionary_words.keys())
+        # self.save_h5data('dictionary_values',self.dictionary_words.values())
 
         self.save_h5data('list_cub_words_full_dataset',self.list_of_cub_words_full_dataset)
 
@@ -510,9 +530,12 @@ class TestDictionary:
 
         self.save_h5data('list_cub_anompercentage_full_dataset',self.list_of_cub_anomperc_full_dataset)
 
+        if(self.use_basis_dict):
+            self.save_h5data('list_of_dict_recon_full_dataset', self.list_of_dict_recon_full_dataset)
+
         return True
 
-    def update_dict_from_video(self):
+    def process_video(self):
 
         next_set_from_cubarray = self.fetch_next_set_from_cubarray()
 
@@ -526,7 +549,7 @@ class TestDictionary:
 
             predictions = self.predict_on_surroundings(surroundings_from_three_rows)
             words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
-            self.update_dict_with_words(words_from_preds)
+            # self.update_dict_with_words(words_from_preds)
 
             self.list_of_cub_anom_gt_full_dataset.extend(sublist_full_dataset_anom_gt)
             self.list_of_cub_loss_full_dataset.extend(sublist_full_dataset_dssim_loss)
@@ -565,7 +588,7 @@ class TestDictionary:
         plt.title('Word Frequency')
         plt.xlabel('Word_index')
         plt.ylabel('Frequency')
-        plt.savefig(os.path.join(self.model_store, graph_name_frq), bbox_inches='tight')
+        plt.savefig(os.path.join(self.image_store, graph_name_frq), bbox_inches='tight')
         plt.close()
 
         hfm, = plt.plot(self.list_of_cub_loss_full_dataset, label='loss values')
@@ -573,7 +596,7 @@ class TestDictionary:
         plt.title('DSSIM Reconstruction Loss')
         plt.xlabel('Cuboid Index')
         plt.ylabel('Loss')
-        plt.savefig(os.path.join(self.model_store, graph_name_loss), bbox_inches='tight')
+        plt.savefig(os.path.join(self.image_store, graph_name_loss), bbox_inches='tight')
         plt.close()
 
         return True
@@ -593,7 +616,10 @@ class TestDictionary:
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
         for i in self.list_of_cub_words_full_dataset:
-            self.list_full_dset_cuboid_frequencies.append(self.dictionary_words[i])
+            if (i in self.dictionary_words.keys()):
+                self.list_full_dset_cuboid_frequencies.append(self.dictionary_words[i])
+            else:
+                self.list_full_dset_cuboid_frequencies.append(0)
 
 
         self.save_h5data('list_cub_frequencies_full_dataset', self.list_full_dset_cuboid_frequencies)
@@ -618,11 +644,16 @@ class TestDictionary:
         tn_list = []
         fn_list = []
 
-        if(max(array_to_th)>=1e3):
-            lspace = np.logspace(math.log10(min(array_to_th)),math.log10(max(array_to_th)),1000)
-        else:
-            lspace = np.linspace(min(array_to_th), max(array_to_th), 1000)
+        # if(max(array_to_th)>=1e3):
+        #
+        #     if(min(array_to_th)==0):
+        #         array_to_th = [x+1.0 for x in array_to_th]
+        #
+        #     lspace = np.logspace(math.log10(min(array_to_th)),math.log10(max(array_to_th)),1000)
+        # else:
+        #
 
+        lspace = np.linspace(min(array_to_th), max(array_to_th), 4000)
         total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
 
         print "#################################################################################"
@@ -719,7 +750,7 @@ class TestDictionary:
         plt.title('TP,FP,TN,FN')
         plt.ylabel('Values')
         plt.xlabel(metric)
-        plt.savefig(os.path.join(self.model_store, tp_fp_graph_name), bbox_inches='tight')
+        plt.savefig(os.path.join(self.image_store, tp_fp_graph_name), bbox_inches='tight')
         plt.close()
 
     def make_p_r_f_curve_word_frequency(self,prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets',xlabel='metric'):
@@ -773,39 +804,68 @@ class TestDictionary:
 
         colors = ['green', 'red']
 
-        f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(80, 80))
 
-        ax1 = ax[0,0]
-        ax2 = ax[0,1]
-        ax3 = ax[1,1]
+        if(metric_name=='LowFreq'):
+            f, ax = plt.subplots(1, 2, sharex='col', sharey='row', figsize=(80, 80))
+            ax1 = ax[0]
+            ax2 = ax[1]
 
-        im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
-        ax1.set_title('ANOMS:Red, N-ANOMS:Green')
-        ax1.set_ylabel(metric_name)
-        ax1.set_xlabel('Cuboid index')
-        ax1.grid(True)
-        cb1 = f.colorbar(im1,ax=ax1)
-        loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
-        cb1.set_ticks(loc)
-        cb1.set_ticklabels(['normal','anomaly'])
+            ac = array_to_consider[array_to_consider<=20]
+            yt = y_true_arr[array_to_consider<=20]
 
-        arr_anoms = array_to_consider[y_true_arr==1]
+            im1 = ax1.scatter(range(0, len(ac)), ac, c=yt,cmap=ListedColormap(colors), alpha=0.5)
+            ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+            ax1.set_ylabel(metric_name)
+            ax1.set_xlabel('Cuboid index')
+            ax1.grid(True)
+            cb1 = f.colorbar(im1, ax=ax1)
+            loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
+            cb1.set_ticks(loc)
+            cb1.set_ticklabels(['normal', 'anomaly'])
 
-        im2 = ax2.scatter(range(0,len(arr_anoms)),arr_anoms,c='red',alpha=0.5)
-        ax2.set_title('ANOMS:Red')
-        ax2.set_ylabel(metric_name)
-        ax2.set_xlabel('Cuboid index')
-        ax2.grid(True)
+            arr_anoms = ac[yt == 1]
 
-        arr_perc = y_perc_arr[y_true_arr==1]
+            im2 = ax2.scatter(range(0, len(arr_anoms)), arr_anoms, c='red', alpha=0.5)
+            ax2.set_title('ANOMS:Red')
+            ax2.set_ylabel(metric_name)
+            ax2.set_xlabel('Cuboid index')
+            ax2.grid(True)
 
-        im3 = ax3.scatter(range(0, len(arr_perc)), arr_perc, c='blue', alpha=0.5)
-        ax3.set_title('ANOMPERC')
-        ax3.set_ylabel('percent of anomaly pixels in cuboid')
-        ax3.set_xlabel('Cuboid index')
-        ax3.grid(True)
 
-        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
+        else:
+            f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(80, 80))
+
+            ax1 = ax[0,0]
+            ax2 = ax[0,1]
+            ax3 = ax[1,1]
+
+            im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
+            ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+            ax1.set_ylabel(metric_name)
+            ax1.set_xlabel('Cuboid index')
+            ax1.grid(True)
+            cb1 = f.colorbar(im1,ax=ax1)
+            loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
+            cb1.set_ticks(loc)
+            cb1.set_ticklabels(['normal','anomaly'])
+
+            arr_anoms = array_to_consider[y_true_arr==1]
+
+            im2 = ax2.scatter(range(0,len(arr_anoms)),arr_anoms,c='red',alpha=0.5)
+            ax2.set_title('ANOMS:Red')
+            ax2.set_ylabel(metric_name)
+            ax2.set_xlabel('Cuboid index')
+            ax2.grid(True)
+
+            arr_perc = y_perc_arr[y_true_arr==1]
+
+            im3 = ax3.scatter(range(0, len(arr_perc)), arr_perc, c='blue', alpha=0.5)
+            ax3.set_title('ANOMPERC')
+            ax3.set_ylabel('percent of anomaly pixels in cuboid')
+            ax3.set_xlabel('Cuboid index')
+            ax3.grid(True)
+
+        plt.savefig(os.path.join(self.image_store, graph_name), bbox_inches='tight')
         plt.close()
 
         return True
@@ -814,6 +874,7 @@ class TestDictionary:
 
         frequency_array = np.array(self.list_full_dset_cuboid_frequencies)
         self.make_comparitive_plot(anom_frequency_graph_name,frequency_array,'Frequency')
+        self.make_comparitive_plot('low_'+anom_frequency_graph_name, frequency_array, 'LowFreq')
 
         return True
 
@@ -846,6 +907,16 @@ class TestDictionary:
 
         return True
 
+    def plot_basis_dict_recon_measure_of_samples(self,basis_dict_recon_measure_samples_graph_name):
+
+        if(self.use_basis_dict):
+            self.make_comparitive_plot(basis_dict_recon_measure_samples_graph_name, np.array(self.list_of_dict_recon_full_dataset),
+                                       metric_name='Basis_Dict Reconstruction Error')
+        else:
+            print "use_basis_dict is False"
+
+        return True
+
     def create_pdf_distance_surroundings(self,list_distances,pdf_name):
 
         plots_done = 0
@@ -875,12 +946,12 @@ class TestDictionary:
         #distance_normal_cuboids_pdf
         list_normal_cuboid_distances = np.array(self.list_full_dset_dist)[np.array(self.list_of_cub_anom_gt_full_dataset)==0]
         list_normal_cuboid_distances = list_normal_cuboid_distances[np.random.randint(0,len(list_normal_cuboid_distances),num_plots_per_pdf)]
-        self.create_pdf_distance_surroundings(list_distances=list_normal_cuboid_distances,pdf_name=os.path.join(self.model_store,'cubds_norm_dist_bar.pdf'))
+        self.create_pdf_distance_surroundings(list_distances=list_normal_cuboid_distances,pdf_name=os.path.join(self.image_store,'cubds_norm_dist_bar.pdf'))
 
         # distance_anom_cuboids_pdf
         list_anom_cuboid_distances = np.array(self.list_full_dset_dist)[np.array(self.list_of_cub_anom_gt_full_dataset)==1]
         list_anom_cuboid_distances = list_anom_cuboid_distances[np.random.randint(0,len(list_anom_cuboid_distances),num_plots_per_pdf)]
-        self.create_pdf_distance_surroundings(list_distances=list_anom_cuboid_distances,pdf_name=os.path.join(self.model_store,'cubds_anom_dist_bar.pdf'))
+        self.create_pdf_distance_surroundings(list_distances=list_anom_cuboid_distances,pdf_name=os.path.join(self.image_store,'cubds_anom_dist_bar.pdf'))
 
         return True
 
