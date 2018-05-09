@@ -13,16 +13,18 @@ metric = af.getopts(argv)
 n_gpus = 1
 server=0
 
+guill = False
+
 if(socket.gethostname()=='puck'):
     print "############################################"
     print "DETECTED RUN ON PUCK"
     print "############################################"
-    # import tensorflow as tf
-    # from keras.backend.tensorflow_backend import set_session
-    #
-    # config = tf.ConfigProto()
-    # config.gpu_options.per_process_gpu_memory_fraction = 0.65
-    # set_session(tf.Session(config=config))
+    import tensorflow as tf
+    from keras.backend.tensorflow_backend import set_session
+
+    config = tf.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 0.25
+    set_session(tf.Session(config=config))
     data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
 
 elif('gpu' in socket.gethostname()):
@@ -41,6 +43,7 @@ else:
     verbose = 1
     os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
     data_store_suffix = '/gs/scratch/sejacob/densecub'
+    guill = True
 
 
 batch_size=256
@@ -136,6 +139,11 @@ suffix +='_lamda_'+str(lamda)
 model_store = 'models/' + suffix
 
 size = 24
+
+print "#############################"
+print "LOAD MODEL"
+print "#############################"
+
 notrain = False
 
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
@@ -159,17 +167,27 @@ else:
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 
+print "#############################"
+print "RELOAD MODEL TO REDUCE MEM USAGE"
+print "#############################"
 
-ae_model.perform_kmeans(n_chapters=n_chapters)
-ae_model.perform_dict_learn(n_chapters=n_chapters)
+del ae_model
+
+notrain = True
+
+ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
+                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
+                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
+                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
+
+ae_model.perform_kmeans(n_chapters=n_chapters,partial=True)
+ae_model.perform_dict_learn(n_chapters=n_chapters,guill=guill)
 ae_model.generate_loss_graph('loss_graph.png')
 ae_model.create_recons(20)
 ae_model.mean_and_samples(n_per_mean=8)
 ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
 ae_model.decode_means('means_decoded')
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
-ae_model.perform_dict_learn(n_chapters=n_chapters)
-
 
 train_dset.close()
 

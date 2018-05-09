@@ -11,7 +11,7 @@ import tensorflow as tf
 from tqdm import tqdm
 from sklearn.utils import shuffle
 from sklearn.cluster import KMeans,MiniBatchKMeans
-from sklearn.decomposition import DictionaryLearning
+from sklearn.decomposition import DictionaryLearning, MiniBatchDictionaryLearning
 from keras.optimizers import RMSprop
 from keras.layers import Input, Dense, Lambda, Reshape, GaussianNoise, Conv2D, SpatialDropout2D, LeakyReLU
 from keras.layers import Dropout, MaxPooling2D, Layer, merge, AveragePooling2D
@@ -1008,6 +1008,12 @@ class Super_autoencoder:
         max_fit_tries = self.max_fit_tries
         exceptions = 0
 
+        start = time.time()
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "START K-MEANS PARTIAL FITTING"
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
         while (disp_track < means_patience and fit_tries<=max_fit_tries and exceptions <=100):
 
             for i in range(0, n_chapters):
@@ -1061,13 +1067,18 @@ class Super_autoencoder:
 
                 del feats
 
+
+        end = time.time()
+
+        print "TIME TAKEN = ", (start-end)/3600.0 , " HOURS"
+
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
         np.save(os.path.join(self.model_store, 'means.npy'), self.means)
         self.features_h5.close()
 
         return True
 
-    def perform_kmeans(self,n_chapters):
+    def perform_kmeans(self,n_chapters,partial=False):
 
         self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
 
@@ -1080,14 +1091,18 @@ class Super_autoencoder:
 
         self.features_h5.close()
 
-        list_feats = np.array(list_feats)
+        list_feats = shuffle(np.array(list_feats))
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START KMEANS FITTING"
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
         del self.km
-        self.km =KMeans(n_clusters=self.n_clusters, max_iter=int(1e3),verbose=1,n_jobs=-1)
+        if(partial):
+            self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=1,batch_size=self.means_batch,
+                                               compute_labels=False,tol=1e-9,max_no_improvement=self.means_patience*200)
+        else:
+            self.km = KMeans(n_clusters=self.n_clusters, max_iter=int(1e3), verbose=1, n_jobs=-1)
 
         start = time.time()
         self.km.fit(list_feats)
@@ -1103,7 +1118,7 @@ class Super_autoencoder:
 
         return True
 
-    def perform_dict_learn(self,n_chapters):
+    def perform_dict_learn(self,n_chapters,guill=False):
 
         self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
 
@@ -1116,13 +1131,19 @@ class Super_autoencoder:
 
         self.features_h5.close()
 
-        list_feats = np.array(list_feats)
+        list_feats = shuffle(np.array(list_feats))
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START DICTIONARY FITTING"
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
-        self.dict = DictionaryLearning(n_components=int(1e-4*len(list_feats)),verbose=1,n_jobs=-1)
+        print "N_COMPONENTS =",int(1e-4*len(list_feats))
+
+        if(guill):
+            print "RUNNING IN GUILLIMIN MODE"
+            self.dict  = MiniBatchDictionaryLearning(n_components=int(1e-4*len(list_feats)),verbose=1,n_iter=1000,batch_size=10)
+        else:
+            self.dict = MiniBatchDictionaryLearning(n_components=int(1e-4*len(list_feats)), verbose=1, n_jobs=-1,n_iter=1000,batch_size=10)
 
         start = time.time()
         self.dict.fit(list_feats)
@@ -1131,6 +1152,9 @@ class Super_autoencoder:
         print "TIME TAKEN:",(end - start) / 3600.0, "HOURS"
 
         print "N_BASIS_COMPONENTS:", self.dict.components_.shape[0]
+
+        if(os.path.exists(os.path.join(self.model_store,'basis_dict.pkl'))):
+            os.remove(os.path.join(self.model_store,'basis_dict.pkl'))
 
         pickle.dump(self.dict, open(os.path.join(self.model_store,'basis_dict.pkl'), 'wb'))
 
@@ -1785,7 +1809,8 @@ class Conv_autoencoder_nostream (Super_autoencoder):
 
         if (notrain):
             # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
-            self.means = np.load(os.path.join(self.model_store, 'means.npy'))
+            if (os.path.isfile(os.path.join(model_store, 'means.npy'))):
+                self.means = np.load(os.path.join(self.model_store, 'means.npy'))
 
             if(os.path.isfile(os.path.join(self.model_store, 'losslist.pkl'))):
                 with open(os.path.join(self.model_store, 'losslist.pkl'), 'rb') as f:

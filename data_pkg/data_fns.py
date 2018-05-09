@@ -16,6 +16,7 @@ import pickle
 import math
 import imageio
 import h5py
+import time
 
 
 list_anom_percentage = []
@@ -387,6 +388,7 @@ class TestDictionary:
 
     def create_surroundings(self,three_rows_cubarray,relevant_row_anom_gt,relevant_row_anompercentage,gif=False):
 
+        start = time.time()
         rows = three_rows_cubarray[0].shape[0]
         cols = three_rows_cubarray[0].shape[1]
 
@@ -468,7 +470,8 @@ class TestDictionary:
                     recon = np.dot(self.basis_dict.transform(encoded[0:1]),self.basis_dict_comp)
                     self.list_of_dict_recon_full_dataset.append(np.linalg.norm(x=(encoded[0:1]-recon)))
 
-
+        end = time.time()
+        print (end-start)/60.0, " minutes"
         return np.array(list_surrounding_cuboids_from_three_rows), sublist_full_dataset_anom_gt, \
                sublist_full_dataset_dssim_loss, sublist_full_dataset_distances, sublist_full_dataset_anompercentage
 
