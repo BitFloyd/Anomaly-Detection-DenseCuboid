@@ -1232,8 +1232,14 @@ class Super_autoencoder:
         print "CREATING RECONSTRUCTIONS"
         self.set_x_train(np.random.randint(0,10))
 
+        folder_name = 'cuboid_reconstructions'
+
+        if(not os.path.exists(os.path.join(self.model_store,folder_name))):
+            os.mkdir(os.path.join(self.model_store,folder_name))
+
+
         for i in range(0, n_recons):
-                self.do_gif_recon(self.x_train[np.random.randint(0, len(self.x_train))], 'recon_' + str(i))
+                self.do_gif_recon(self.x_train[np.random.randint(0, len(self.x_train))], os.path.join(folder_name,'recon_' + str(i)))
 
         return True
 
@@ -1569,12 +1575,24 @@ class Super_autoencoder:
 
         means_decoded = self.decoder.predict(self.means)
 
+        folder_name = 'means_decoded'
+
+        if (not os.path.exists(os.path.join(self.model_store, folder_name))):
+            os.mkdir(os.path.join(self.model_store, folder_name))
+
         for i in range(0, len(means_decoded)):
-            self.save_gifs(means_decoded[i], graph_name + '_' + str(i + 1))
+            self.save_gifs(means_decoded[i], os.path.join(folder_name+graph_name + '_' + str(i + 1)))
+
+        return True
 
     def mean_and_samples(self,n_per_mean):
 
         assert((n_per_mean+1)%3==0),"n_per_mean+1 should be a multiple of 3 for columnwise display"
+
+        folder_name = 'means_and_samples'
+
+        if(not os.path.exists(os.path.join(self.model_store,folder_name))):
+            os.mkdir(os.path.join(self.model_store,folder_name))
 
         points = np.zeros(shape=(self.means.shape[0],n_per_mean+1,self.means.shape[1]))
 
@@ -1585,7 +1603,8 @@ class Super_autoencoder:
             for j in range(0,n_per_mean):
                 points[i,j+1,:] = self.means[i]+np.random.normal(0.0,0.1,self.means.shape[1])
 
-            self.recon_mean_samples_to_gif(points=points[i],name='mean_and_samples_'+str(i))
+            self.recon_mean_samples_to_gif(points=points[i],name=os.path.join(folder_name,'mean_and_samples_'+str(i)))
+
         return True
 
     def recon_mean_samples_to_gif(self,points,name):
