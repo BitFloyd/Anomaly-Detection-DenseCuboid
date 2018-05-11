@@ -16,12 +16,11 @@ from keras.optimizers import RMSprop
 from keras.layers import Input, Dense, Lambda, Reshape, GaussianNoise, Conv2D, SpatialDropout2D, LeakyReLU
 from keras.layers import Dropout, MaxPooling2D, Layer, merge, AveragePooling2D
 from keras.layers import UpSampling2D, Flatten, BatchNormalization,ConvLSTM2D,TimeDistributed
-from keras.layers.core import Lambda
 from keras.models import Model
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from keras.losses import mean_squared_error,binary_crossentropy
-from keras.utils import plot_model
+from keras.utils import multi_gpu_model
 from keras_contrib.losses import DSSIMObjective
 import os
 import time
@@ -535,6 +534,8 @@ class Super_autoencoder:
     ae = None
     encoder = None
     decoder = None
+    multi_gpu_model = False
+    n_gpu = 1
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10, lr_model=1e-4, lamda=0.01,
@@ -592,6 +593,21 @@ class Super_autoencoder:
     def set_cl_loss(self,val):
         K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(val))
         return True
+
+    def make_ae_model_multi_gpu(self,n_gpus):
+
+        try:
+            self.ae_single = self.ae
+            self.ae = multi_gpu_model(self.ae, gpus=n_gpus)
+            print("Training using multiple GPUs..")
+            self.ae.compile(optimizer=self.adam_ae, loss=None)
+            self.multi_gpu_model = True
+            self.n_gpu = n_gpus
+        except:
+            print("Training using single GPU or CPU..")
+            self.multi_gpu_model = False
+            self.n_gpu = 1
+
 
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
                            n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5):
@@ -1319,7 +1335,12 @@ class Super_autoencoder:
         return True
 
     def save_weights(self):
-        self.ae.save_weights(filepath=os.path.join(self.model_store, 'ae_weights.h5'))
+
+        if(self.multi_gpu_model):
+            self.ae_single.save_weights(filepath=os.path.join(self.model_store, 'ae_weights.h5'))
+        else:
+            self.ae.save_weights(filepath=os.path.join(self.model_store, 'ae_weights.h5'))
+
         self.decoder.save_weights(filepath=os.path.join(self.model_store, 'decoder_weights.h5'))
         self.encoder.save_weights(filepath=os.path.join(self.model_store, 'encoder_weights.h5'))
 
@@ -1581,7 +1602,7 @@ class Super_autoencoder:
             os.mkdir(os.path.join(self.model_store, folder_name))
 
         for i in range(0, len(means_decoded)):
-            self.save_gifs(means_decoded[i], os.path.join(folder_name+graph_name + '_' + str(i + 1)))
+            self.save_gifs(means_decoded[i], os.path.join(folder_name,graph_name + '_' + str(i + 1)))
 
         return True
 
@@ -1769,7 +1790,7 @@ class Conv_autoencoder_nostream (Super_autoencoder):
         ae17 = dec17(ae16)
         ae18 = recon(ae17)
 
-        adam_ae = Adam(lr=self.lr_model)
+        self.adam_ae = Adam(lr=self.lr_model)
         dssim = DSSIMObjective(kernel_size=8)
 
         if (loss == 'mse'):
@@ -1812,7 +1833,7 @@ class Conv_autoencoder_nostream (Super_autoencoder):
 
         self.ae = Model(inputs=[inp], outputs=[y])
 
-        self.ae.compile(optimizer=adam_ae, loss=None)
+        self.ae.compile(optimizer=self.adam_ae, loss=None)
 
         if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
             print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
@@ -1963,7 +1984,7 @@ class Conv_autoencoder_nostream_UCSD_noh(Super_autoencoder):
         ae21 = dec21(ae20)
         ae22 = recon(ae21)
 
-        adam_ae = Adam(lr=self.lr_model)
+        self.adam_ae = Adam(lr=self.lr_model)
         dssim = DSSIMObjective(kernel_size=8)
 
         if (loss == 'mse'):
@@ -2008,7 +2029,7 @@ class Conv_autoencoder_nostream_UCSD_noh(Super_autoencoder):
 
         self.ae = Model(inputs=[inp], outputs=[y])
 
-        self.ae.compile(optimizer=adam_ae, loss=None)
+        self.ae.compile(optimizer=self.adam_ae, loss=None)
 
 
         if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
@@ -2163,7 +2184,7 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
         ae21 = dec21(ae20)
         ae22 = recon(ae21)
 
-        adam_ae = Adam(lr=self.lr_model)
+        self.adam_ae = Adam(lr=self.lr_model)
         dssim = DSSIMObjective(kernel_size=8)
 
         if (loss == 'mse'):
@@ -2209,7 +2230,7 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
 
         self.ae = Model(inputs=[inp], outputs=[y])
 
-        self.ae.compile(optimizer=adam_ae, loss=None)
+        self.ae.compile(optimizer=self.adam_ae, loss=None)
 
         if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
             print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"

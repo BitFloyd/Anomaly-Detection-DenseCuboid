@@ -45,8 +45,14 @@ else:
     data_store_suffix = '/gs/scratch/sejacob/densecub'
     guill = True
 
+    if('-ngpu' in metric.keys()):
+        n_gpus = int(metric['-ngpu'])
 
-batch_size=256
+if(guill and '-ngpu' in metric.keys()):
+    batch_size=256*n_gpus
+else:
+    batch_size=256
+
 n_chapters = 0
 gs = False
 nic = 0
@@ -156,6 +162,12 @@ print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
 
+if(guill and '-ngpu' in metric.keys()):
+    print "############################"
+    print "TRYING TO PARALLELISE TO MULTIPLE GPUS"
+    print "############################"
+    ae_model.make_ae_model_multi_gpu(n_gpus)
+
 if(nocl):
     ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=100, n_chapters=n_chapters,
                                         n_train=ntrain, reduce_lr=True, patience_lr=25, factor=1.25)
@@ -167,19 +179,6 @@ else:
 
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
-
-print "#############################"
-print "RELOAD MODEL TO REDUCE MEM USAGE"
-print "#############################"
-
-del ae_model
-
-notrain = True
-
-ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
-                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
 
 ae_model.perform_kmeans(n_chapters=n_chapters,partial=True)
 ae_model.perform_dict_learn(n_chapters=n_chapters,guill=guill)
