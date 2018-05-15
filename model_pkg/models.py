@@ -28,6 +28,7 @@ from scipy.spatial.distance import cdist
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler,Normalizer
 import seaborn as sns
+sns.set(color_codes=True)
 import keras.backend as K
 from keras.objectives import *
 import h5py
@@ -977,6 +978,112 @@ class Super_autoencoder:
 
         return True
 
+    def perform_feature_space_analysis(self):
+
+        features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, len(features_h5)):
+            f_arr = np.array(features_h5.get('chapter_' + str(id)))
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        features_h5.close()
+
+        list_feats = np.array(list_feats)
+
+        plots_done = 0
+
+        pdf_name = os.path.join(self.model_store, 'features_kde.pdf')
+
+        rows_plots = (list_feats.shape[1] / 8)
+
+        with PdfPages(pdf_name) as pdf:
+
+            for j in range(0, 3):
+
+                fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
+
+                if (j == 0):
+                    list_feats_to_plot = list_feats
+                    plt.suptitle('Features as is without any scaling')
+                elif (j == 1):
+                    sc = Normalizer()
+                    list_feats_to_plot = sc.fit_transform(list_feats)
+                    plt.suptitle('Features - Normalized')
+                else:
+                    sc = StandardScaler()
+                    list_feats_to_plot = sc.fit_transform(list_feats)
+                    plt.suptitle('Features - Scaled')
+
+                for i in range(0, list_feats_to_plot.shape[1]):
+                    ax[int(i / rows_plots)][i % 8].set_title('feature: ' + str(i + 1))
+                    sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
+                                 ax=ax[int(i / rows_plots)][i % 8])
+
+                pdf.savefig()  # saves the current figure into a pdf page
+                plt.close()
+
+    def check_model_sanity(self):
+
+        self.set_x_train(0)
+
+        with open(os.path.join(self.model_store,'evaluation_score.txt')) as f:
+            content = f.read().splitlines()
+
+        score_on_chap_0_saved_list = [float(i.split('=>')[-1]) for i in content]
+
+        score_on_chap_0 = self.ae.evaluate(self.x_train)
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "scores_saved = ", score_on_chap_0_saved_list
+        print "score_after_load = ", score_on_chap_0
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        f = open(os.path.join(self.model_store, 'evaluation_score.txt'), 'a+')
+        f.write('score_evaluated_chap0_after_load: => ' + str(score_on_chap_0) + '\n')
+        f.close()
+
+        encoded_feats_post_load = self.encoder.predict(self.x_train)
+        encoded_feats_pre_load = np.load(os.path.join(self.model_store, 'encoded_feats_sanity.npy'))
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "difference_in_encoded = ", np.sum(np.abs(encoded_feats_post_load-encoded_feats_pre_load))
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+
+        decodeds_post_load = self.decoder.predict(encoded_feats_post_load)
+        decoded_feats_pre_load = np.load(os.path.join(self.model_store, 'decoded_feats_sanity.npy'))
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "difference_in_decoded = ", np.sum(np.abs(decodeds_post_load-decoded_feats_pre_load))
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        return True
+
+    def prepare_for_model_sanity(self):
+
+        self.set_x_train(0)
+
+        for i in range(0,10):
+
+            score_on_chap_0 = self.ae.evaluate(self.x_train)
+
+            print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+            print "score_saved = ", score_on_chap_0
+            print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+            f = open(os.path.join(self.model_store, 'evaluation_score.txt'), 'a+')
+            f.write('score_evaluated_chap0: '+str(i) + ' => ' + str(score_on_chap_0) + '\n')
+            f.close()
+
+        encoded_feats = self.encoder.predict(self.x_train)
+        np.save(os.path.join(self.model_store, 'encoded_feats_sanity.npy'), encoded_feats)
+
+        decodeds = self.decoder.predict(encoded_feats)
+        np.save(os.path.join(self.model_store, 'decoded_feats_sanity.npy'), decodeds)
+
     def fit_model_single_chap(self, verbose=1,epochs=15):
 
         if (self.notrain):
@@ -1134,7 +1241,7 @@ class Super_autoencoder:
 
         return True
 
-    def perform_dict_learn(self,n_chapters,guill=False):
+    def perform_dict_learn(self,n_chapters,guill=False,n_comp=64):
 
         self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
 
@@ -1149,17 +1256,22 @@ class Super_autoencoder:
 
         list_feats = shuffle(np.array(list_feats))
 
+        if(n_comp<1):
+            n_components = int(n_comp * len(list_feats))
+        else:
+            n_components = n_comp
+
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START DICTIONARY FITTING"
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
-        print "N_COMPONENTS =",int(1e-4*len(list_feats))
+        print "N_COMPONENTS =",n_components
 
         if(guill):
             print "RUNNING IN GUILLIMIN MODE"
-            self.dict  = MiniBatchDictionaryLearning(n_components=int(1e-4*len(list_feats)),verbose=1,n_iter=1000,batch_size=10)
+            self.dict  = MiniBatchDictionaryLearning(n_components=n_components,verbose=1,n_iter=1000,batch_size=10)
         else:
-            self.dict = MiniBatchDictionaryLearning(n_components=int(1e-4*len(list_feats)), verbose=1, n_jobs=-1,n_iter=1000,batch_size=10)
+            self.dict = MiniBatchDictionaryLearning(n_components=n_components, verbose=1, n_jobs=-1,n_iter=1000,batch_size=10)
 
         start = time.time()
         self.dict.fit(list_feats)
@@ -1175,51 +1287,6 @@ class Super_autoencoder:
         pickle.dump(self.dict, open(os.path.join(self.model_store,'basis_dict.pkl'), 'wb'))
 
         return True
-
-    def perform_feature_space_analysis(self):
-
-        features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, len(features_h5)):
-            f_arr = np.array(features_h5.get('chapter_' + str(id)))
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        features_h5.close()
-
-        list_feats = np.array(list_feats)
-
-        pdf_name = os.path.join(self.model_store, 'features_kde.pdf')
-
-        rows_plots = (list_feats.shape[1]/8)
-
-        with PdfPages(pdf_name) as pdf:
-
-            for j in range(0, 3):
-
-                fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
-
-                if (j == 0):
-                    list_feats_to_plot = list_feats
-                    plt.suptitle('Features as is without any scaling')
-                elif (j == 1):
-                    sc = Normalizer()
-                    list_feats_to_plot = sc.fit_transform(list_feats)
-                    plt.suptitle('Features - Normalized')
-                else:
-                    sc = StandardScaler()
-                    list_feats_to_plot = sc.fit_transform(list_feats)
-                    plt.suptitle('Features - Scaled')
-
-                for i in range(0, list_feats_to_plot.shape[1]):
-                    ax[int(i / rows_plots)][i % 8].set_title('feature: ' + str(i + 1))
-                    sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
-                                 ax=ax[int(i / rows_plots)][i % 8])
-
-                pdf.savefig()  # saves the current figure into a pdf page
-                plt.close()
 
     def get_assigns(self, means, feats):
 
@@ -1634,12 +1701,12 @@ class Super_autoencoder:
         decoded = self.decoder.predict(points)
 
         for i in range(0, decoded.shape[-1]/self.n_channels):
-
             f, axarr = plt.subplots(len(points) / 3, 3)
             plt.suptitle('Centroid and Nearby Sampling (features) Reconstructed')
 
             if self.reverse:
-                decoded = np.flip(decoded,axis=3)
+                for idx,k in enumerate(decoded):
+                    decoded[idx] = np.flip(k, axis=2)
 
             for j in range(0, len(points) / 3):
                 for k in range(0, 3):
@@ -1849,6 +1916,7 @@ class Conv_autoencoder_nostream (Super_autoencoder):
 
         if (notrain):
             # self.initial_means = np.load(os.path.join(self.model_store, 'initial_means.npy'))
+
             if (os.path.isfile(os.path.join(model_store, 'means.npy'))):
                 self.means = np.load(os.path.join(self.model_store, 'means.npy'))
 

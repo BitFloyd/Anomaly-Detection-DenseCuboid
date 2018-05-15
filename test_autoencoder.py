@@ -10,141 +10,33 @@ import h5py
 
 metric = af.getopts(argv)
 
-n_gpus = 1
-server=0
+rdict = af.parse_run_variables(metric)
 
-guill = False
-
-if(socket.gethostname()=='puck'):
-    print "############################################"
-    print "DETECTED RUN ON PUCK"
-    print "############################################"
-    import tensorflow as tf
-    from keras.backend.tensorflow_backend import set_session
-
-    config = tf.ConfigProto()
-    config.gpu_options.per_process_gpu_memory_fraction = 0.25
-    set_session(tf.Session(config=config))
-    data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
-
-elif('gpu' in socket.gethostname()):
-    print "############################################"
-    print "DETECTED RUN ON HELIOS: Probably"
-    print "############################################"
-    verbose = 1
-    os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
-    data_store_suffix = '/scratch/suu-621-aa/ANOMALY/densecub'
-
-else:
-    print socket.gethostname()
-    print "############################################"
-    print "DETECTED RUN ON GUILLIMIN: Probably"
-    print "############################################"
-    verbose = 1
-    os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
-    data_store_suffix = '/gs/scratch/sejacob/densecub'
-    guill = True
-
-    if('-ngpu' in metric.keys()):
-        n_gpus = int(metric['-ngpu'])
-
-if(guill and '-ngpu' in metric.keys()):
-    batch_size=256*n_gpus
-else:
-    batch_size=256
-
-n_chapters = 0
-gs = False
-nic = 0
-tstrides = 4
-lassign = 0.0
-h_units = int(metric['-h'])
-loss = 'dssim'
-ntrain = int(metric['-ntrain'])
-nclusters = int(metric['-nclust'])
-nocl = bool(int(metric['-nocl']))
-
-
-if(nocl):
-    suffix = 'nocl_tstrd_'+str(tstrides)+'_nic_'+str(nic)+'_chapters_'+str(n_chapters) + '_clusters_'+str(nclusters)
-    lamda = 0.0
-else:
-    suffix = 'tstrd_' + str(tstrides) + '_nic_' + str(nic) + '_chapters_' + str(n_chapters) + '_clusters_' + str(nclusters)
-    lamda = float(metric['-lamda'])
-
-suffix +='_hunits_'+str(h_units)
-
-if(gs):
-
-    train_folder = os.path.join(data_store_suffix,'chapter_store_conv','triangle_data_store_greyscale_bkgsub'+str(tstrides))
-    test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test','triangle_data_store_greyscale_test_bkgsub' + str(tstrides))
-    nc=1
-
-else:
-
-    train_folder = os.path.join(data_store_suffix,'chapter_store_conv', 'triangle_data_store_bksgub' + str(tstrides))
-    test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test', 'triangle_data_store_test_bkgsub' + str(tstrides))
-    nc=3
-
-
-# Open train dset
-train_dset = h5py.File(os.path.join(train_folder,'data_train.h5'),'r')
-
-if(n_chapters == 0):
-    n_chapters=len(train_dset.keys())
-
-if(nic==0):
-    nic=n_chapters
-
-
-if(gs):
-    suffix += '_greyscale_'
-else:
-    suffix += '_color_'
-
-print "############################"
-print "SET UP MODEL"
-print "############################"
-
-if('-large' in metric.keys()):
-    large = bool(int(metric['-large']))
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print "MODEL SIZE LARGE? :" , large
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-
-else:
-    large = True
-
-if('-tlm' in metric.keys()):
-    tlm = metric['-tlm']
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print "USE TEST LOSS METRIC:" , tlm
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-
-else:
-    tlm = 'dssim'
-
-if('-rev' in metric.keys()):
-
-    reverse = bool(int(metric['-rev']))
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print "REVERSE? :" , reverse
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    suffix += '_rev_' + str(reverse)
-
-else:
-    reverse = False
-
-
-suffix += '_large_'+str(large)
-suffix +='_ntrain_'+str(ntrain)
-suffix +='_lamda_'+str(lamda)
-
-
-# Get MODEL
-model_store = 'models/' + suffix
-
+n_gpus = rdict['n_gpus']
+guill = rdict['guill']
+data_store_suffix = rdict['data_store_suffix']
+batch_size=rdict['batch_size']
+n_chapters = rdict['n_chapters']
+gs = rdict['gs']
+nic = rdict['nic']
+tstrides = rdict['tstrides']
+lassign = rdict['lassign']
+h_units = rdict['h_units']
+loss = rdict['loss']
+ntrain = rdict['ntrain']
+nclusters = rdict['nclusters']
+nocl = rdict['nocl']
+lamda = rdict['lamda']
+train_folder = rdict['train_folder']
+test_data_store = rdict['test_data_store']
+nc=rdict['nc']
+large = rdict['large']
+tlm = rdict['tlm']
+reverse = rdict['reverse']
+model_store = rdict['model_store']
 size = 24
+
+train_dset = h5py.File(os.path.join(train_folder, 'data_train.h5'), 'r')
 
 print "#############################"
 print "LOAD MODEL"
@@ -183,6 +75,7 @@ else:
 ae_model.perform_kmeans(n_chapters=n_chapters,partial=True)
 ae_model.perform_dict_learn(n_chapters=n_chapters,guill=guill)
 ae_model.generate_loss_graph('loss_graph.png')
+ae_model.perform_feature_space_analysis()
 ae_model.create_recons(20)
 ae_model.mean_and_samples(n_per_mean=8)
 ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
@@ -223,7 +116,7 @@ print "START TESTING"
 print "################################"
 
 notest = False
-udiw=False
+udiw = False
 
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 print train_folder

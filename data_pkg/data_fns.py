@@ -656,7 +656,7 @@ class TestDictionary:
         # else:
         #
 
-        lspace = np.linspace(min(array_to_th), max(array_to_th), 4000)
+        lspace = np.linspace(min(array_to_th), max(array_to_th), 5000)
         total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
 
         print "#################################################################################"
@@ -733,10 +733,10 @@ class TestDictionary:
         plt.title('Precision, Recall, F1_Score')
         plt.ylabel('Scores')
         plt.xlabel(metric)
-        plt.savefig(os.path.join(self.model_store, prfa_graph_name), bbox_inches='tight')
+        plt.savefig(os.path.join(self.image_store, prfa_graph_name), bbox_inches='tight')
         plt.close()
 
-        f = open(os.path.join(self.model_store, deets_filename), 'a+')
+        f = open(os.path.join(self.image_store, deets_filename), 'a+')
         f.write(s_acc +  '\n')
         f.write(s_f1  +  '\n')
         f.write(s_pr  +  '\n')
@@ -755,6 +755,70 @@ class TestDictionary:
         plt.xlabel(metric)
         plt.savefig(os.path.join(self.image_store, tp_fp_graph_name), bbox_inches='tight')
         plt.close()
+
+        score_dict = {'max_acc': float(max(accuracy_score_list)), 'max_f1': float(max(f1_score_list)),
+                      'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list))}
+
+        return score_dict
+
+    def evaluate_prfa(self,array_to_th,lt=False):
+
+        precision_score_list = []
+        recall_score_list = []
+        f1_score_list = []
+        accuracy_score_list = []
+
+        lspace = np.linspace(min(array_to_th), max(array_to_th), 2500)
+        total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
+
+        print "#################################################################################"
+        print "TOTAL NUMBER OF TRUE POSITIVES:" , total_num_tp
+        print "TOTAL NUMBER OF SAMPLES TO BE TESTED:",len(self.list_of_cub_anom_gt_full_dataset)
+        print "RATIO:",total_num_tp/(len(self.list_of_cub_anom_gt_full_dataset)+0.0)
+        print "ACC WHEN ALL 0: ", (len(self.list_of_cub_anom_gt_full_dataset) - total_num_tp)/(len(self.list_of_cub_anom_gt_full_dataset)+0.0) * 100
+        print "#################################################################################"
+
+
+        for i in tqdm(lspace):
+
+            y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
+
+            if(lt):
+                y_pred = (np.array(array_to_th)<=i)
+            else:
+                y_pred = (np.array(array_to_th)>=i)
+
+
+            precision_score_list.append(precision_score(y_true,y_pred)*100)
+            recall_score_list.append(recall_score(y_true,y_pred)*100)
+            f1_score_list.append(f1_score(y_true,y_pred)*100)
+            accuracy_score_list.append(accuracy_score(y_true,y_pred)*100)
+
+
+        print "##########################################################################"
+        print "MAX ACCURACY:",max(accuracy_score_list)
+        print "THRESHOLD:",lspace[accuracy_score_list.index(max(accuracy_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX PRECISION:",max(precision_score_list)
+        print "THRESHOLD:",lspace[precision_score_list.index(max(precision_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX RECALL:", max(recall_score_list)
+        print "THRESHOLD:", lspace[recall_score_list.index(max(recall_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX F1:", max(f1_score_list)
+        print "THRESHOLD:", lspace[f1_score_list.index(max(f1_score_list))]
+        print "##########################################################################"
+
+        score_dict = {'max_acc': float(max(accuracy_score_list)), 'max_f1': float(max(f1_score_list)),
+                      'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list))}
+
+        return score_dict
 
     def make_p_r_f_curve_word_frequency(self,prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets',xlabel='metric'):
 
