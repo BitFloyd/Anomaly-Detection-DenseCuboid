@@ -199,11 +199,6 @@ tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
 tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
 tclass.plot_distance_measure_of_samples('distance_target_samples_plot.png','distance')
 tclass.plot_distance_measure_of_samples('distancexloss_'+tlm+'_samples_plot.png','distancexloss')
-print "############################"
-print "MAKE NORM ANOM CUBOID PDFS"
-print "############################"
-tclass.create_distance_metric_pdfs(1000)
-
 
 print "########################################################"
 print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
