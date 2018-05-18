@@ -204,6 +204,12 @@ print "MAKE NORM ANOM CUBOID PDFS"
 print "############################"
 tclass.create_distance_metric_pdfs(1000)
 
+
+print "########################################################"
+print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "########################################################"
+tclass.feature_analysis_normvsanom()
+
 data_h5_vc.close()
 data_h5_va.close()
 data_h5_vp.close()

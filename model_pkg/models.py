@@ -525,23 +525,23 @@ class Conv_LSTM_autoencoder:
 
 class Super_autoencoder:
 
-    means = None
-    initial_means = None
-    list_mean_disp = []
-    loss_list = []
-    features_h5 = None
-    features_h5_pre = None
-    y_obj = None
-    ae = None
-    encoder = None
-    decoder = None
-    multi_gpu_model = False
-    n_gpu = 1
-
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10, lr_model=1e-4, lamda=0.01,
                  gs=False, notrain=False, reverse=False, data_folder='data_store',
                  dat_h5=None,large=True, means_tol=1e-5, means_patience=200, max_fit_tries=500000):
+
+        self.means = None
+        self.initial_means = None
+        self.list_mean_disp = []
+        self.loss_list = []
+        self.features_h5 = None
+        self.features_h5_pre = None
+        self.y_obj = None
+        self.ae = None
+        self.encoder = None
+        self.decoder = None
+        self.multi_gpu_model = False
+        self.n_gpu = 1
 
         self.clustering_lr = 1.0
         self.batch_size = batch_size
@@ -642,8 +642,11 @@ class Super_autoencoder:
         for i in range(0,n_chapters):
             self.set_x_train(i)
             feats = self.encoder.predict(self.x_train)
+            name = 'chapter_' + str(i)
             with h5py.File(os.path.join(self.model_store, 'features_pre.h5'), "a") as f:
-                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
+                if(name in f.keys()):
+                    del f[name]
+                dset = f.create_dataset(name, data=np.array(feats))
                 print(dset.shape)
             del feats
 
@@ -997,33 +1000,29 @@ class Super_autoencoder:
 
         pdf_name = os.path.join(self.model_store, 'features_kde.pdf')
 
+        if(os.path.exists(pdf_name)):
+            os.remove(pdf_name)
+
         rows_plots = (list_feats.shape[1] / 8)
 
         with PdfPages(pdf_name) as pdf:
 
-            for j in range(0, 3):
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
+            list_feats_to_plot = list_feats
+            plt.suptitle('Distribution of each feature in the dataset',fontsize=30)
 
-                fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
+            for i in range(0, list_feats_to_plot.shape[1]):
+                print "PROCESSING FEATURE:", i
+                ax[int(i / 8)][i % 8].set_title('feature: ' + str(i + 1),fontsize=20)
+                plt.setp(ax[int(i / 8)][i % 8].get_xticklabels(),visible=True)
+                sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
+                                 ax=ax[int(i / 8)][i % 8])
 
-                if (j == 0):
-                    list_feats_to_plot = list_feats
-                    plt.suptitle('Features as is without any scaling')
-                elif (j == 1):
-                    sc = Normalizer()
-                    list_feats_to_plot = sc.fit_transform(list_feats)
-                    plt.suptitle('Features - Normalized')
-                else:
-                    sc = StandardScaler()
-                    list_feats_to_plot = sc.fit_transform(list_feats)
-                    plt.suptitle('Features - Scaled')
+            pdf.savefig()  # saves the current figure into a pdf page
+            plt.close()
 
-                for i in range(0, list_feats_to_plot.shape[1]):
-                    ax[int(i / rows_plots)][i % 8].set_title('feature: ' + str(i + 1))
-                    sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
-                                 ax=ax[int(i / rows_plots)][i % 8])
-
-                pdf.savefig()  # saves the current figure into a pdf page
-                plt.close()
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 
     def check_model_sanity(self):
 
@@ -1269,9 +1268,9 @@ class Super_autoencoder:
 
         if(guill):
             print "RUNNING IN GUILLIMIN MODE"
-            self.dict  = MiniBatchDictionaryLearning(n_components=n_components,verbose=1,n_iter=1000,batch_size=10)
+            self.dict  = MiniBatchDictionaryLearning(n_components=n_components,verbose=1,n_iter=1000,batch_size=40)
         else:
-            self.dict = MiniBatchDictionaryLearning(n_components=n_components, verbose=1, n_jobs=-1,n_iter=1000,batch_size=10)
+            self.dict = MiniBatchDictionaryLearning(n_components=n_components, verbose=1, n_jobs=-1,n_iter=1000,batch_size=40)
 
         start = time.time()
         self.dict.fit(list_feats)
@@ -1753,6 +1752,9 @@ class Super_autoencoder:
         plt.close()
 
         return True
+
+    def __del__(self):
+        print ("Destructor called for SuperAutoEncoder")
 
 class Conv_autoencoder_nostream (Super_autoencoder):
 

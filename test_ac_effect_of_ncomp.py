@@ -2,6 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
+from functionals_pkg import save_objects as so
 from data_pkg.data_fns import TestDictionary,TrainDictionary
 from sys import argv
 import os
@@ -15,7 +16,7 @@ sns.set(color_codes=True)
 import time
 
 
-def update_pdf(index=0):
+def save_pdf(index=0):
 
     if(os.path.exists(pdf_name)):
         os.remove(pdf_name)
@@ -38,6 +39,7 @@ def update_pdf(index=0):
             pdf.savefig()  # saves the current figure into a pdf page
             plt.close()
 
+    return True
 
 def run_and_update(comps = 10):
 
@@ -75,24 +77,15 @@ def run_and_update(comps = 10):
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
                         use_basis_dict=use_basis_dict)
 
-
     print "############################"
     print "UPDATING DICT FROM DATA"
     print "############################"
     tclass.process_data()
 
-
-    print "############################"
-    print "MAKE BASIS_DICT_RECON SAMPLES PLOT"
-    print "############################"
-    score_dict = tclass.evaluate_prfa(array_to_th=tclass.list_of_dict_recon_full_dataset,lt=False)
+    score_dict = tclass.evaluate_prfa_dict_recon()
 
     for j in score_dict_running.keys():
         score_dict_running[j].append(score_dict[j])
-
-
-    del tclass
-    del ae_model
 
     end_time = time.time()
     time_taken_hours = (end_time-start_time)/3600.0
@@ -101,11 +94,6 @@ def run_and_update(comps = 10):
     print "PRINT TIME TAKEN :",time_taken_hours, "HOURS"
     print "############################"
 
-    avg_time_taken = (avg_time_taken*idx + time_taken_hours)/(idx+1)
-
-    print "############################"
-    print "ESTIMATED_TIME_LEFT:",avg_time_taken*(len(list_components)-1-idx), "HOURS"
-    print "############################"
 
     data_h5_vc.close()
     data_h5_va.close()
@@ -113,8 +101,6 @@ def run_and_update(comps = 10):
     data_h5_ap.close()
 
     return True
-
-
 
 metric = af.getopts(argv)
 
@@ -154,28 +140,21 @@ print train_folder
 print test_data_store
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
+pdf_name = os.path.join(model_store,'effect_of_n_components.pdf')
 
-
-
+list_titles = ['Maximum accuracy score', 'Maximum F1 score', 'Maximum Precision Score', 'Maximum Recall score']
 
 score_dict_running = {'max_acc':[],'max_f1':[],'max_pre':[],'max_rec':[]}
 
-list_titles = ['Maximum accuracy score', 'Maximum F1 score', 'Maximum Precision Score', 'Maximum Recall score']
 
 list_components = list(np.logspace(1.5,5,15).astype(int))
 
 avg_time_taken = 0.0
 
-pdf_name = os.path.join(model_store,'effect_of_n_components.pdf')
-
-
 for idx,i in enumerate(list_components):
-
-    run_and_update(comps=i)
-    update_pdf(index=idx)
-
-
-
+    components = i
+    run_and_update(comps=components)
+    save_pdf(idx)
 
 
 

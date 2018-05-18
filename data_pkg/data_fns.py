@@ -10,6 +10,8 @@ from sklearn.metrics import accuracy_score,confusion_matrix
 from collections import deque
 from matplotlib.colors import ListedColormap
 from matplotlib.backends.backend_pdf import PdfPages
+import seaborn as sns
+sns.set(color_codes=True)
 import copy
 import sys
 import pickle
@@ -23,20 +25,18 @@ list_anom_percentage = []
 
 class TrainDictionary:
 
-    model = None
-    dictionary_words = {}
-    means = None
-
-    data_store = None  # Where the train data is stored in spatiotemporal format
-
-    vid = None         # Id of the video being processed ATM -> Always points to the next id to be loaded
-    cubarray = None    # Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
-
-    cubarray_process_index = None  # The index of the set in cubarray that is being processed.
-
-
     def __init__(self, model, data_train_h5=None, model_store=None):
 
+        self.model = None
+        self.dictionary_words = {}
+        self.means = None
+
+        self.data_store = None  # Where the train data is stored in spatiotemporal format
+
+        self.vid = None  # Id of the video being processed ATM -> Always points to the next id to be loaded
+        self.cubarray = None  # Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
+
+        self.cubarray_process_index = None  # The index of the set in cubarray that is being processed.
         self.timesteps = 8
         self.data_vc = data_train_h5
         self.model_enc = model.encoder
@@ -235,33 +235,36 @@ class TrainDictionary:
 
         return True
 
+    def __del__(self):
+        print ("Destructor called for TrainDictionary")
+
 class TestDictionary:
 
-    model = None
-    dictionary_words = {}
-    means = None
+    def __init__(self,model,data_store,data_test_h5=None,notest=False,model_store=None,test_loss_metric='dssim',use_dist_in_word=False, nc=3, round_to=1,use_basis_dict=False):
 
-    data_store = None       #Where the test data is stored
+        self.model = None
+        self.dictionary_words = {}
+        self.means = None
 
-    vid = None              #Id of the video being processed ATM -> Always points to the next id to be loaded
-    cubarray = None         #Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
-    amongtarray = None      #Contains anomaly groundtruths of corresponding cuboids in cubarray (shape = cubarray.shape())
-    anompercentarray = None #Contains the anomaly percentage in the cuboid
-    pixmaparray = None      #Each element contains a tuple of the pixel centres of corresponding cuboid in cubarray
-                            # (shape = cubarray.shape())
+        self.data_store = None          # Where the test data is stored
 
-    cubarray_process_index = None #The index of the set in cubarray that is being processed.
+        self.vid = None                 # Id of the video being processed ATM -> Always points to the next id to be loaded
+        self.cubarray = None            # Array of all cuboids sampled in a video, arranged in a spatio-temporal fashion
+        self.amongtarray = None         # Contains anomaly groundtruths of corresponding cuboids in cubarray (shape = cubarray.shape())
+        self.anompercentarray = None    # Contains the anomaly percentage in the cuboid
+        self.pixmaparray = None         # Each element contains a tuple of the pixel centres of corresponding cuboid in cubarray
+                                        # (shape = cubarray.shape())
 
-    list_of_cub_words_full_dataset = []
-    list_of_cub_loss_full_dataset = []
-    list_of_cub_anom_gt_full_dataset = []
-    list_of_cub_anomperc_full_dataset = []
+        self.cubarray_process_index = None  # The index of the set in cubarray that is being processed.
 
-    list_full_dset_cuboid_frequencies = []
-    list_anom_gifs=[]
-    list_full_dset_dist = []
+        self.list_of_cub_words_full_dataset = []
+        self.list_of_cub_loss_full_dataset = []
+        self.list_of_cub_anom_gt_full_dataset = []
+        self.list_of_cub_anomperc_full_dataset = []
 
-    def __init__(self,model,data_store,data_test_h5=None,notest=False,model_store=None,test_loss_metric='dssim',use_dist_in_word=False,round_to=1,use_basis_dict=False):
+        self.list_full_dset_cuboid_frequencies = []
+        self.list_anom_gifs = []
+        self.list_full_dset_dist = []
 
         self.notest = notest
 
@@ -277,6 +280,7 @@ class TestDictionary:
         self.use_dist_in_word=use_dist_in_word
         self.round_to=round_to
 
+        self.n_channels = nc
         self.model_store = model_store
         self.image_store = os.path.join(model_store,'test_images')
 
@@ -308,8 +312,6 @@ class TestDictionary:
             self.vid = 1
 
         if(notest):
-
-            self.n_channels = 3
 
             self.list_of_cub_words_full_dataset = self.load_h5data('list_cub_words_full_dataset')
 
@@ -388,7 +390,7 @@ class TestDictionary:
 
     def create_surroundings(self,three_rows_cubarray,relevant_row_anom_gt,relevant_row_anompercentage,gif=False):
 
-        start = time.time()
+        # start = time.time()
         rows = three_rows_cubarray[0].shape[0]
         cols = three_rows_cubarray[0].shape[1]
 
@@ -458,20 +460,19 @@ class TestDictionary:
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k])
                 surroundings.append(three_rows_cubarray[surr_idx][j + 1, k + 1])
 
-                encoded = self.model_enc.predict(np.array(surroundings))
-
-                d = np.min(cdist(encoded,self.means),axis=1)
-
-                sublist_full_dataset_distances.append(d)
-
                 list_surrounding_cuboids_from_three_rows.append(np.array(surroundings))
 
-                if(self.use_basis_dict):
+                if(not gif):
+                    encoded = self.model_enc.predict(np.array(surroundings))
+                    d = np.min(cdist(encoded,self.means),axis=1)
+                    sublist_full_dataset_distances.append(d)
+
+                if(self.use_basis_dict and not gif):
                     recon = np.dot(self.basis_dict.transform(encoded[0:1]),self.basis_dict_comp)
                     self.list_of_dict_recon_full_dataset.append(np.linalg.norm(x=(encoded[0:1]-recon)))
 
-        end = time.time()
-        print (end-start)/60.0, " minutes"
+        # end = time.time()
+        # print (end-start)/60.0, " minutes"
         return np.array(list_surrounding_cuboids_from_three_rows), sublist_full_dataset_anom_gt, \
                sublist_full_dataset_dssim_loss, sublist_full_dataset_distances, sublist_full_dataset_anompercentage
 
@@ -647,15 +648,6 @@ class TestDictionary:
         tn_list = []
         fn_list = []
 
-        # if(max(array_to_th)>=1e3):
-        #
-        #     if(min(array_to_th)==0):
-        #         array_to_th = [x+1.0 for x in array_to_th]
-        #
-        #     lspace = np.logspace(math.log10(min(array_to_th)),math.log10(max(array_to_th)),1000)
-        # else:
-        #
-
         lspace = np.linspace(min(array_to_th), max(array_to_th), 5000)
         total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
 
@@ -758,6 +750,12 @@ class TestDictionary:
 
         score_dict = {'max_acc': float(max(accuracy_score_list)), 'max_f1': float(max(f1_score_list)),
                       'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list))}
+
+        return score_dict
+
+    def evaluate_prfa_dict_recon(self):
+
+        score_dict = self.evaluate_prfa(self.list_of_dict_recon_full_dataset,lt=False)
 
         return score_dict
 
@@ -1039,22 +1037,26 @@ class TestDictionary:
         next_set_from_cubarray = self.fetch_next_set_from_cubarray()
 
         while(next_set_from_cubarray):
-            surroundings_from_three_rows, sublist_full_dataset_anom_gt, _ , sublist_full_dataset_distances= \
-                self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],relevant_row_anom_gt=next_set_from_cubarray[1]
-                                         ,gif=True)
+            surroundings_from_three_rows, sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss, sublist_full_dataset_distances, \
+            sublist_full_dataset_anompercentage = self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],
+                                                                           relevant_row_anom_gt=next_set_from_cubarray[1],
+                                                                           relevant_row_anompercentage=next_set_from_cubarray[3],
+                                                                           gif=True)
 
             if(not any(sublist_full_dataset_anom_gt)):
                 next_set_from_cubarray = self.fetch_next_set_from_cubarray()
                 continue
             else:
-                surroundings_from_three_rows = surroundings_from_three_rows[np.array(sublist_full_dataset_anom_gt)==True]
-                predictions = self.predict_on_surroundings(surroundings_from_three_rows)
-                words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
+                if(np.random.rand()<0.1):
+                    surroundings_from_three_rows = surroundings_from_three_rows[np.array(sublist_full_dataset_anom_gt)==True]
+                    predictions = self.predict_on_surroundings(surroundings_from_three_rows)
+                    words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
 
-                self.make_gifs_from_surroundings(surroundings_from_three_rows,words_from_preds)
+                    self.make_gifs_from_surroundings(surroundings_from_three_rows,words_from_preds)
 
 
             next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
 
         return True
 
@@ -1129,6 +1131,87 @@ class TestDictionary:
         imageio.mimsave(name, images)
 
         return True
+
+    def feature_analysis_normvsanom(self):
+
+        self.vid=1 #Reset vid
+
+        full_list_feats_normal = []
+        full_list_feats_anomaly = []
+
+        while (self.load_data()):
+
+            feats_normal, feats_anomaly = self.create_feats_to_analyze_from_video()
+            full_list_feats_normal.extend(feats_normal)
+            full_list_feats_anomaly.extend(feats_anomaly)
+
+
+        full_list_feats_normal = np.array(full_list_feats_normal)
+        full_list_feats_anomaly = np.array(full_list_feats_anomaly)
+
+
+        pdf_name = os.path.join(self.model_store, 'features_kde_normvsanom.pdf')
+
+        if (os.path.exists(pdf_name)):
+            os.remove(pdf_name)
+
+        rows_plots = (full_list_feats_normal.shape[1] / 8)
+
+        with PdfPages(pdf_name) as pdf:
+
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
+            plt.suptitle('Distribution of each feature in the dataset. Green:Features of Normal Cuboids, Red: Features of Anomaly Cuboids', fontsize=30)
+
+            for i in range(0, full_list_feats_normal.shape[1]):
+                print "PROCESSING FEATURE:", i
+                ax[int(i / 8)][i % 8].set_title('feature: ' + str(i + 1), fontsize=20)
+                plt.setp(ax[int(i / 8)][i % 8].get_xticklabels(), visible=True)
+
+                sns.distplot(full_list_feats_normal[:, i], kde=True, rug=False, hist=True,
+                                 ax=ax[int(i / 8)][i % 8],color='green')
+
+                sns.distplot(full_list_feats_anomaly[:, i], kde=True, rug=False, hist=True,
+                             ax=ax[int(i / 8)][i % 8],color='red')
+
+            pdf.savefig()  # saves the current figure into a pdf page
+            plt.close()
+
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        return True
+
+    def create_feats_to_analyze_from_video(self):
+
+        list_feats_normal = []
+        list_feats_anomaly = []
+
+        next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+        while(next_set_from_cubarray):
+            surroundings_from_three_rows, sublist_full_dataset_anom_gt, sublist_full_dataset_dssim_loss, sublist_full_dataset_distances, \
+            sublist_full_dataset_anompercentage = self.create_surroundings(three_rows_cubarray=next_set_from_cubarray[0],
+                                                                           relevant_row_anom_gt=next_set_from_cubarray[1],
+                                                                           relevant_row_anompercentage=next_set_from_cubarray[3],
+                                                                           gif=True)
+
+            valid_cuboids = surroundings_from_three_rows[:,0]
+            predictions = self.model_enc.predict(valid_cuboids)
+
+            feats_normal = list(predictions[np.array(sublist_full_dataset_anom_gt)==False])
+            feats_anomaly = list(predictions[np.array(sublist_full_dataset_anom_gt)==True])
+
+            list_feats_normal.extend(feats_normal)
+            list_feats_anomaly.extend(feats_anomaly)
+
+            next_set_from_cubarray = self.fetch_next_set_from_cubarray()
+
+
+        return list_feats_normal, list_feats_anomaly
+
+    def __del__(self):
+        print ("Destructor called for TestDictionary")
+
 
 class Video_Stream_UCSD:
 
