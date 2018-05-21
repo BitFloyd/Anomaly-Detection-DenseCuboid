@@ -34,6 +34,7 @@ large = rdict['large']
 tlm = rdict['tlm']
 reverse = rdict['reverse']
 model_store = rdict['model_store']
+use_basis_dict = rdict['use_basis_dict']
 size = 24
 
 train_dset = h5py.File(os.path.join(train_folder, 'data_train.h5'), 'r')
@@ -140,8 +141,6 @@ data_h5_va = h5py.File(os.path.join(test_data_store,'data_test_video_anomgt.h5')
 data_h5_vp = h5py.File(os.path.join(test_data_store,'data_test_video_pixmap.h5'))
 data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5'))
 
-
-use_basis_dict = True
 
 tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,

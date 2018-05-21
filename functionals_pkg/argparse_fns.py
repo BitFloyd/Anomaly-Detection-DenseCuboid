@@ -17,6 +17,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     n_gpus = 1
     guill = False
+    use_basis_dict = True
 
     if (socket.gethostname() == 'puck'):
         print "############################################"
@@ -31,6 +32,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
             set_session(tf.Session(config=config))
 
         data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
+        use_basis_dict = False
 
     elif ('gpu' in socket.gethostname()):
         print "############################################"
@@ -175,6 +177,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     return_parse_dict['nc'] = nc
 
     return_parse_dict['reverse'] = False
+    return_parse_dict['use_basis_dict'] = use_basis_dict
 
     train_dset.close()
 

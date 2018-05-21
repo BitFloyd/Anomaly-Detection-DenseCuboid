@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_pkg/data_fns.py" afterPath="$PROJECT_DIR$/data_pkg/data_fns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/num_clusters_analysis.py" afterPath="$PROJECT_DIR$/num_clusters_analysis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_ac_effect_of_ncomp.py" afterPath="$PROJECT_DIR$/test_ac_effect_of_ncomp.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_algorithm.py" afterPath="$PROJECT_DIR$/test_algorithm.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_autoencoder.py" afterPath="$PROJECT_DIR$/test_autoencoder.py" />
     </list>
@@ -36,8 +32,8 @@
       <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1194">
-              <caret line="178" column="0" lean-forward="true" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+            <state relative-caret-position="744">
+              <caret line="144" column="0" lean-forward="false" selection-start-line="144" selection-start-column="0" selection-end-line="144" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -46,79 +42,20 @@
       <file leaf-file-name="test_algorithm.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_algorithm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="726">
-              <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
+            <state relative-caret-position="132">
+              <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="40" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+      <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="1176" column="0" lean-forward="true" selection-start-line="1176" selection-start-column="0" selection-end-line="1176" selection-end-column="0" />
+            <state relative-caret-position="-2154">
+              <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
               <folding>
-                <element signature="e#642#8583#0" expanded="false" />
-                <element signature="e#1569#2271#0" expanded="false" />
-                <element signature="e#2324#2536#0" expanded="false" />
-                <element signature="e#2579#2729#0" expanded="false" />
-                <element signature="e#2784#3203#0" expanded="false" />
-                <element signature="e#3270#5934#0" expanded="false" />
-                <element signature="e#6014#6234#0" expanded="false" />
-                <element signature="e#6303#6543#0" expanded="false" />
-                <element signature="e#6610#6818#0" expanded="false" />
-                <element signature="e#6866#7107#0" expanded="false" />
-                <element signature="e#7156#7681#0" expanded="false" />
-                <element signature="e#7746#8503#0" expanded="false" />
-                <element signature="e#8612#48207#0" expanded="false" />
-                <element signature="e#8793#12313#0" expanded="false" />
-                <element signature="e#12349#13468#0" expanded="false" />
-                <element signature="e#13519#13730#0" expanded="false" />
-                <element signature="e#13772#13920#0" expanded="false" />
-                <element signature="e#13974#14804#0" expanded="false" />
-                <element signature="e#14929#19167#0" expanded="false" />
-                <element signature="e#19246#19465#0" expanded="false" />
-                <element signature="e#19564#20156#0" expanded="false" />
-                <element signature="e#20222#20425#0" expanded="false" />
-                <element signature="e#20464#21305#0" expanded="false" />
-                <element signature="e#21345#22811#0" expanded="false" />
-                <element signature="e#22891#24391#0" expanded="false" />
-                <element signature="e#24456#25832#0" expanded="false" />
-                <element signature="e#25995#31128#0" expanded="false" />
-                <element signature="e#26975#27741#0" expanded="false" />
-                <element signature="e#31188#31399#0" expanded="false" />
-                <element signature="e#31460#34355#0" expanded="false" />
-                <element signature="e#34458#36336#0" expanded="false" />
-                <element signature="e#36416#36601#0" expanded="false" />
-                <element signature="e#36670#36856#0" expanded="false" />
-                <element signature="e#36967#37773#0" expanded="false" />
-                <element signature="e#37884#38214#0" expanded="false" />
-                <element signature="e#38297#38873#0" expanded="false" />
-                <element signature="e#38945#39871#0" expanded="false" />
-                <element signature="e#39915#40182#0" expanded="false" />
-                <element signature="e#40235#41687#0" expanded="false" />
-                <element signature="e#41787#42536#0" expanded="false" />
-                <element signature="e#42595#43504#0" expanded="false" />
-                <element signature="e#43551#44068#0" expanded="false" />
-                <element signature="e#44122#45934#0" expanded="false" />
-                <element signature="e#45995#47304#0" expanded="false" />
-                <element signature="e#47418#48128#0" expanded="false" />
-                <element signature="e#48161#48207#0" expanded="false" />
-                <element signature="e#48240#51527#0" expanded="false" />
-                <element signature="e#51560#56074#0" expanded="false" />
-                <element signature="e#56149#56638#0" expanded="false" />
-                <element signature="e#56814#64336#0" expanded="false" />
-                <element signature="e#64393#64556#0" expanded="false" />
-                <element signature="e#64657#68164#0" expanded="false" />
-                <element signature="e#68272#69437#0" expanded="false" />
-                <element signature="e#69525#70470#0" expanded="false" />
-                <element signature="e#70558#71269#0" expanded="false" />
-                <element signature="e#71380#71756#0" expanded="false" />
-                <element signature="e#71864#73736#0" expanded="false" />
-                <element signature="e#73807#75053#0" expanded="false" />
-                <element signature="e#75147#75686#0" expanded="false" />
-                <element signature="e#75721#75754#0" expanded="false" />
+                <element signature="e#0#13#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -225,11 +162,11 @@
         <option value="$PROJECT_DIR$/test_ac_effect_of_ncomp_main.py" />
         <option value="$PROJECT_DIR$/num_clusters_analysis.py" />
         <option value="$PROJECT_DIR$/model_pkg/models.py" />
-        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
         <option value="$PROJECT_DIR$/test_ac_effect_of_ncomp.py" />
-        <option value="$PROJECT_DIR$/test_autoencoder.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
+        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
         <option value="$PROJECT_DIR$/test_algorithm.py" />
+        <option value="$PROJECT_DIR$/test_autoencoder.py" />
       </list>
     </option>
   </component>
@@ -780,7 +717,14 @@
       <option name="project" value="LOCAL" />
       <updated>1526674353777</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="fix reverse to be False">
+      <created>1526927479254</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1526927479254</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -803,7 +747,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.598369" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25989583" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.159375" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15125" sideWeight="0.50743496" order="2" side_tool="true" content_ui="tabs" />
@@ -869,7 +813,8 @@
     <MESSAGE value="multiple gpu support added." />
     <MESSAGE value="fixed memory leak problem. Added feature analysis on normal and anomalous cuboids." />
     <MESSAGE value="removed cuboid distance pdf creation from full_run" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed cuboid distance pdf creation from full_run" />
+    <MESSAGE value="fix reverse to be False" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix reverse to be False" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1105,17 +1050,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_ac_effect_of_ncomp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="43" column="31" lean-forward="false" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
-          <folding>
-            <element signature="e#480#1249#0" expanded="false" />
-            <element signature="e#1288#3465#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/num_clusters_analysis.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="184">
@@ -1123,24 +1057,6 @@
           <folding>
             <element signature="e#499#3212#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="708">
-          <caret line="158" column="21" lean-forward="true" selection-start-line="158" selection-start-column="21" selection-end-line="158" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1213,10 +1129,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test_ac_effect_of_ncomp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="129" column="34" lean-forward="true" selection-start-line="129" selection-start-column="34" selection-end-line="129" selection-end-column="34" />
+          <folding>
+            <element signature="e#480#1249#0" expanded="false" />
+            <element signature="e#1288#3465#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2154">
+          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_algorithm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1194">
-          <caret line="178" column="0" lean-forward="true" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+        <state relative-caret-position="744">
+          <caret line="144" column="0" lean-forward="false" selection-start-line="144" selection-start-column="0" selection-end-line="144" selection-end-column="0" />
           <folding />
         </state>
       </provider>
