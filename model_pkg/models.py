@@ -34,6 +34,7 @@ from keras.objectives import *
 import h5py
 from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.cm as cm
+from functionals_pkg import save_objects as so
 
 
 class CustomClusterLayer(Layer):
@@ -548,7 +549,12 @@ class Super_autoencoder:
         self.batch_size = batch_size
         self.model_store = model_store
         self.loss = loss
-        self.n_clusters = n_clusters
+
+        if(os.path.exists(os.path.join(self.model_store,'nclusters_optimized.pkl')) and notrain):
+            self.n_clusters = so.load_obj(os.path.join(self.model_store,'nclusters_optimized.pkl'))
+        else:
+            self.n_clusters = n_clusters
+
         self.size_y = size_y
         self.size_x = size_x
         self.lr_model = lr_model
@@ -1877,6 +1883,8 @@ class Super_autoencoder:
         print "#########################################################"
         print "CHANGING THE NUMBER OF CLUSTERS TO: ", self.n_clusters
         print "#########################################################"
+
+        so.save_obj(self.n_clusters,os.path.join(self.model_store,'nclusters_optimized.pkl'))
 
         return True
 
