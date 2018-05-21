@@ -72,6 +72,7 @@ else:
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 
+ae_model.perform_num_clusters_analysis(n_chapters=n_chapters)
 ae_model.perform_kmeans(n_chapters=n_chapters,partial=True)
 ae_model.perform_dict_learn(n_chapters=n_chapters,guill=guill)
 ae_model.generate_loss_graph('loss_graph.png')
@@ -129,7 +130,7 @@ else:
     ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
-                                            reverse=False, data_folder=train_folder,dat_h5=None,large=large)
+                                            reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
     ae_model.set_cl_loss(0.0)
 
@@ -157,22 +158,6 @@ print "############################"
 print "MAKE LIST OF FULL CUBOID DATASET FREQUENCIES"
 print "############################"
 tclass.make_list_full_dset_cuboid_frequencies()
-
-print "############################"
-print "MAKE PRF CURVE FRQ"
-print "############################"
-tclass.make_p_r_f_curve_word_frequency('prf_curve_udiw_'+str(udiw)+'.png',
-                                       'tpfp_curve_udiw_'+str(udiw)+'.png',
-                                       'prf_deets_udiw_'+str(udiw)+'.txt',
-                                       'word_frequency')
-
-print "############################"
-print "MAKE PRF CURVE LOSS"
-print "############################"
-tclass.make_p_r_f_curve_loss_metric('prf_curve_'+tlm+'.png',
-                                    'tpfp_curve_'+tlm+'.png',
-                                    'prf_deets_'+tlm+'.txt',
-                                    tlm+' loss')
 
 print "############################"
 print "MAKE FREQUENCY SAMPLES PLOT"

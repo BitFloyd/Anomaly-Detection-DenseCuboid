@@ -648,7 +648,7 @@ class TestDictionary:
         tn_list = []
         fn_list = []
 
-        lspace = np.linspace(min(array_to_th), max(array_to_th), 5000)
+        lspace = np.linspace(min(array_to_th), max(array_to_th), 3000)
         total_num_tp = np.sum(self.list_of_cub_anom_gt_full_dataset)
 
         print "#################################################################################"
@@ -753,9 +753,10 @@ class TestDictionary:
 
         return score_dict
 
-    def evaluate_prfa_dict_recon(self):
+    def evaluate_prfa_dict_recon(self,comps=10):
 
         score_dict = self.evaluate_prfa(self.list_of_dict_recon_full_dataset,lt=False)
+        self.plot_basis_dict_recon_measure_of_samples('basis_dict_recon_plot_samples_'+str(comps)+'.png')
 
         return score_dict
 
@@ -818,43 +819,9 @@ class TestDictionary:
 
         return score_dict
 
-    def make_p_r_f_curve_word_frequency(self,prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets',xlabel='metric'):
+    def make_comparitive_plot(self,graph_name,array_to_consider,metric_name=None,lt=False):
 
-        self.make_p_r_f_a_curve(self.list_full_dset_cuboid_frequencies,True,
-                                prfa_graph_name,tp_fp_graph_name,deets_filename,xlabel)
-
-        return True
-
-    def make_p_r_f_curve_loss_metric(self,prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets',xlabel='metric'):
-
-        self.make_p_r_f_a_curve(self.list_of_cub_loss_full_dataset,False,
-                                prfa_graph_name,tp_fp_graph_name,deets_filename,xlabel)
-        return True
-
-    def make_prf_curve_dist_metric(self,dmeasure='mean',prfa_graph_name='prf.png',tp_fp_graph_name='tpfp.png',deets_filename='prf_deets'):
-
-        if(dmeasure=='mean'):
-            dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1)
-
-        elif(dmeasure=='std'):
-            dmeasure_array = np.std(np.array(self.list_full_dset_dist),axis=1)
-
-        elif(dmeasure=='meanxloss'):
-            dmeasure_array = np.mean(np.array(self.list_full_dset_dist),axis=1) * np.array(self.list_of_cub_loss_full_dataset)
-
-        elif(dmeasure=='stdxloss'):
-            dmeasure_array = np.std(np.array(self.list_full_dset_dist), axis=1) * np.array(self.list_of_cub_loss_full_dataset)
-
-        else:
-            print "ERROR: DMEASURE MUST BE = mean or std"
-            return False
-
-        self.make_p_r_f_a_curve(dmeasure_array,False,
-                                prfa_graph_name, tp_fp_graph_name, deets_filename,dmeasure)
-
-        return True
-
-    def make_comparitive_plot(self,graph_name,array_to_consider,metric_name=None):
+        aclist = array_to_consider.tolist()
 
         y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
 
@@ -869,84 +836,59 @@ class TestDictionary:
 
         colors = ['green', 'red']
 
+        f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(80, 80))
 
-        if(metric_name=='LowFreq'):
-            f, ax = plt.subplots(1, 2, sharex='col', sharey='row', figsize=(80, 80))
-            ax1 = ax[0]
-            ax2 = ax[1]
+        ax1 = ax[0,0]
+        ax2 = ax[0,1]
+        ax3 = ax[1,1]
 
-            ac = array_to_consider[array_to_consider<=20]
-            yt = y_true_arr[array_to_consider<=20]
+        im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
+        ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+        ax1.set_ylabel(metric_name)
+        ax1.set_xlabel('Cuboid index')
+        ax1.grid(True)
+        cb1 = f.colorbar(im1,ax=ax1)
+        loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
+        cb1.set_ticks(loc)
+        cb1.set_ticklabels(['normal','anomaly'])
 
-            im1 = ax1.scatter(range(0, len(ac)), ac, c=yt,cmap=ListedColormap(colors), alpha=0.5)
-            ax1.set_title('ANOMS:Red, N-ANOMS:Green')
-            ax1.set_ylabel(metric_name)
-            ax1.set_xlabel('Cuboid index')
-            ax1.grid(True)
-            cb1 = f.colorbar(im1, ax=ax1)
-            loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
-            cb1.set_ticks(loc)
-            cb1.set_ticklabels(['normal', 'anomaly'])
+        arr_anoms = array_to_consider[y_true_arr==1]
 
-            arr_anoms = ac[yt == 1]
+        im2 = ax2.scatter(range(0,len(arr_anoms)),arr_anoms,c='red',alpha=0.5)
+        ax2.set_title('ANOMS:Red')
+        ax2.set_ylabel(metric_name)
+        ax2.set_xlabel('Cuboid index')
+        ax2.grid(True)
 
-            im2 = ax2.scatter(range(0, len(arr_anoms)), arr_anoms, c='red', alpha=0.5)
-            ax2.set_title('ANOMS:Red')
-            ax2.set_ylabel(metric_name)
-            ax2.set_xlabel('Cuboid index')
-            ax2.grid(True)
+        arr_perc = y_perc_arr[y_true_arr==1]
 
+        im3 = ax3.scatter(range(0, len(arr_perc)), arr_perc, c='blue', alpha=0.5)
+        ax3.set_title('ANOMPERC')
+        ax3.set_ylabel('percent of anomaly pixels in cuboid')
+        ax3.set_xlabel('Cuboid index')
+        ax3.grid(True)
 
-        else:
-            f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(80, 80))
-
-            ax1 = ax[0,0]
-            ax2 = ax[0,1]
-            ax3 = ax[1,1]
-
-            im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
-            ax1.set_title('ANOMS:Red, N-ANOMS:Green')
-            ax1.set_ylabel(metric_name)
-            ax1.set_xlabel('Cuboid index')
-            ax1.grid(True)
-            cb1 = f.colorbar(im1,ax=ax1)
-            loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
-            cb1.set_ticks(loc)
-            cb1.set_ticklabels(['normal','anomaly'])
-
-            arr_anoms = array_to_consider[y_true_arr==1]
-
-            im2 = ax2.scatter(range(0,len(arr_anoms)),arr_anoms,c='red',alpha=0.5)
-            ax2.set_title('ANOMS:Red')
-            ax2.set_ylabel(metric_name)
-            ax2.set_xlabel('Cuboid index')
-            ax2.grid(True)
-
-            arr_perc = y_perc_arr[y_true_arr==1]
-
-            im3 = ax3.scatter(range(0, len(arr_perc)), arr_perc, c='blue', alpha=0.5)
-            ax3.set_title('ANOMPERC')
-            ax3.set_ylabel('percent of anomaly pixels in cuboid')
-            ax3.set_xlabel('Cuboid index')
-            ax3.grid(True)
 
         plt.savefig(os.path.join(self.image_store, graph_name), bbox_inches='tight')
         plt.close()
+
+        score_dict = self.evaluate_prfa(array_to_th=aclist)
+
+        self.write_prf_details_to_file(filename='prf_details.txt',score_dict=score_dict,metric_name=metric_name)
 
         return True
 
     def plot_frequencies_of_samples(self,anom_frequency_graph_name):
 
         frequency_array = np.array(self.list_full_dset_cuboid_frequencies)
-        self.make_comparitive_plot(anom_frequency_graph_name,frequency_array,'Frequency')
-        self.make_comparitive_plot('low_'+anom_frequency_graph_name, frequency_array, 'LowFreq')
+        self.make_comparitive_plot(anom_frequency_graph_name,frequency_array,'Frequency',lt=True)
 
         return True
 
     def plot_loss_of_samples(self,recon_loss_graph_name):
 
         loss_array = np.array(self.list_of_cub_loss_full_dataset)
-        self.make_comparitive_plot(recon_loss_graph_name,loss_array,self.test_loss_metric+'-loss')
+        self.make_comparitive_plot(recon_loss_graph_name,loss_array,self.test_loss_metric+'-loss',lt=False)
 
         return True
 
@@ -965,10 +907,10 @@ class TestDictionary:
 
             dmeasure_array = np.array(self.list_full_dset_dist)[:, 0] * np.array(self.list_of_cub_loss_full_dataset)
         else:
-            print "ERROR: DMEASURE MUST BE = mean or std"
+            print "ERROR: DMEASURE MUST BE = one of [mean, meanxloss, distance, distancexloss]"
             return False
 
-        self.make_comparitive_plot(distance_measure_samples_graph_name,dmeasure_array,metric_name=dmeasure)
+        self.make_comparitive_plot(distance_measure_samples_graph_name,dmeasure_array,metric_name=dmeasure,lt=False)
 
         return True
 
@@ -976,7 +918,7 @@ class TestDictionary:
 
         if(self.use_basis_dict):
             self.make_comparitive_plot(basis_dict_recon_measure_samples_graph_name, np.array(self.list_of_dict_recon_full_dataset),
-                                       metric_name='Basis_Dict Reconstruction Error')
+                                       metric_name='Basis_Dict Reconstruction Error',lt=False)
         else:
             print "use_basis_dict is False"
 
@@ -1208,6 +1150,26 @@ class TestDictionary:
 
 
         return list_feats_normal, list_feats_anomaly
+
+    def write_prf_details_to_file(self,filename='prf_details.txt',score_dict=None,metric_name = None):
+
+        s_acc = 'max_acc:' + str(format(score_dict['max_acc'], '.2f'))
+        s_f1 = 'max_f1:' + str(format(score_dict['max_f1'], '.2f'))
+        s_pr = 'max_pr:' + str(format(score_dict['max_pre'], '.2f'))
+        s_re = 'max_re:' + str(format(score_dict['max_rec'], '.2f'))
+
+        f = open(os.path.join(self.image_store, filename), 'a+')
+        f.write('--------------------------------' + '\n')
+        f.write(metric_name + '\n')
+        f.write('--------------------------------' + '\n')
+        f.write(s_acc +  '\n')
+        f.write(s_f1  +  '\n')
+        f.write(s_pr  +  '\n')
+        f.write(s_re  +  '\n')
+        f.write('--------------------------------' + '\n')
+        f.close()
+
+        return True
 
     def __del__(self):
         print ("Destructor called for TestDictionary")

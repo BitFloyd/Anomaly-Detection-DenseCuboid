@@ -20,7 +20,9 @@ def kmeans_and_update_pdf(n_clusters=10,pdf=None):
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(30, 40))
 
     ax.set_xlim([-1, 1])
-    ax.set_ylim([0, len(list_feats[select_indexes]) + (n_clusters + 1) * 10])
+    ax.set_ylim([0, int(0.01 * len(list_feats)) + (n_clusters + 1) * 10])
+
+    select_indexes = np.random.randint(0, len(list_feats), int(0.01 * len(list_feats)))
 
     clusterer = MiniBatchKMeans(n_clusters=n_clusters, verbose=0, batch_size=256,
                                     compute_labels=False, tol=1e-12, max_no_improvement=200 * 200, random_state=10)
@@ -131,14 +133,14 @@ list_feats = np.array(list_feats)
 print "################################"
 print "FEATURES_SHAPE:", list_feats.shape
 print "################################"
-range_n_clusters = range(5,205,5)
+range_n_clusters = range(5, 31)
+range_n_clusters.extend((range(35, 105, 5)))
+
 print "################################"
 print "RANGE:", range_n_clusters
 print "################################"
 
 pdf_name = os.path.join(model_store, 'silhouette_analysis.pdf')
-
-select_indexes = np.random.randint(0,len(list_feats),int(0.01*len(list_feats)))
 
 if(os.path.exists(pdf_name)):
     os.remove(pdf_name)
@@ -153,7 +155,7 @@ with PdfPages(pdf_name) as pdf:
 
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20,20))
 
-    sns.regplot(x=np.array(range_n_clusters), y=np.array(silhouette_avg_score_list), ax=ax,fit_reg=False,color='r')
+    sns.regplot(x=np.array(range_n_clusters), y=np.array(silhouette_avg_score_list), ax=ax,fit_reg=True,color='r')
     ax.set_xlabel('N_clusters')
     ax.set_ylabel('Average silhouette score')
 

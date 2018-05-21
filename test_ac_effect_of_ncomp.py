@@ -27,14 +27,14 @@ def save_pdf(index=0):
 
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(40,40))
 
-            plt.suptitle(list_titles[indx])
+            plt.suptitle(list_titles[j])
             print "J = ", j
             print "LIST_COMPONENTS = " ,list_components[0:index+1]
             print "SCORE_DICT_RUNNING = ", score_dict_running[j]
 
             sns.regplot(x=np.array(np.log(list_components[0:index + 1])), y=np.array(score_dict_running[j]), ax=ax)
-            ax.set_xlabel('Log Scale: N_components')
-            ax.set_ylabel('Score')
+            ax.set_xlabel('Log Scale: N_components',fontsize=30)
+            ax.set_ylabel('Score',fontsize=30)
 
             pdf.savefig()  # saves the current figure into a pdf page
             plt.close()
@@ -65,7 +65,7 @@ def run_and_update(comps = 10):
         ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
-                                            reverse=False, data_folder=train_folder,dat_h5=None,large=large)
+                                            reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
         ae_model.perform_dict_learn(n_chapters=n_chapters,guill=guill,n_comp=comps)
         ae_model.set_cl_loss(0.0)
@@ -82,7 +82,7 @@ def run_and_update(comps = 10):
     print "############################"
     tclass.process_data()
 
-    score_dict = tclass.evaluate_prfa_dict_recon()
+    score_dict = tclass.evaluate_prfa_dict_recon(comps=comps)
 
     for j in score_dict_running.keys():
         score_dict_running[j].append(score_dict[j])
@@ -142,7 +142,8 @@ print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
 pdf_name = os.path.join(model_store,'effect_of_n_components.pdf')
 
-list_titles = ['Maximum accuracy score', 'Maximum F1 score', 'Maximum Precision Score', 'Maximum Recall score']
+
+list_titles = {'max_acc':'Maximum accuracy score','max_f1':'Maximum F1 score','max_pre':'Maximum Precision Score','max_rec':'Maximum Recall score'}
 
 score_dict_running = {'max_acc':[],'max_f1':[],'max_pre':[],'max_rec':[]}
 

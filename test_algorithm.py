@@ -41,7 +41,7 @@ print "################################"
 print "START TESTING"
 print "################################"
 
-notest = False
+notest = True
 udiw = False
 
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -55,10 +55,9 @@ else:
     ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
-                                            reverse=False, data_folder=train_folder,dat_h5=None,large=large)
+                                            reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
     ae_model.set_cl_loss(0.0)
-    ae_model.perform_feature_space_analysis()
 
 #Get Test class
 data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
@@ -75,9 +74,31 @@ tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h
 
 
 print "############################"
-print "UPDATING DICT FROM DATA"
+print "MAKE FREQUENCY SAMPLES PLOT"
 print "############################"
-tclass.feature_analysis_normvsanom()
+tclass.plot_frequencies_of_samples('word_frequency_plot_udiw'+str(udiw)+'.png')
+
+print "############################"
+print "MAKE LOSS SAMPLES PLOT"
+print "############################"
+tclass.plot_loss_of_samples('loss_'+tlm+'_samples_plot.png')
+
+
+if(use_basis_dict):
+
+    print "############################"
+    print "MAKE BASIS_DICT_RECON SAMPLES PLOT"
+    print "############################"
+    tclass.plot_basis_dict_recon_measure_of_samples('basis_dict_recon_error_samples_plot.png')
+
+print "############################"
+print "MAKE DISTANCE METRIC PLOT"
+print "############################"
+tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
+tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
+tclass.plot_distance_measure_of_samples('distance_target_samples_plot.png','distance')
+tclass.plot_distance_measure_of_samples('distancexloss_'+tlm+'_samples_plot.png','distancexloss')
+
 
 data_h5_vc.close()
 data_h5_va.close()

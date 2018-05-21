@@ -1,6 +1,7 @@
 import socket
 import os
 import h5py
+import tensorflow as tf
 
 def getopts(argv):
     opts = {}  # Empty dictionary to store key-value pairs.
@@ -157,17 +158,6 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     else:
         tlm = 'dssim'
 
-    if ('-rev' in metric.keys()):
-
-        reverse = bool(int(metric['-rev']))
-        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-        print "REVERSE? :", reverse
-        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-        suffix += '_rev_' + str(reverse)
-
-    else:
-        reverse = False
-
     suffix += '_large_' + str(large)
     suffix += '_ntrain_' + str(ntrain)
     suffix += '_lamda_' + str(lamda)
@@ -183,7 +173,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     return_parse_dict['nic']=nic
     return_parse_dict['n_chapters']=n_chapters
     return_parse_dict['nc'] = nc
-    return_parse_dict['reverse']=reverse
+
+    return_parse_dict['reverse'] = False
 
     train_dset.close()
 
