@@ -10,8 +10,8 @@ from sklearn.metrics import accuracy_score,confusion_matrix
 from collections import deque
 from matplotlib.colors import ListedColormap
 from matplotlib.backends.backend_pdf import PdfPages
+from functionals_pkg import save_objects as so
 import seaborn as sns
-sns.set(color_codes=True)
 import copy
 import sys
 import pickle
@@ -19,6 +19,7 @@ import math
 import imageio
 import h5py
 import time
+sns.set(color_codes=True)
 
 
 list_anom_percentage = []
@@ -1120,6 +1121,91 @@ class TestDictionary:
             plt.close()
 
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        return True
+
+    def gmm_analysis(self):
+
+        self.vid=1 #Reset vid
+        self.gm = so.load_obj(os.path.join(self.model_store,'gmm.pkl'))
+
+        full_list_scores_normal = []
+        full_list_scores_anomaly = []
+
+        while (self.load_data()):
+
+            feats_normal, feats_anomaly = self.create_feats_to_analyze_from_video()
+            full_list_scores_normal.extend(self.gm.score_samples(np.array(feats_normal)).tolist())
+            full_list_scores_anomaly.extend(self.gm.score_samples(np.array(feats_anomaly)).tolist())
+
+
+        full_list_scores_normal = np.sort(np.array(full_list_scores_normal))
+        full_list_scores_anomaly = np.sort(np.array(full_list_scores_anomaly))
+
+
+        pdf_name = os.path.join(self.image_store, 'gmm_analysis.pdf')
+
+        if (os.path.exists(pdf_name)):
+            os.remove(pdf_name)
+
+
+        with PdfPages(pdf_name) as pdf:
+
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(40, 40), sharex='col', sharey='row')
+            plt.suptitle('Distribution of log-probability scores from the dataset. Green:Scores of Normal Cuboids, Red:Scores of Anomaly Cuboids', fontsize=30)
+            plt.setp(ax.get_xticklabels(), visible=True)
+            sns.distplot(full_list_scores_normal, kde=True, rug=False, hist=True, ax=ax,color='green')
+            sns.distplot(full_list_scores_anomaly, kde=True, rug=False, hist=True, ax=ax,color='red')
+            pdf.savefig()  # saves the current figure into a pdf page
+            plt.close()
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+            list_all_scores = []
+            list_all_scores.extend(full_list_scores_normal.tolist())
+            list_all_scores.extend(full_list_scores_anomaly.tolist())
+            list_all_scores = np.array(list_all_scores)
+
+            list_all_gt = []
+            list_all_gt.extend(np.zeros(len(full_list_scores_normal)).tolist())
+            list_all_gt.extend(np.zeros(len(full_list_scores_anomaly)).tolist())
+            list_all_gt = np.array(list_all_gt)
+
+            args_arr_sort = np.argsort(list_all_scores)
+
+
+            y_true_arr = list_all_gt[args_arr_sort]
+            list_all_scores = list_all_scores[args_arr_sort]
+
+            colors = ['green', 'red']
+
+            fig, ax = plt.subplots(ncols=2, nrows = 1, figsize=(40,40), sharey='row')
+
+            ax1 = ax[0]
+            ax2 = ax[1]
+
+            plt.suptitle('Log probability Score plots of anomaly vs normal cuboids',fontsize=30)
+
+            im1 = ax1.scatter(range(0, len(list_all_scores)), list_all_scores, c=y_true_arr,
+                              cmap=ListedColormap(colors), alpha=0.5)
+            ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+            ax1.set_ylabel('Log-probability score')
+            ax1.set_xlabel('Cuboid index')
+            ax1.grid(True)
+            cb1 = fig.colorbar(im1, ax=ax1)
+            loc = np.arange(0, max(y_true_arr), max(y_true_arr) / float(len(colors)))
+            cb1.set_ticks(loc)
+            cb1.set_ticklabels(['normal', 'anomaly'])
+
+            arr_anoms = list_all_scores[y_true_arr == 1]
+
+            im2 = ax2.scatter(range(0, len(arr_anoms)), arr_anoms, c='red', alpha=0.5)
+            ax2.set_title('ANOMS:Red')
+            ax2.set_ylabel('Log-probability score')
+            ax2.set_xlabel('Cuboid index')
+            ax2.grid(True)
+            pdf.savefig()  # saves the current figure into a pdf page
+            plt.close()
 
         return True
 

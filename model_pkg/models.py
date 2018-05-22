@@ -27,14 +27,16 @@ import time
 from scipy.spatial.distance import cdist
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler,Normalizer
-import seaborn as sns
-sns.set(color_codes=True)
 import keras.backend as K
 from keras.objectives import *
 import h5py
 from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.cm as cm
 from functionals_pkg import save_objects as so
+from sklearn.mixture import GaussianMixture
+import seaborn as sns
+sns.set(color_codes=True)
+
 
 
 class CustomClusterLayer(Layer):
@@ -1290,9 +1292,47 @@ class Super_autoencoder:
         if(os.path.exists(os.path.join(self.model_store,'basis_dict.pkl'))):
             os.remove(os.path.join(self.model_store,'basis_dict.pkl'))
 
-        pickle.dump(self.dict, open(os.path.join(self.model_store,'basis_dict.pkl'), 'wb'))
+        so.save_obj(self.dict,os.path.join(self.model_store,'basis_dict.pkl'))
 
         return True
+
+    def perform_gmm_training(self,n_chapters=10,guill=False,n_comp=-1):
+
+
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, n_chapters):
+            f_arr = self.set_feats(id)
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        self.features_h5.close()
+
+        list_feats = shuffle(np.array(list_feats))
+
+        if(n_comp == -1):
+            n_comp = self.n_clusters
+
+        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100)
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "START GMM FITTING"
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        start = time.time()
+        self.gm.fit(list_feats)
+        end = time.time()
+
+        print "TIME TAKEN:", (end - start) / 3600.0, "HOURS"
+
+        if (os.path.exists(os.path.join(self.model_store, 'gmm.pkl'))):
+            os.remove(os.path.join(self.model_store, 'gmm.pkl'))
+
+        so.save_obj(self.gm,os.path.join(self.model_store, 'gmm.pkl'))
+
+        return  True
 
     def get_assigns(self, means, feats):
 
