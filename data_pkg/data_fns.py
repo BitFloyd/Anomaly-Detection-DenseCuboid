@@ -820,6 +820,65 @@ class TestDictionary:
 
         return score_dict
 
+    def evaluate_prfa_on_specific(self,array_to_th,gt_array,lt=False):
+
+        precision_score_list = []
+        recall_score_list = []
+        f1_score_list = []
+        accuracy_score_list = []
+
+        lspace = np.linspace(min(array_to_th), max(array_to_th), 2500)
+        total_num_tp = np.sum(gt_array)
+
+        print "#################################################################################"
+        print "TOTAL NUMBER OF TRUE POSITIVES:" , total_num_tp
+        print "TOTAL NUMBER OF SAMPLES TO BE TESTED:",len(gt_array)
+        print "RATIO:",total_num_tp/(len(gt_array)+0.0)
+        print "ACC WHEN ALL 0: ", (len(gt_array) - total_num_tp)/(len(gt_array)+0.0) * 100
+        print "#################################################################################"
+
+
+        for i in tqdm(lspace):
+
+            y_true = gt_array
+
+            if(lt):
+                y_pred = (np.array(array_to_th)<=i)
+            else:
+                y_pred = (np.array(array_to_th)>=i)
+
+
+            precision_score_list.append(precision_score(y_true,y_pred)*100)
+            recall_score_list.append(recall_score(y_true,y_pred)*100)
+            f1_score_list.append(f1_score(y_true,y_pred)*100)
+            accuracy_score_list.append(accuracy_score(y_true,y_pred)*100)
+
+
+        print "##########################################################################"
+        print "MAX ACCURACY:",max(accuracy_score_list)
+        print "THRESHOLD:",lspace[accuracy_score_list.index(max(accuracy_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX PRECISION:",max(precision_score_list)
+        print "THRESHOLD:",lspace[precision_score_list.index(max(precision_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX RECALL:", max(recall_score_list)
+        print "THRESHOLD:", lspace[recall_score_list.index(max(recall_score_list))]
+        print "##########################################################################"
+
+        print "##########################################################################"
+        print "MAX F1:", max(f1_score_list)
+        print "THRESHOLD:", lspace[f1_score_list.index(max(f1_score_list))]
+        print "##########################################################################"
+
+        score_dict = {'max_acc': float(max(accuracy_score_list)), 'max_f1': float(max(f1_score_list)),
+                      'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list))}
+
+        return score_dict
+
     def make_comparitive_plot(self,graph_name,array_to_consider,metric_name=None,lt=False):
 
         aclist = array_to_consider.tolist()
@@ -1155,57 +1214,58 @@ class TestDictionary:
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(40, 40), sharex='col', sharey='row')
             plt.suptitle('Distribution of log-probability scores from the dataset. Green:Scores of Normal Cuboids, Red:Scores of Anomaly Cuboids', fontsize=30)
             plt.setp(ax.get_xticklabels(), visible=True)
-            sns.distplot(full_list_scores_normal, kde=True, rug=False, hist=True, ax=ax,color='green')
-            sns.distplot(full_list_scores_anomaly, kde=True, rug=False, hist=True, ax=ax,color='red')
+            sns.distplot(full_list_scores_normal, kde=False, rug=False, hist=True, ax=ax,color='green')
+            sns.distplot(full_list_scores_anomaly, kde=False, rug=False, hist=True, ax=ax,color='red')
             pdf.savefig()  # saves the current figure into a pdf page
             plt.close()
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 
-            list_all_scores = []
-            list_all_scores.extend(full_list_scores_normal.tolist())
-            list_all_scores.extend(full_list_scores_anomaly.tolist())
-            list_all_scores = np.array(list_all_scores)
+        list_all_scores = []
+        list_all_scores.extend(full_list_scores_normal.tolist())
+        list_all_scores.extend(full_list_scores_anomaly.tolist())
+        list_all_scores = np.array(list_all_scores)
 
-            list_all_gt = []
-            list_all_gt.extend(np.zeros(len(full_list_scores_normal)).tolist())
-            list_all_gt.extend(np.zeros(len(full_list_scores_anomaly)).tolist())
-            list_all_gt = np.array(list_all_gt)
+        list_all_gt = []
+        list_all_gt.extend(np.zeros(len(full_list_scores_normal)).tolist())
+        list_all_gt.extend(np.ones(len(full_list_scores_anomaly)).tolist())
+        list_all_gt = np.array(list_all_gt)
 
-            args_arr_sort = np.argsort(list_all_scores)
+        args_arr_sort = np.argsort(-list_all_scores)
 
+        y_true_arr = list_all_gt[args_arr_sort]
+        list_all_scores = list_all_scores[args_arr_sort]
 
-            y_true_arr = list_all_gt[args_arr_sort]
-            list_all_scores = list_all_scores[args_arr_sort]
+        colors = ['green', 'red']
 
-            colors = ['green', 'red']
+        fig, ax = plt.subplots(ncols=2, nrows=1, figsize=(80, 40), sharey='row')
 
-            fig, ax = plt.subplots(ncols=2, nrows = 1, figsize=(40,40), sharey='row')
+        ax1 = ax[0]
+        ax2 = ax[1]
 
-            ax1 = ax[0]
-            ax2 = ax[1]
+        plt.suptitle('Log probability Score plots of anomaly vs normal cuboids', fontsize=30)
 
-            plt.suptitle('Log probability Score plots of anomaly vs normal cuboids',fontsize=30)
+        im1 = ax1.scatter(range(0, len(list_all_scores)), list_all_scores, c=y_true_arr,
+                          cmap=ListedColormap(colors), alpha=0.5)
+        ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+        ax1.set_ylabel('Log-probability score')
+        ax1.set_xlabel('Cuboid index')
+        ax1.grid(True)
+        cb1 = fig.colorbar(im1, ax=ax1)
+        loc = np.arange(0, max(y_true_arr), max(y_true_arr) / float(len(colors)))
+        cb1.set_ticks(loc)
+        cb1.set_ticklabels(['normal', 'anomaly'])
+        arr_anoms = list_all_scores[y_true_arr == 1]
 
-            im1 = ax1.scatter(range(0, len(list_all_scores)), list_all_scores, c=y_true_arr,
-                              cmap=ListedColormap(colors), alpha=0.5)
-            ax1.set_title('ANOMS:Red, N-ANOMS:Green')
-            ax1.set_ylabel('Log-probability score')
-            ax1.set_xlabel('Cuboid index')
-            ax1.grid(True)
-            cb1 = fig.colorbar(im1, ax=ax1)
-            loc = np.arange(0, max(y_true_arr), max(y_true_arr) / float(len(colors)))
-            cb1.set_ticks(loc)
-            cb1.set_ticklabels(['normal', 'anomaly'])
+        im2 = ax2.scatter(range(0, len(arr_anoms)), arr_anoms, c='red', alpha=0.5)
+        ax2.set_title('ANOMS:Red')
+        ax2.set_ylabel('Log-probability score')
+        ax2.set_xlabel('Cuboid index')
+        ax2.grid(True)
+        plt.savefig(os.path.join(self.image_store, 'gmm_analysis_plot.png'))
+        plt.close()
 
-            arr_anoms = list_all_scores[y_true_arr == 1]
-
-            im2 = ax2.scatter(range(0, len(arr_anoms)), arr_anoms, c='red', alpha=0.5)
-            ax2.set_title('ANOMS:Red')
-            ax2.set_ylabel('Log-probability score')
-            ax2.set_xlabel('Cuboid index')
-            ax2.grid(True)
-            pdf.savefig()  # saves the current figure into a pdf page
-            plt.close()
+        score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores,gt_array=list_all_gt,lt=True)
+        self.write_prf_details_to_file(filename='prf_details.txt', score_dict=score_dict, metric_name='GMM probability score')
 
         return True
 

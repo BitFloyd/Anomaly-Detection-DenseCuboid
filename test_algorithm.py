@@ -58,7 +58,7 @@ else:
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
                                             reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
-    ae_model.perform_gmm_training(n_chapters=n_chapters)
+    # ae_model.perform_gmm_training(n_chapters=n_chapters)
     ae_model.set_cl_loss(0.0)
 
 #Get Test class

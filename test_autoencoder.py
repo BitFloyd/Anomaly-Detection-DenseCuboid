@@ -37,6 +37,8 @@ model_store = rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
 size = 24
 
+do_silhouette = True
+
 train_dset = h5py.File(os.path.join(train_folder, 'data_train.h5'), 'r')
 
 print "#############################"
@@ -72,8 +74,9 @@ else:
 
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
+if(do_silhouette):
+    ae_model.perform_num_clusters_analysis(n_chapters=n_chapters)
 
-ae_model.perform_num_clusters_analysis(n_chapters=n_chapters)
 ae_model.perform_kmeans(n_chapters=n_chapters,partial=True)
 ae_model.perform_dict_learn(n_chapters=n_chapters,guill=guill)
 ae_model.generate_loss_graph('loss_graph.png')
@@ -83,6 +86,7 @@ ae_model.mean_and_samples(n_per_mean=8)
 ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
 ae_model.decode_means('means_decoded')
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
+ae_model.perform_gmm_training(n_chapters=n_chapters,guill=guill)
 
 train_dset.close()
 
@@ -134,6 +138,9 @@ else:
                                             reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
     ae_model.set_cl_loss(0.0)
+
+    if(do_silhouette):
+        ae_model.set_clusters_to_optimum()
 
 #Get Test class
 data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
@@ -188,6 +195,11 @@ print "########################################################"
 print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
 print "########################################################"
 tclass.feature_analysis_normvsanom()
+
+print "########################################################"
+print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "########################################################"
+tclass.gmm_analysis()
 
 data_h5_vc.close()
 data_h5_va.close()

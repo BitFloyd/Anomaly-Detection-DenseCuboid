@@ -551,12 +551,7 @@ class Super_autoencoder:
         self.batch_size = batch_size
         self.model_store = model_store
         self.loss = loss
-
-        if(os.path.exists(os.path.join(self.model_store,'nclusters_optimized.pkl')) and notrain):
-            self.n_clusters = so.load_obj(os.path.join(self.model_store,'nclusters_optimized.pkl'))
-        else:
-            self.n_clusters = n_clusters
-
+        self.n_clusters = n_clusters
         self.size_y = size_y
         self.size_x = size_x
         self.lr_model = lr_model
@@ -617,6 +612,15 @@ class Super_autoencoder:
             print("Training using single GPU or CPU..")
             self.multi_gpu_model = False
             self.n_gpu = 1
+
+    def set_clusters_to_optimum(self):
+
+        if(os.path.exists(os.path.join(self.model_store,'nclusters_optimized.pkl'))):
+            self.n_clusters = so.load_obj(os.path.join(self.model_store,'nclusters_optimized.pkl'))
+        else:
+            raise Exception ('No optimized clusters saved in the model')
+
+        return True
 
 
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
