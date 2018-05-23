@@ -72,7 +72,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     lassign = 0.0
     h_units = int(metric['-h'])
     loss = 'dssim'
-    ntrain = int(metric['-ntrain'])
+    ntrain = 100
     nclusters = int(metric['-nclust'])
     nocl = bool(int(metric['-nocl']))
 
@@ -161,7 +161,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tlm = 'dssim'
 
     suffix += '_large_' + str(large)
-    suffix += '_ntrain_' + str(ntrain)
+    # suffix += '_ntrain_' + str(ntrain)
     suffix += '_lamda_' + str(lamda)
 
     # Get MODEL
