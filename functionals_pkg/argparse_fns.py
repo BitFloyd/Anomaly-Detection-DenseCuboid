@@ -11,7 +11,7 @@ def getopts(argv):
         argv = argv[1:]  # Reduce the argument list by copying it starting from index 1.
     return opts
 
-def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
+def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False):
 
     return_parse_dict = {}
 
@@ -88,12 +88,10 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
 
     if (nocl):
-        suffix = 'nocl_tstrd_' + str(tstrides) + '_nic_' + str(nic) + '_chapters_' + str(
-            n_chapters) + '_clusters_' + str(nclusters)
+        suffix = 'nocl_tstrd_' + str(tstrides) + '_clusters_' + str(nclusters)
         lamda = 0.0
     else:
-        suffix = 'tstrd_' + str(tstrides) + '_nic_' + str(nic) + '_chapters_' + str(n_chapters) + '_clusters_' + str(
-            nclusters)
+        suffix = 'tstrd_' + str(tstrides) + '_clusters_' + str(nclusters)
         lamda = float(metric['-lamda'])
 
     return_parse_dict['lamda'] = lamda
@@ -101,20 +99,25 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     suffix += '_hunits_' + str(h_units)
 
+    if(ucsd2):
+        dataset = 'ucsd2'
+    else:
+        dataset = 'triangle'
+
     if (gs):
 
         train_folder = os.path.join(data_store_suffix, 'chapter_store_conv',
-                                    'triangle_data_store_greyscale_bkgsub' + str(tstrides))
+                                    dataset+'_data_store_greyscale_bkgsub' + str(tstrides))
         test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test',
-                                       'triangle_data_store_greyscale_test_bkgsub' + str(tstrides))
+                                       dataset+'_data_store_greyscale_test_bkgsub' + str(tstrides))
         nc = 1
 
     else:
 
         train_folder = os.path.join(data_store_suffix, 'chapter_store_conv',
-                                    'triangle_data_store_bksgub' + str(tstrides))
+                                    dataset+'_data_store_bksgub' + str(tstrides))
         test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test',
-                                       'triangle_data_store_test_bkgsub' + str(tstrides))
+                                       dataset+'_data_store_test_bkgsub' + str(tstrides))
         nc = 3
 
     return_parse_dict['nc']= nc

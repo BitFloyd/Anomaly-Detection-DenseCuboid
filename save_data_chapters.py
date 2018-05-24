@@ -10,33 +10,12 @@ import socket
 import numpy as np
 import sys
 import h5py
+import time
 
 
 metric = af.getopts(argv)
 
-if(socket.gethostname()=='puck'):
-    print "############################################"
-    print "DETECTED RUN ON PUCK"
-    print "############################################"
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Train'
-
-elif('gpu' in socket.gethostname()):
-    print "############################################"
-    print "DETECTED RUN ON HELIOS: Probably"
-    print "############################################"
-    verbose = 1
-    os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
-    path_videos='/scratch/suu-621-aa/ANOMALY/data/art_videos_prob_0.01/artif_videos_128x128'
-
-else:
-    print socket.gethostname()
-    print "############################################"
-    print "DETECTED RUN ON GUILLIMIN: Probably"
-    print "############################################"
-    verbose = 1
-    os.chdir('/gs/project/suu-621-aa/sejacob/densecub/')
-    path_videos = '/gs/project/suu-621-aa/sejacob/data/art_videos_prob_0.01/artif_videos_128x128'
-
+path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train'
 
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
@@ -57,12 +36,12 @@ else:
 
 
 if(gs):
-    folder = os.path.join(mainfol, 'triangle_data_store_greyscale_bkgsub' + str(tstrides))
+    folder = os.path.join(mainfol, 'ucsd2_data_store_greyscale_bkgsub' + str(tstrides))
 
 
 else:
     # tv = 0.0
-    folder = os.path.join(mainfol, 'triangle_data_store_bksgub' + str(tstrides))
+    folder = os.path.join(mainfol, 'ucsd2_data_store_bksgub' + str(tstrides))
 
 tv = 0.0
 
@@ -79,38 +58,34 @@ print "############################"
 #Get Data Stream
 train_test = 'Train'
 
-size_axis = 24
+size_axis = 48
 n_frames = 8
-vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
-                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,bkgsub=True)
 
-
-print "############################"
-print "ASSEMBLE AND SAVE DATASET"
-print "############################"
-
-if(os.path.exists(os.path.join(folder,'vid_this.npy'))):
-    video_id = np.load(os.path.join(folder,'vid_this.npy'))
-    chapter_id = np.load(os.path.join(folder,'chap_this.npy'))
-else:
-    video_id = np.array([0])
-    chapter_id = np.array([0])
-
-
-print "SAVING FOR VIDEO ID:"
-print video_id
-print "STARTING WITH CHAPTER ID: ",chapter_id
-
-vstream.set_seek_to_video(video_id[0])
-
-print "SEEK IS NOW:", vstream.seek
-
+video_id = 0
+chapter_id = 0
 
 while True:
 
+    vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
+                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,bkgsub=True)
+
+
+    print "############################"
+    print "ASSEMBLE AND SAVE DATASET"
+    print "############################"
+    print "SAVING FOR VIDEO ID:"
+    print video_id
+    print "STARTING WITH CHAPTER ID: ",chapter_id
+
+    vstream.set_seek_to_video(video_id)
+
+    print "SEEK IS NOW:", vstream.seek
+
+
     list_cubatch = []
 
-    for k in tqdm(range(0,200)):
+    start_time = time.time()
+    while True:
         cubatch = bf.return_relevant_cubs(vstream,thresh_variance=tv,gs=gs,ts_pos=ts_pos)
         list_cubatch.append(cubatch.tolist())
 
@@ -119,7 +94,9 @@ while True:
 
         if (len(vstream.seek_dict[vstream.seek+1]) > 1):
             break
+    end_time = time.time()
 
+    print "TIME_TAKEN: ",(end_time-start_time)/60.0," MINUTES"
     flat_list_cubs = [item for sublist in list_cubatch for item in sublist]
 
 
@@ -136,21 +113,18 @@ while True:
     del (list_cubatch[:])
 
     with h5py.File(os.path.join(folder,'data_train.h5'), "a") as f:
-        dset = f.create_dataset('chapter_'+str(chapter_id[0]),data=np.array(flat_list_cubs))
+        dset = f.create_dataset('chapter_'+str(chapter_id),data=np.array(flat_list_cubs))
         print(dset.shape)
 
-
-    print "SAVING CHAPTER ID:",str(chapter_id[0])
+    del flat_list_cubs
+    print "SAVING CHAPTER ID:",str(chapter_id)
 
     chapter_id+=1
+    video_id+=1
+
     if(vstream.seek+1 == len(vstream.seek_dict.values())):
         break
 
-    if (len(vstream.seek_dict[vstream.seek+1]) > 1):
-        break
-
-
-
-video_id+=1
-np.save(os.path.join(folder,'vid_this.npy'),np.array(video_id))
-np.save(os.path.join(folder,'chap_this.npy'),np.array(chapter_id))
+print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+print "FINISHED ALL VIDEOS"
+print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"

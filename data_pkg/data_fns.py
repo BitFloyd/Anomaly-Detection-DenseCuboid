@@ -1424,30 +1424,29 @@ class Video_Stream_UCSD:
 
 class Video_Stream_ARTIF:
 
-    video_path = 'INIT_PATH_TO_UCSD'
-    video_train_test = 'Test'
-    size_y = 8
-    size_x = 8
-    timesteps = 4
-    frame_size = (128, 128)
-    data_max_possible = 255.0
-    seek = -1
-    list_images_relevant_full_dset = None
-    list_images_relevant_gt_full_dset = None
-    seek_dict = {}
-    seek_dict_gt = {}
-
-    list_cuboids = []
-    list_cuboids_pixmap = []
-    list_cuboids_anomaly = []
-    list_cuboids_anompercentage = []
-
-    list_all_cuboids = []
-    list_all_cuboids_gt = []
-
     def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1,tstrides=1,anompth=0.0,bkgsub=False):
 
         # Initialize-video-params
+        self.video_path = 'INIT_PATH_TO_UCSD'
+        self.video_train_test = 'Test'
+        self.size_y = 8
+        self.size_x = 8
+        self.timesteps = 4
+        self.frame_size = (128, 128)
+        self.data_max_possible = 255.0
+        self.seek = -1
+        self.list_images_relevant_full_dset = None
+        self.list_images_relevant_gt_full_dset = None
+        self.seek_dict = {}
+        self.seek_dict_gt = {}
+
+        self.list_cuboids = []
+        self.list_cuboids_pixmap = []
+        self.list_cuboids_anomaly = []
+        self.list_cuboids_anompercentage = []
+
+        self.list_all_cuboids = []
+        self.list_all_cuboids_gt = []
         self.video_path = video_path
         self.video_train_test = video_train_test
         self.size_y = size_y
