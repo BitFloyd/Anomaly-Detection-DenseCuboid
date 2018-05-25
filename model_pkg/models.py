@@ -1322,7 +1322,7 @@ class Super_autoencoder:
         self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100)
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-        print "START GMM FITTING"
+        print "START GMM FITTING: NUMBER OF COMPONENTS = ", n_comp
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
         start = time.time()

@@ -86,7 +86,7 @@ ae_model.mean_and_samples(n_per_mean=8)
 ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
 ae_model.decode_means('means_decoded')
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
-ae_model.perform_gmm_training(n_chapters=n_chapters,guill=guill)
+ae_model.perform_gmm_training(n_chapters=n_chapters,guill=guill,n_comp=nclusters)
 
 train_dset.close()
 
