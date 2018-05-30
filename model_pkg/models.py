@@ -35,6 +35,7 @@ import matplotlib.cm as cm
 from functionals_pkg import save_objects as so
 from sklearn.mixture import GaussianMixture
 import seaborn as sns
+import itertools
 sns.set(color_codes=True)
 
 
@@ -1300,7 +1301,7 @@ class Super_autoencoder:
 
         return True
 
-    def perform_gmm_training(self,n_chapters=10,guill=False,n_comp=-1):
+    def perform_gmm_training(self,n_chapters=10,guill=False,n_comp=-1,covariance_type='full'):
 
 
         self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
@@ -1319,7 +1320,7 @@ class Super_autoencoder:
         if(n_comp == -1):
             n_comp = self.n_clusters
 
-        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100)
+        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100,covariance_type=covariance_type)
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START GMM FITTING: NUMBER OF COMPONENTS = ", n_comp
@@ -1337,6 +1338,75 @@ class Super_autoencoder:
         so.save_obj(self.gm,os.path.join(self.model_store, 'gmm.pkl'))
 
         return  True
+
+    def perform_gmm_analysis_and_training(self,n_chapters=10,guill=False):
+
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, n_chapters):
+            f_arr = self.set_feats(id)
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        self.features_h5.close()
+
+        list_feats = shuffle(np.array(list_feats))
+
+        lowest_bic = np.infty
+        bic = []
+        n_components_range = range(5, 31)
+
+        print "N_COMPONENTS TO BE ANALYZED FOR GAUSSIAN MIXTURE:", n_components_range
+
+        cv_types = ['spherical', 'tied', 'diag', 'full']
+        for cv_type in cv_types:
+            for n_components in n_components_range:
+                # Fit a Gaussian mixture with EM
+                gmm = GaussianMixture(n_components=n_components,covariance_type=cv_type, verbose=1)
+                start_time = time.time()
+                gmm.fit(list_feats)
+                end_time = time.time()
+                bic.append(gmm.bic(list_feats))
+                print "---------------------------------------------------"
+                print "cv_type:",cv_type," ","n_components:",n_components
+                print "---------------------------------------------------"
+                print "bic:",bic[-1]
+                print "---------------------------------------------------"
+                print "time:",(end_time-start_time)/3600.0
+                print "---------------------------------------------------"
+                if bic[-1] < lowest_bic:
+                    lowest_bic = bic[-1]
+                    best_n_components = n_components
+                    best_cv_type = cv_type
+
+
+
+        bic = np.array(bic)
+        color_iter = itertools.cycle(['navy', 'turquoise', 'cornflowerblue','darkorange'])
+        bars = []
+
+        # Plot the BIC scores
+        spl = plt.subplot(1, 1, 1)
+        for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
+            xpos = np.array(n_components_range) + .2 * (i - 2)
+            bars.append(plt.bar(xpos, bic[i * len(n_components_range):
+            (i + 1) * len(n_components_range)],
+                                width=.2, color=color))
+        plt.xticks(n_components_range)
+        plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
+        plt.title('BIC score per model')
+        xpos = np.mod(bic.argmin(), len(n_components_range)) + .65 + \
+               .2 * np.floor(bic.argmin() / len(n_components_range))
+        plt.text(xpos, bic.min() * 0.97 + .03 * bic.max(), '*', fontsize=14)
+        spl.set_xlabel('Number of components')
+        spl.legend([b[0] for b in bars], cv_types)
+        plt.savefig(os.path.join(self.model_store,'GMM_plot.png'))
+
+        self.perform_gmm_training(n_chapters=n_chapters,n_comp=best_n_components,covariance_type=best_cv_type)
+
+        return True
 
     def get_assigns(self, means, feats):
 

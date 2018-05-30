@@ -199,7 +199,7 @@ tclass.feature_analysis_normvsanom()
 print "########################################################"
 print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
 print "########################################################"
-tclass.gmm_analysis()
+score_dict = tclass.gmm_analysis()
 
 data_h5_vc.close()
 data_h5_va.close()

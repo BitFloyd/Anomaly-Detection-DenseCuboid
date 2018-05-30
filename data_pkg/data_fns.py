@@ -798,25 +798,31 @@ class TestDictionary:
         print "##########################################################################"
         print "MAX ACCURACY:",max(accuracy_score_list)
         print "THRESHOLD:",lspace[accuracy_score_list.index(max(accuracy_score_list))]
+        max_acc_threshold = lspace[accuracy_score_list.index(max(accuracy_score_list))]
         print "##########################################################################"
 
         print "##########################################################################"
         print "MAX PRECISION:",max(precision_score_list)
         print "THRESHOLD:",lspace[precision_score_list.index(max(precision_score_list))]
+        max_pre_threshold = lspace[precision_score_list.index(max(precision_score_list))]
         print "##########################################################################"
 
         print "##########################################################################"
         print "MAX RECALL:", max(recall_score_list)
         print "THRESHOLD:", lspace[recall_score_list.index(max(recall_score_list))]
+        max_re_threshold = lspace[recall_score_list.index(max(recall_score_list))]
         print "##########################################################################"
 
         print "##########################################################################"
         print "MAX F1:", max(f1_score_list)
         print "THRESHOLD:", lspace[f1_score_list.index(max(f1_score_list))]
+        max_f1_threshold = lspace[f1_score_list.index(max(f1_score_list))]
         print "##########################################################################"
 
         score_dict = {'max_acc': float(max(accuracy_score_list)), 'max_f1': float(max(f1_score_list)),
-                      'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list))}
+                      'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list)),
+                      'max_acc_th': max_acc_threshold, 'max_f1_th': max_f1_threshold, 'max_pre_th':max_pre_threshold,
+                      'max_rec_th': max_re_threshold}
 
         return score_dict
 
@@ -857,25 +863,31 @@ class TestDictionary:
         print "##########################################################################"
         print "MAX ACCURACY:",max(accuracy_score_list)
         print "THRESHOLD:",lspace[accuracy_score_list.index(max(accuracy_score_list))]
+        max_acc_threshold = lspace[accuracy_score_list.index(max(accuracy_score_list))]
         print "##########################################################################"
 
         print "##########################################################################"
         print "MAX PRECISION:",max(precision_score_list)
         print "THRESHOLD:",lspace[precision_score_list.index(max(precision_score_list))]
+        max_pre_threshold = lspace[precision_score_list.index(max(precision_score_list))]
         print "##########################################################################"
 
         print "##########################################################################"
         print "MAX RECALL:", max(recall_score_list)
         print "THRESHOLD:", lspace[recall_score_list.index(max(recall_score_list))]
+        max_re_threshold = lspace[recall_score_list.index(max(recall_score_list))]
         print "##########################################################################"
 
         print "##########################################################################"
         print "MAX F1:", max(f1_score_list)
         print "THRESHOLD:", lspace[f1_score_list.index(max(f1_score_list))]
+        max_f1_threshold = lspace[f1_score_list.index(max(f1_score_list))]
         print "##########################################################################"
 
         score_dict = {'max_acc': float(max(accuracy_score_list)), 'max_f1': float(max(f1_score_list)),
-                      'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list))}
+                      'max_pre': float(max(precision_score_list)), 'max_rec': float(max(recall_score_list)),
+                      'max_acc_th': max_acc_threshold, 'max_f1_th': max_f1_threshold, 'max_pre_th':max_pre_threshold,
+                      'max_rec_th': max_re_threshold}
 
         return score_dict
 
@@ -1267,7 +1279,7 @@ class TestDictionary:
         score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores,gt_array=list_all_gt,lt=True)
         self.write_prf_details_to_file(filename='prf_details.txt', score_dict=score_dict, metric_name='GMM probability score')
 
-        return True
+        return score_dict
 
     def create_feats_to_analyze_from_video(self):
 
@@ -1299,10 +1311,10 @@ class TestDictionary:
 
     def write_prf_details_to_file(self,filename='prf_details.txt',score_dict=None,metric_name = None):
 
-        s_acc = 'max_acc:' + str(format(score_dict['max_acc'], '.2f'))
-        s_f1 = 'max_f1:' + str(format(score_dict['max_f1'], '.2f'))
-        s_pr = 'max_pr:' + str(format(score_dict['max_pre'], '.2f'))
-        s_re = 'max_re:' + str(format(score_dict['max_rec'], '.2f'))
+        s_acc = 'max_acc:' + str(format(score_dict['max_acc'], '.5f'))
+        s_f1 = 'max_f1:' + str(format(score_dict['max_f1'], '.5f'))
+        s_pr = 'max_pr:' + str(format(score_dict['max_pre'], '.5f'))
+        s_re = 'max_re:' + str(format(score_dict['max_rec'], '.5f'))
 
         f = open(os.path.join(self.image_store, filename), 'a+')
         f.write('--------------------------------' + '\n')

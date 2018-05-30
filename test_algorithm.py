@@ -1,9 +1,8 @@
 import matplotlib as mpl
-
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary, TrainDictionary
+from data_pkg.data_fns import TestDictionary,TrainDictionary
 from sys import argv
 import os
 import socket
@@ -11,7 +10,7 @@ import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric)
+rdict = af.parse_run_variables(metric,set_mem=True)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']
@@ -38,6 +37,8 @@ model_store = rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
 size = 24
 
+do_silhouette = True
+
 print "################################"
 print "START TESTING"
 print "################################"
@@ -58,8 +59,11 @@ else:
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
                                             reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
-    # ae_model.perform_gmm_training(n_chapters=n_chapters)
     ae_model.set_cl_loss(0.0)
+
+    if(do_silhouette):
+        ae_model.set_clusters_to_optimum()
+        ae_model.perform_gmm_analysis_and_training(n_chapters=n_chapters)
 
 #Get Test class
 data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
@@ -70,9 +74,11 @@ data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5
 
 tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
-                        use_basis_dict=use_basis_dict,nc=nc)
+                        use_basis_dict=use_basis_dict)
 
-
+print "########################################################"
+print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "########################################################"
 tclass.gmm_analysis()
 
 data_h5_vc.close()
