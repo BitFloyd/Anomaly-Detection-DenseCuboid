@@ -11,6 +11,7 @@ from collections import deque
 from matplotlib.colors import ListedColormap
 from matplotlib.backends.backend_pdf import PdfPages
 from functionals_pkg import save_objects as so
+from functionals_pkg.logging import debug_print
 import seaborn as sns
 import copy
 import sys
@@ -19,6 +20,8 @@ import math
 import imageio
 import h5py
 import time
+import shutil
+
 sns.set(color_codes=True)
 
 list_anom_percentage = []
@@ -1386,16 +1389,21 @@ class TestVideoStream:
 
             self.process_video(list_test_img=list_test_img_class_video,idx=idx)
 
+        return True
+
     def process_video(self,list_test_img,idx):
 
         if (os.path.exists(os.path.join(self.ModelStore, 'Video_Results', str(idx)))):
-            os.remove(os.path.join(self.ModelStore, 'Video_Results', str(idx)))
-            os.mkdir(os.path.join(self.ModelStore, 'Video_Results', str(idx)))
+            shutil.rmtree(os.path.join(self.ModelStore, 'Video_Results', str(idx)))
 
         path_save_frames = os.path.join(self.ModelStore, 'Video_Results', str(idx))
 
+        os.mkdir(path_save_frames)
+
         for test_img in tqdm(list_test_img):
             self.process_self_test_img(test_img,path_save_frames)
+
+        return True
 
     def process_self_test_img(self,test_img,path_save_frames):
 
@@ -1411,17 +1419,15 @@ class TestVideoStream:
 
         self.format_and_save_output_images(anomaly_map,list_files_present,path_save_frames)
 
-
         return True
 
     def format_and_save_output_images(self,anomaly_map,list_files_present,path_save_frames):
 
-
-        collection = imread_collection(list_files_present,as_grey=self.GrayScale)
+        collection = imread_collection(list_files_present,as_grey=True)
 
         for idx,image in enumerate(collection):
 
-            img = img_as_float(np.uint8(image))
+            img = img_as_float(np.uint8(image*255.0))
             img_color = np.dstack((img, img, img))
             img_hsv = color.rgb2hsv(img_color)
 
@@ -1435,8 +1441,11 @@ class TestVideoStream:
             img_masked = color.hsv2rgb(img_hsv)
             plt.imshow(img_masked)
 
-            filename, fext = os.path.splitext(list_files_present[idx])
-            plt.savefig(os.path.join(path_save_frames, filename+'.png'))
+            top, filename = os.path.split(list_files_present[idx])
+            filename, fext = os.path.splitext(filename)
+            plt.axis('off')
+            plt.savefig(os.path.join(path_save_frames, filename+'.png'),bbox_inches='tight')
+            plt.close()
 
         return True
 

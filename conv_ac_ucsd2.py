@@ -35,6 +35,8 @@ tlm = rdict['tlm']
 reverse = rdict['reverse']
 model_store = 'ucsd2_'+rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
+path_to_videos_test = rdict['path_to_videos_test']
+sp_strides = rdict['sp_strides']
 
 size = 48
 do_silhouette = True
@@ -92,7 +94,7 @@ ae_model.mean_and_samples(n_per_mean=8)
 ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
 ae_model.decode_means('means_decoded')
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
-ae_model.perform_gmm_training(n_chapters=n_chapters,guill=guill)
+ae_model.perform_gmm_training(n_chapters=n_chapters,guill=guill,n_comp=nclusters)
 
 train_dset.close()
 
@@ -217,9 +219,30 @@ tclass.feature_analysis_normvsanom()
 print "########################################################"
 print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
 print "########################################################"
-tclass.gmm_analysis()
+score_dict = tclass.gmm_analysis()
 
 data_h5_vc.close()
 data_h5_va.close()
 data_h5_vp.close()
 data_h5_ap.close()
+
+threshold = score_dict['max_f1_th']
+
+ae_model.load_gmm_model()
+
+tvs = TestVideoStream(PathToVideos=path_to_videos_test,
+                      CubSizeY=size,
+                      CubSizeX=size,
+                      CubTimesteps=8,
+                      ModelStore=model_store,
+                      Encoder=ae_model.encoder,
+                      GMM=ae_model.gm,
+                      LSTM=False,
+                      StridesTime=tstrides,
+                      StridesSpace=sp_strides,
+                      GrayScale=gs,
+                      BkgSub=True)
+
+tvs.set_GMMThreshold(threshold=threshold)
+
+tvs.process_data()

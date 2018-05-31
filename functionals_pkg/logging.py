@@ -20,3 +20,10 @@ class Logger(object):
         #you might want to specify some extra behavior here.
         pass
 
+
+def debug_print(string=None):
+
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "DEBUG:"
+    print string
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"

@@ -2,7 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary
+from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream
 from sys import argv
 import os
 import socket
@@ -35,6 +35,9 @@ tlm = rdict['tlm']
 reverse = rdict['reverse']
 model_store = rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
+path_to_videos_test = rdict['path_to_videos_test']
+sp_strides = rdict['sp_strides']
+
 size = 24
 
 do_silhouette = True
@@ -205,3 +208,24 @@ data_h5_vc.close()
 data_h5_va.close()
 data_h5_vp.close()
 data_h5_ap.close()
+
+threshold = score_dict['max_f1_th']
+
+ae_model.load_gmm_model()
+
+tvs = TestVideoStream(PathToVideos=path_to_videos_test,
+                      CubSizeY=size,
+                      CubSizeX=size,
+                      CubTimesteps=8,
+                      ModelStore=model_store,
+                      Encoder=ae_model.encoder,
+                      GMM=ae_model.gm,
+                      LSTM=False,
+                      StridesTime=tstrides,
+                      StridesSpace=sp_strides,
+                      GrayScale=gs,
+                      BkgSub=True)
+
+tvs.set_GMMThreshold(threshold=threshold)
+
+tvs.process_data()
