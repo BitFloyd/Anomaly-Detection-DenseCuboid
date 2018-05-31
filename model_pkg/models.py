@@ -1408,6 +1408,14 @@ class Super_autoencoder:
 
         return True
 
+    def load_gmm_model(self):
+
+        if (os.path.exists(os.path.join(self.model_store, 'gmm.pkl'))):
+            self.gm = so.load_obj(os.path.join(self.model_store, 'gmm.pkl'))
+        else:
+            print "CANNOT FIND GMM.PKL in MODEL STORE"
+            raise AssertionError
+
     def get_assigns(self, means, feats):
 
         dist_matrix = cdist(feats, means)
@@ -1960,7 +1968,7 @@ class Super_autoencoder:
         print "################################"
         print "FEATURES_SHAPE:", list_feats.shape
         print "################################"
-        range_n_clusters = range(5,31)
+        range_n_clusters = range(10,31)
         range_n_clusters.extend((range(35,105,5)))
         print "################################"
         print "RANGE:", range_n_clusters

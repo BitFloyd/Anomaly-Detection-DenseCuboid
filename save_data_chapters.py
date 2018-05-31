@@ -20,7 +20,7 @@ path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
 tstrides = int(metric['-tstrd'])
-lstm = bool(int(metric['-lstm']))
+lstm = False
 
 
 if(lstm):

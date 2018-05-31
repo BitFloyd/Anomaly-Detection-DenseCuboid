@@ -65,10 +65,21 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False):
     return_parse_dict['guill'] = guill
     return_parse_dict['batch_size'] = batch_size
 
+    if(ucsd2):
+        dataset = 'ucsd2'
+        path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+        tstrides = 1
+        sp_strides = 12
+    else:
+        dataset = 'triangle'
+        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'
+        tstrides = 4
+        sp_strides = 7
+
+
     n_chapters = 0
     gs = False
     nic = 0
-    tstrides = 4
     lassign = 0.0
     h_units = int(metric['-h'])
     loss = 'dssim'
@@ -80,6 +91,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False):
     return_parse_dict['gs']=gs
     return_parse_dict['lassign'] = lassign
     return_parse_dict['tstrides'] = tstrides
+    return_parse_dict['sp_strides'] = sp_strides
     return_parse_dict['h_units'] = h_units
     return_parse_dict['ntrain'] = ntrain
     return_parse_dict['nclusters'] = nclusters
@@ -99,10 +111,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False):
 
     suffix += '_hunits_' + str(h_units)
 
-    if(ucsd2):
-        dataset = 'ucsd2'
-    else:
-        dataset = 'triangle'
+
 
     if (gs):
 
@@ -181,6 +190,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False):
 
     return_parse_dict['reverse'] = False
     return_parse_dict['use_basis_dict'] = use_basis_dict
+    return_parse_dict['path_to_videos_test'] = path_to_videos_test
 
     train_dset.close()
 

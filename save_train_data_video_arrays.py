@@ -15,7 +15,7 @@ path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
 tstrides = int(metric['-tstrd'])
-lstm = bool(int(metric['-lstm']))
+lstm = False
 
 test = 0
 
@@ -59,7 +59,7 @@ video_id = 0
 
 while True:
     vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
-                                    timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.10,
+                                    timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.20,
                                     bkgsub=True)
 
 
@@ -105,7 +105,7 @@ while True:
     video_id+=1
 
     with h5py.File(os.path.join(folder, 'data_train_video_cuboids.h5'), "a") as f:
-        dset = f.create_dataset('video_cuboids_array_'+str(video_id[0]), data=np.array(list_cuboids_full_video))
+        dset = f.create_dataset('video_cuboids_array_'+str(video_id), data=np.array(list_cuboids_full_video))
         print(dset.shape)
 
     del list_cuboids_full_video

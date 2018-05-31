@@ -21,8 +21,20 @@ import h5py
 import time
 sns.set(color_codes=True)
 
-
 list_anom_percentage = []
+
+class TestImgClass:
+
+    def __init__(self,fnames):
+
+        self.fnames = fnames
+
+    def get_time_base_filenames(self):
+        fnames_past = self.fnames[0:-2]
+        fnames_present = self.fnames[1:-1]
+        fnames_future = self.fnames[2:]
+
+        return fnames_past,fnames_present,fnames_future
 
 class TrainDictionary:
 
@@ -1332,107 +1344,197 @@ class TestDictionary:
     def __del__(self):
         print ("Destructor called for TestDictionary")
 
+class TestVideoStream:
 
-class Video_Stream_UCSD:
+    def __init__(self, PathToVideos,CubSizeY,CubSizeX,CubTimesteps,ModelStore,Encoder=None,GMM=None,LSTM=False,StridesTime=1,StridesSpace=1,GrayScale=False,BkgSub=True):
 
-    video_path = 'INIT_PATH_TO_UCSD'
-    video_train_test = 'Train'
-    size_y = 8
-    size_x = 8
-    timesteps = 4
-    frame_size = (128, 128)
-    data_max_possible = 255.0
-    seek = -1
-    list_images_relevant_full_dset = None
-    list_images_relevant_gt_full_dset = None
-    seek_dict = {}
-    seek_dict_gt = {}
+        self.PathToVideos = PathToVideos
+        self.CubSizeY = CubSizeY
+        self.CubSizeX = CubSizeX
+        self.CubTimesteps = CubTimesteps
+        self.LSTM = LSTM
+        self.StridesTime = StridesTime
+        self.StridesSpace = StridesSpace
+        self.ModelStore = ModelStore
+        self.GrayScale = GrayScale
+        self.Encoder = Encoder
+        self.GMM = GMM
 
-    list_cuboids = []
-    list_cuboids_pixmap = []
-    list_cuboids_anomaly = []
-    list_all_cuboids = []
-    list_all_cuboids_gt = []
-
-    def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1):
-
-        # Initialize-video-params
-        self.video_path = video_path
-        self.video_train_test = video_train_test
-        self.size_y = size_y
-        self.size_x = size_x
-        self.timesteps = timesteps
-        self.ts_first_or_last = ts_first_or_last
-        self.list_images_relevant_full_dset, self.list_images_relevant_gt_full_dset = make_file_list(video_path, train_test=video_train_test,n_frames=timesteps,num=num)
-        self.strides = strides
-
-        i = 0
-        j = 0
-        k = 0
-
-        while (i<len(self.list_images_relevant_full_dset)):
-
-            list_images = self.list_images_relevant_full_dset[i]
-            list_images_gt = self.list_images_relevant_gt_full_dset[i]
-
-            j=0
-
-            lpre = list_images[j:j + timesteps]
-            lcurrent = list_images[j + 1:j + 1 + timesteps]
-            lpost = list_images[j + 2:j + 2 + timesteps]
-
-            self.seek_dict[k] = [lpre, lcurrent, lpost]
-
-            if (self.video_train_test == 'Test'):
-
-                lpre_gt = list_images_gt[j:j + timesteps]
-                lcurrent_gt = list_images_gt[j + 1:j + 1 + timesteps]
-                lpost_gt = list_images_gt[j + 2:j + 2 + timesteps]
-
-                self.seek_dict_gt[k] = [lpre_gt, lcurrent_gt, lpost_gt]
-                k += 1
-            else:
-                self.seek_dict_gt[k] = [None]
-                k += 1
-
-            j += 3
-
-            while(j+timesteps<=len(list_images)):
-
-                lpost = list_images[j:j+timesteps]
-
-                self.seek_dict[k] = [lpost]
-
-                if(self.video_train_test=='Test'):
-
-                    lpost_gt = list_images_gt[j:j+timesteps]
-
-                    self.seek_dict_gt[k] = [lpost_gt]
-                    k += 1
-                else:
-                    self.seek_dict_gt[k] = [None]
-                    k += 1
-
-                j+=1
-
-
-            i+=1
-
-    def get_next_cuboids_from_stream(self):
-        self.seek+=1
-
-        if(self.seek>=len(self.seek_dict)):
-            self.seek=-1
-            return np.array([0]),np.array([0]),np.array([0]),np.array([0]),np.array([0])
+        if(self.GrayScale):
+            self.NumChannels = 1
         else:
-            self.list_cuboids, self.list_cuboids_pixmap, self.list_cuboids_anomaly, self.list_all_cuboids, self.list_all_cuboids_gt = \
-            make_cuboids_for_stream(self,self.seek_dict[self.seek], self.seek_dict_gt[self.seek], self.size_x, self.size_y,
-                                    test_or_train=self.video_train_test, ts_first_last = self.ts_first_or_last,strides=self.strides)
+            self.NumChannels = 3
 
-        return self.list_cuboids, self.list_cuboids_pixmap, self.list_cuboids_anomaly, np.array(self.list_all_cuboids), np.array(self.list_all_cuboids_gt)
+        self.BkgSub = BkgSub
 
-    def reset_stream(self):
-        self.seek = -1
+        self.ListTestImgClass_AllVideos = make_list_test_img_class_all_videos(loc_videos=PathToVideos, n_frames=CubTimesteps, tstrides=StridesTime)
+
+        self.FrameSize_Y, self.FrameSize_X = get_frame_size(self.ListTestImgClass_AllVideos[0][0],self.GrayScale)
+
+    def set_GMMThreshold(self,threshold):
+
+        self.ThresholdGMM = threshold
+
+        return True
+
+    def process_data(self):
+
+        if (not os.path.exists(os.path.join(self.ModelStore, 'Video_Results'))):
+            os.mkdir(os.path.join(self.ModelStore, 'Video_Results'))
+
+        for idx,list_test_img_class_video in enumerate(self.ListTestImgClass_AllVideos):
+
+            self.process_video(list_test_img=list_test_img_class_video,idx=idx)
+
+    def process_video(self,list_test_img,idx):
+
+        if (os.path.exists(os.path.join(self.ModelStore, 'Video_Results', str(idx)))):
+            os.remove(os.path.join(self.ModelStore, 'Video_Results', str(idx)))
+            os.mkdir(os.path.join(self.ModelStore, 'Video_Results', str(idx)))
+
+        path_save_frames = os.path.join(self.ModelStore, 'Video_Results', str(idx))
+
+        for test_img in tqdm(list_test_img):
+            self.process_self_test_img(test_img,path_save_frames)
+
+    def process_self_test_img(self,test_img,path_save_frames):
+
+        list_files_past,list_files_present,list_files_future = test_img.get_time_base_filenames()
+
+        array_cuboids_past,_ = self.create_cuboids_from_fnames(list_files_past)
+        array_cuboids_present,array_relevant_rows_cols_map_cuboids = self.create_cuboids_from_fnames(list_files_present)
+        array_cuboids_future,_ = self.create_cuboids_from_fnames(list_files_future)
+
+        list_array_cuboids = [array_cuboids_past,array_cuboids_present,array_cuboids_future]
+
+        anomaly_map = self.process_list_array_cuboids(list_array_cuboids,array_relevant_rows_cols_map_cuboids)
+
+        self.format_and_save_output_images(anomaly_map,list_files_present,path_save_frames)
+
+
+        return True
+
+    def format_and_save_output_images(self,anomaly_map,list_files_present,path_save_frames):
+
+
+        collection = imread_collection(list_files_present,as_grey=self.GrayScale)
+
+        for idx,image in enumerate(collection):
+
+            img = img_as_float(np.uint8(image))
+            img_color = np.dstack((img, img, img))
+            img_hsv = color.rgb2hsv(img_color)
+
+            color_mask = np.zeros((img.shape[0], img.shape[1], 3))
+            color_mask[:, :, 0] = np.uint8(anomaly_map)
+            color_mask_hsv = color.rgb2hsv(color_mask)
+
+            img_hsv[..., 0] = color_mask_hsv[..., 0]
+            img_hsv[..., 1] = color_mask_hsv[..., 1] * 0.6
+
+            img_masked = color.hsv2rgb(img_hsv)
+            plt.imshow(img_masked)
+
+            filename, fext = os.path.splitext(list_files_present[idx])
+            plt.savefig(os.path.join(path_save_frames, filename+'.png'))
+
+        return True
+
+    def process_list_array_cuboids(self,list_array_cuboids,array_relevant_rows_cols_map_cuboids):
+
+        anomaly_map = np.zeros((self.FrameSize_Y,self.FrameSize_X))
+
+        array_cuboids_present = list_array_cuboids[1]
+        array_cuboids_present = array_cuboids_present.reshape(-1,*array_cuboids_present.shape[2:])
+
+        array_relevant_rows_cols_map_cuboids = array_relevant_rows_cols_map_cuboids.reshape(-1,*array_relevant_rows_cols_map_cuboids.shape[2:])
+
+        encodings_of_cuboids = self.Encoder.predict(array_cuboids_present)
+        score_samples = self.GMM.score_samples(encodings_of_cuboids)
+
+        thresholded = (score_samples<self.ThresholdGMM)
+
+        for idx,rows_cols_map_cuboid in enumerate(array_relevant_rows_cols_map_cuboids):
+
+            if(thresholded[idx]):
+
+                start_rows = rows_cols_map_cuboid[0]
+                end_rows = rows_cols_map_cuboid[1]
+                start_cols = rows_cols_map_cuboid[2]
+                end_cols = rows_cols_map_cuboid[3]
+
+                anomaly_map[start_rows:end_rows,start_cols:end_cols]=1
+
+        return anomaly_map
+
+    def preprocess_collection(self, image_collection):
+
+        if (self.BkgSub):
+            # Subtract mean
+            image_collection = image_collection - np.mean(image_collection, axis=0)
+
+            # Rescale data to 0-1 if gs and 0-255 if not-gs
+            image_collection = (image_collection - np.min(image_collection))
+            image_collection = image_collection / np.max(image_collection)
+
+            if (not self.GrayScale):
+                image_collection = np.uint8(image_collection * 255.0)
+
+        if (not self.GrayScale):
+            image_collection = image_collection / np.max(image_collection)
+
+        return image_collection
+
+    def create_cuboids_from_fnames(self,list_files):
+
+        image_collection = imread_collection(list_files, as_grey=self.GrayScale)
+
+        frame_size_y = self.FrameSize_Y
+        frame_size_x = self.FrameSize_X
+
+        image_collection = self.preprocess_collection(image_collection)
+
+        lc = np.zeros((frame_size_y, frame_size_x, self.NumChannels * self.CubTimesteps))
+
+        for l in range(0, len(image_collection)):
+            lc[:, :, l * self.NumChannels:(l + 1) * self.NumChannels] = image_collection[l].reshape(frame_size_y, frame_size_x, self.NumChannels)
+
+        del image_collection
+        image_collection = lc
+
+        list_cuboids_local = []
+        list_cuboids_pixmap_local = []
+
+        for j in range(0, frame_size_y,self.StridesSpace):
+            for k in range(0, frame_size_x,self.StridesSpace):
+
+                start_rows = int(j - (self.CubSizeY/2))
+                end_rows   = int(j + (self.CubSizeY/2))
+
+                start_cols = int(k - (self.CubSizeX/2))
+                end_cols   = int(k + (self.CubSizeX/2))
+
+
+                if (start_rows < 0 or end_rows > frame_size_y or start_cols < 0 or end_cols > frame_size_x):
+                    continue
+
+                cuboid_data = image_collection[start_rows:end_rows, start_cols:end_cols, :]
+
+                list_cuboids_local.append(cuboid_data)
+                list_cuboids_pixmap_local.append([start_rows,end_rows,start_cols,end_cols])
+
+
+        array_cuboids = np.array(list_cuboids_local).reshape((frame_size_y - self.CubSizeY) / self.StridesSpace + 1,
+                                                             (frame_size_x - self.CubSizeX) / self.StridesSpace + 1,
+                                                             self.CubSizeY,
+                                                             self.CubSizeX,
+                                                             self.NumChannels * self.CubTimesteps)
+
+        relevant_rows_cols_map_cuboids = np.array(list_cuboids_pixmap_local).reshape((frame_size_y - self.CubSizeY) / self.StridesSpace + 1,
+                                                                                     (frame_size_x - self.CubSizeX) / self.StridesSpace + 1,
+                                                                                      4)
+
+        return array_cuboids,relevant_rows_cols_map_cuboids
 
 class Video_Stream_ARTIF:
 
@@ -1966,6 +2068,59 @@ def make_frame_list_(loc_of_frames, n_frames,test_or_train='Train',tstrides=1):
         list_images_relevant_gt = [os.path.join(loc_of_frames+'_gt', i) for i in strip_sth(list_images_gt, strip_tag='Store')]
 
     return list_images_relevant, list_images_relevant_gt
+
+def make_list_test_img_class_for_single_video(loc_of_frames,n_frames=5,tstrides=1):
+
+    assert (n_frames >= 4)  # Frame size have to be greater than 5 for any valuable temporal aspect
+
+    list_images = os.listdir(loc_of_frames)
+    list_images.sort()
+    list_images = list_images[0::tstrides]
+
+    list_images_relevant = [os.path.join(loc_of_frames, i) for i in strip_sth(list_images, strip_tag='Store')]
+
+    ListTestImgClass_Video = []
+
+    for i in range(0,len(list_images_relevant)-n_frames-1):
+        ListTestImgClass_Video.append(TestImgClass(fnames=list_images_relevant[i:i+n_frames+2]))
+
+    return ListTestImgClass_Video
+
+def make_list_test_img_class_all_videos(loc_videos,n_frames=5,tstrides=1,num=-1):
+
+    list_dirs = os.listdir(loc_videos)
+    list_dirs.sort()
+    list_dirs = strip_sth(list_dirs, strip_tag='Store')
+    list_dirs = strip_sth(list_dirs, strip_tag='gt')
+    list_dirs = strip_sth(list_dirs, strip_tag='Videos')
+
+    if (num != -1):
+        list_dirs = list_dirs[0:num]
+
+    ListTestImgClass_AllVideos = []
+
+
+    for idx, i in enumerate(list_dirs):
+        ListTestImgClass_Video = make_list_test_img_class_for_single_video(loc_of_frames=os.path.join(loc_videos, i),
+                                                                           n_frames=n_frames,
+                                                                           tstrides=tstrides)
+
+        ListTestImgClass_AllVideos.append(ListTestImgClass_Video)
+
+
+    return ListTestImgClass_AllVideos
+
+def get_frame_size(test_img,gs):
+
+    list_files_past, list_files_present, list_files_future = test_img.get_time_base_filenames()
+
+    image_collection = imread_collection(list_files_present, as_grey=gs)
+
+    frame_size = image_collection[0].shape
+    frame_size_y = frame_size[0]
+    frame_size_x = frame_size[1]
+
+    return frame_size_y, frame_size_x
 
 def make_videos_of_anomalies(list_cuboids_test,path_videos,n_frames,size_x,size_y,threshold,cnn=False):
 

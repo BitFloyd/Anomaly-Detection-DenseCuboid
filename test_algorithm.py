@@ -2,7 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary
+from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream
 from sys import argv
 import os
 import socket
@@ -35,6 +35,9 @@ tlm = rdict['tlm']
 reverse = rdict['reverse']
 model_store = rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
+path_to_videos_test = rdict['path_to_videos_test']
+sp_strides = rdict['sp_strides']
+
 size = 24
 
 do_silhouette = True
@@ -60,28 +63,22 @@ else:
                                             reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
     ae_model.set_cl_loss(0.0)
-
-    if(do_silhouette):
-        ae_model.set_clusters_to_optimum()
-        ae_model.perform_gmm_analysis_and_training(n_chapters=n_chapters)
-
-#Get Test class
-data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
-data_h5_va = h5py.File(os.path.join(test_data_store,'data_test_video_anomgt.h5'))
-data_h5_vp = h5py.File(os.path.join(test_data_store,'data_test_video_pixmap.h5'))
-data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5'))
+    ae_model.load_gmm_model()
 
 
-tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
-                        notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
-                        use_basis_dict=use_basis_dict)
+tvs = TestVideoStream(PathToVideos=path_to_videos_test,
+                      CubSizeY=size,
+                      CubSizeX=size,
+                      CubTimesteps=8,
+                      ModelStore=model_store,
+                      Encoder=ae_model.encoder,
+                      GMM=ae_model.gm,
+                      LSTM=False,
+                      StridesTime=tstrides,
+                      StridesSpace=sp_strides,
+                      GrayScale=gs,
+                      BkgSub=True)
 
-print "########################################################"
-print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
-print "########################################################"
-tclass.gmm_analysis()
+tvs.set_GMMThreshold(threshold=25.0)
 
-data_h5_vc.close()
-data_h5_va.close()
-data_h5_vp.close()
-data_h5_ap.close()
+tvs.process_data()
