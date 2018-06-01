@@ -5,12 +5,11 @@ from functionals_pkg import argparse_fns as af
 from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream
 from sys import argv
 import os
-import socket
 import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric,set_mem=True,ucsd2=True)
+rdict = af.parse_run_variables(metric,set_mem=True,ucsd2=True,greyscale=True)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']

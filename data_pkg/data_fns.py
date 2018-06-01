@@ -7,11 +7,12 @@ from skimage import color,img_as_float
 from scipy.spatial.distance import cdist
 from sklearn.metrics import precision_score, f1_score, recall_score
 from sklearn.metrics import accuracy_score,confusion_matrix
+from sklearn.metrics import roc_curve,auc
 from collections import deque
 from matplotlib.colors import ListedColormap
 from matplotlib.backends.backend_pdf import PdfPages
 from functionals_pkg import save_objects as so
-from functionals_pkg.logging import debug_print
+from functionals_pkg.logging import debug_print,message_print
 import seaborn as sns
 import copy
 import sys
@@ -847,8 +848,9 @@ class TestDictionary:
         recall_score_list = []
         f1_score_list = []
         accuracy_score_list = []
+        cm_list = []
 
-        lspace = np.linspace(min(array_to_th), max(array_to_th), 2500)
+        lspace = np.linspace(min(array_to_th), max(array_to_th), 4000)
         total_num_tp = np.sum(gt_array)
 
         print "#################################################################################"
@@ -864,14 +866,15 @@ class TestDictionary:
             y_true = gt_array
 
             if(lt):
-                y_pred = (np.array(array_to_th)<=i)
+                y_pred = (array_to_th<=i)
             else:
-                y_pred = (np.array(array_to_th)>=i)
+                y_pred = (array_to_th>=i)
 
 
             precision_score_list.append(precision_score(y_true,y_pred)*100)
             recall_score_list.append(recall_score(y_true,y_pred)*100)
             f1_score_list.append(f1_score(y_true,y_pred)*100)
+            cm_list.append(confusion_matrix(y_true,y_pred))
             accuracy_score_list.append(accuracy_score(y_true,y_pred)*100)
 
 
@@ -897,6 +900,8 @@ class TestDictionary:
         print "MAX F1:", max(f1_score_list)
         print "THRESHOLD:", lspace[f1_score_list.index(max(f1_score_list))]
         max_f1_threshold = lspace[f1_score_list.index(max(f1_score_list))]
+        print "CONFUSION_MATRIX FOR MAX_F1"
+        print cm_list[f1_score_list.index(max(f1_score_list))]
         print "##########################################################################"
 
         score_dict = {'max_acc': float(max(accuracy_score_list)), 'max_f1': float(max(f1_score_list)),
@@ -905,6 +910,26 @@ class TestDictionary:
                       'max_rec_th': max_re_threshold}
 
         return score_dict
+
+    def plot_roc_curve(self,plot_title,array_scores,array_gt,plot_filename):
+
+        fpr,tpr ,_ = roc_curve(y_true=array_gt,y_score=array_scores)
+        auc_score = auc(fpr,tpr)
+
+        plt.figure()
+        lw = 2
+        plt.plot(fpr, tpr, color='darkorange',lw=lw, label='ROC curve (area = %0.2f)' % auc_score)
+        plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title(plot_title)
+        plt.legend(loc="lower right")
+        plt.savefig(os.path.join(self.image_store,plot_filename),bbox_inches='tight')
+        plt.close()
+
+        return True
 
     def make_comparitive_plot(self,graph_name,array_to_consider,metric_name=None,lt=False):
 
@@ -1294,6 +1319,12 @@ class TestDictionary:
         score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores,gt_array=list_all_gt,lt=True)
         self.write_prf_details_to_file(filename='prf_details.txt', score_dict=score_dict, metric_name='GMM probability score')
 
+        message_print("START PLOTTING ROC CURVE")
+
+        self.plot_roc_curve(plot_title='Reciever Operating Characteristic when using Gaussian Mixture Model',
+                            array_scores=(-list_all_scores),
+                            array_gt=list_all_gt,
+                            plot_filename = 'roc_for_gmm.png')
         return score_dict
 
     def create_feats_to_analyze_from_video(self):
@@ -1455,7 +1486,6 @@ class TestVideoStream:
 
         array_cuboids_present = list_array_cuboids[1]
         array_cuboids_present = array_cuboids_present.reshape(-1,*array_cuboids_present.shape[2:])
-
         array_relevant_rows_cols_map_cuboids = array_relevant_rows_cols_map_cuboids.reshape(-1,*array_relevant_rows_cols_map_cuboids.shape[2:])
 
         encodings_of_cuboids = self.Encoder.predict(array_cuboids_present)
@@ -1466,7 +1496,6 @@ class TestVideoStream:
         for idx,rows_cols_map_cuboid in enumerate(array_relevant_rows_cols_map_cuboids):
 
             if(thresholded[idx]):
-
                 start_rows = rows_cols_map_cuboid[0]
                 end_rows = rows_cols_map_cuboid[1]
                 start_cols = rows_cols_map_cuboid[2]
@@ -1490,7 +1519,7 @@ class TestVideoStream:
                 image_collection = np.uint8(image_collection * 255.0)
 
         if (not self.GrayScale):
-            image_collection = image_collection / np.max(image_collection)
+            image_collection = image_collection / 255.0
 
         return image_collection
 

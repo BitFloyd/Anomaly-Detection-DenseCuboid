@@ -5,7 +5,6 @@ from functionals_pkg import argparse_fns as af
 from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream
 from sys import argv
 import os
-import socket
 import h5py
 
 metric = af.getopts(argv)

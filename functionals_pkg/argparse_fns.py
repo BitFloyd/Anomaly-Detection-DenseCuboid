@@ -11,7 +11,7 @@ def getopts(argv):
         argv = argv[1:]  # Reduce the argument list by copying it starting from index 1.
     return opts
 
-def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False):
+def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,greyscale=False):
 
     return_parse_dict = {}
 
@@ -78,7 +78,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False):
 
 
     n_chapters = 0
-    gs = False
+    gs = greyscale
     nic = 0
     lassign = 0.0
     h_units = int(metric['-h'])

@@ -65,6 +65,30 @@ else:
     ae_model.set_cl_loss(0.0)
     ae_model.load_gmm_model()
 
+#Get Test class
+data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
+data_h5_va = h5py.File(os.path.join(test_data_store,'data_test_video_anomgt.h5'))
+data_h5_vp = h5py.File(os.path.join(test_data_store,'data_test_video_pixmap.h5'))
+data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5'))
+
+
+tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
+                        notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
+                        use_basis_dict=use_basis_dict)
+
+
+print "########################################################"
+print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "########################################################"
+score_dict = tclass.gmm_analysis()
+
+data_h5_vc.close()
+data_h5_va.close()
+data_h5_vp.close()
+data_h5_ap.close()
+
+threshold = score_dict['max_f1_th']
+
 
 tvs = TestVideoStream(PathToVideos=path_to_videos_test,
                       CubSizeY=size,
@@ -79,6 +103,6 @@ tvs = TestVideoStream(PathToVideos=path_to_videos_test,
                       GrayScale=gs,
                       BkgSub=True)
 
-tvs.set_GMMThreshold(threshold=25.0)
+tvs.set_GMMThreshold(threshold=threshold)
 
 tvs.process_data()
