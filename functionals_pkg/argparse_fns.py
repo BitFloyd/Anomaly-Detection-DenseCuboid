@@ -173,7 +173,6 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,gr
         tlm = 'dssim'
 
     suffix += '_large_' + str(large)
-    # suffix += '_ntrain_' + str(ntrain)
     suffix += '_lamda_' + str(lamda)
 
     # Get MODEL

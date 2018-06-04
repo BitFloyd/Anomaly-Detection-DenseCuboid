@@ -71,13 +71,13 @@ if(guill and '-ngpu' in metric.keys()):
     ae_model.make_ae_model_multi_gpu(n_gpus)
 
 if(nocl):
-    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=100, n_chapters=n_chapters,
-                                        n_train=ntrain, reduce_lr=True, patience_lr=25, factor=1.25)
+    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=30, n_chapters=n_chapters,
+                                        n_train=ntrain, reduce_lr=True, patience_lr=15, factor=1.25)
 
 
 else:
-    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
-                            n_train=ntrain, reduce_lr = True, patience_lr=25 , factor=1.25)
+    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=30,n_chapters=n_chapters,
+                            n_train=ntrain, reduce_lr = True, patience_lr=15 , factor=1.25)
 
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
