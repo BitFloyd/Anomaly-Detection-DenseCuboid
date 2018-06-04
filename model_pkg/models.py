@@ -851,6 +851,9 @@ class Super_autoencoder:
                             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                             K.set_value(self.ae.optimizer.lr, lr / factor)
                             lr = lr / factor
+                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                            print "REDUCING_LR TO:", lr
+                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 
                         if (earlystopping and loss_track > patience):
                             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
