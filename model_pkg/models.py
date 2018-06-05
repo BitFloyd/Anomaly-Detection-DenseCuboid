@@ -1033,8 +1033,11 @@ class Super_autoencoder:
                 print "PROCESSING FEATURE:", i
                 ax[int(i / 8)][i % 8].set_title('feature: ' + str(i + 1),fontsize=20)
                 plt.setp(ax[int(i / 8)][i % 8].get_xticklabels(),visible=True)
-                sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
+                try:
+                    sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
                                  ax=ax[int(i / 8)][i % 8])
+                except:
+                    print "SKIPPING FEATURE:", i
 
             pdf.savefig()  # saves the current figure into a pdf page
             plt.close()
