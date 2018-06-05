@@ -1219,14 +1219,17 @@ class TestDictionary:
 
             for i in range(0, full_list_feats_normal.shape[1]):
                 print "PROCESSING FEATURE:", i
-                ax[int(i / 8)][i % 8].set_title('feature: ' + str(i + 1), fontsize=20)
-                plt.setp(ax[int(i / 8)][i % 8].get_xticklabels(), visible=True)
+                try:
+                    ax[int(i / 8)][i % 8].set_title('feature: ' + str(i + 1), fontsize=20)
+                    plt.setp(ax[int(i / 8)][i % 8].get_xticklabels(), visible=True)
 
-                sns.distplot(full_list_feats_normal[:, i], kde=True, rug=False, hist=True,
+                    sns.distplot(full_list_feats_normal[:, i], kde=True, rug=False, hist=True,
                                  ax=ax[int(i / 8)][i % 8],color='green')
 
-                sns.distplot(full_list_feats_anomaly[:, i], kde=True, rug=False, hist=True,
+                    sns.distplot(full_list_feats_anomaly[:, i], kde=True, rug=False, hist=True,
                              ax=ax[int(i / 8)][i % 8],color='red')
+                except:
+                    print "SKIPPING FEATURE:", i
 
             pdf.savefig()  # saves the current figure into a pdf page
             plt.close()

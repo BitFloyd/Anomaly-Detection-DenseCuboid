@@ -4,7 +4,8 @@
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conv_ac_ucsd2.py" afterPath="$PROJECT_DIR$/conv_ac_ucsd2.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_pkg/data_fns.py" afterPath="$PROJECT_DIR$/data_pkg/data_fns.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,16 +31,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1412">
+              <caret line="222" column="18" lean-forward="true" selection-start-line="222" selection-start-column="18" selection-end-line="222" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="594">
-              <caret line="1378" column="54" lean-forward="false" selection-start-line="1378" selection-start-column="54" selection-end-line="1378" selection-end-column="54" />
+              <caret line="257" column="21" lean-forward="false" selection-start-line="257" selection-start-column="21" selection-end-line="257" selection-end-column="21" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#804#1080#0" expanded="false" />
                 <element signature="e#1110#9051#0" expanded="false" />
-                <element signature="e#9080#57316#0" expanded="false" />
+                <element signature="e#9080#57426#0" expanded="false" />
                 <element signature="e#9261#12781#0" expanded="false" />
                 <element signature="e#11934#12781#0" expanded="false" />
                 <element signature="e#12817#13936#0" expanded="false" />
@@ -71,61 +82,39 @@
                 <element signature="e#46956#47705#0" expanded="false" />
                 <element signature="e#47764#48673#0" expanded="false" />
                 <element signature="e#48720#49237#0" expanded="false" />
-                <element signature="e#49291#51103#0" expanded="false" />
-                <element signature="e#51142#55043#0" expanded="false" />
-                <element signature="e#55104#56413#0" expanded="false" />
-                <element signature="e#56527#57237#0" expanded="false" />
-                <element signature="e#57346#65147#0" expanded="false" />
-                <element signature="e#57521#58294#0" expanded="false" />
-                <element signature="e#58347#58397#0" expanded="false" />
-                <element signature="e#58436#58769#0" expanded="false" />
-                <element signature="e#58827#59243#0" expanded="false" />
-                <element signature="e#59317#60012#0" expanded="false" />
-                <element signature="e#60116#61047#0" expanded="false" />
-                <element signature="e#61156#62148#0" expanded="false" />
-                <element signature="e#62214#62787#0" expanded="false" />
-                <element signature="e#62851#65147#0" expanded="false" />
-                <element signature="e#65180#69855#0" expanded="false" />
-                <element signature="e#68001#69517#0" expanded="false" />
-                <element signature="e#69555#69569#0" expanded="false" />
-                <element signature="e#69617#69855#0" expanded="false" />
-                <element signature="e#69930#70419#0" expanded="false" />
-                <element signature="e#70595#78117#0" expanded="false" />
-                <element signature="e#78174#78337#0" expanded="false" />
-                <element signature="e#78438#81945#0" expanded="false" />
-                <element signature="e#82053#83218#0" expanded="false" />
-                <element signature="e#83306#84251#0" expanded="false" />
-                <element signature="e#84339#85050#0" expanded="false" />
-                <element signature="e#85141#85685#0" expanded="false" />
-                <element signature="e#85774#86545#0" expanded="false" />
-                <element signature="e#86585#86899#0" expanded="false" />
-                <element signature="e#87010#87386#0" expanded="false" />
-                <element signature="e#87494#89366#0" expanded="false" />
-                <element signature="e#89437#90683#0" expanded="false" />
-                <element signature="e#90777#91316#0" expanded="false" />
-                <element signature="e#91351#91384#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="50" lean-forward="false" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1566">
-              <caret line="96" column="46" lean-forward="false" selection-start-line="96" selection-start-column="37" selection-end-line="96" selection-end-column="46" />
-              <folding>
-                <element signature="e#84#443#0" expanded="false" />
+                <element signature="e#49291#51213#0" expanded="false" />
+                <element signature="e#51252#55153#0" expanded="false" />
+                <element signature="e#55214#56523#0" expanded="false" />
+                <element signature="e#56637#57347#0" expanded="false" />
+                <element signature="e#57456#65257#0" expanded="false" />
+                <element signature="e#57631#58404#0" expanded="false" />
+                <element signature="e#58457#58507#0" expanded="false" />
+                <element signature="e#58546#58879#0" expanded="false" />
+                <element signature="e#58937#59353#0" expanded="false" />
+                <element signature="e#59427#60122#0" expanded="false" />
+                <element signature="e#60226#61157#0" expanded="false" />
+                <element signature="e#61266#62258#0" expanded="false" />
+                <element signature="e#62324#62897#0" expanded="false" />
+                <element signature="e#62961#65257#0" expanded="false" />
+                <element signature="e#65290#69965#0" expanded="false" />
+                <element signature="e#68111#69627#0" expanded="false" />
+                <element signature="e#69665#69679#0" expanded="false" />
+                <element signature="e#69727#69965#0" expanded="false" />
+                <element signature="e#70040#70529#0" expanded="false" />
+                <element signature="e#70705#78227#0" expanded="false" />
+                <element signature="e#78284#78447#0" expanded="false" />
+                <element signature="e#78548#82055#0" expanded="false" />
+                <element signature="e#82163#83328#0" expanded="false" />
+                <element signature="e#83416#84361#0" expanded="false" />
+                <element signature="e#84449#85160#0" expanded="false" />
+                <element signature="e#85251#85795#0" expanded="false" />
+                <element signature="e#85884#86655#0" expanded="false" />
+                <element signature="e#86695#87009#0" expanded="false" />
+                <element signature="e#87120#87496#0" expanded="false" />
+                <element signature="e#87604#89476#0" expanded="false" />
+                <element signature="e#89547#90793#0" expanded="false" />
+                <element signature="e#90887#91426#0" expanded="false" />
+                <element signature="e#91461#91494#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -143,8 +132,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>get</find>
-      <find>.normed_data(data_mean=mean_data, data_std=std_data)</find>
       <find>ae_model.create_tsne_plot('tsne_plot.png',n_chapters=10,total_chaps_trained=n_chapters)</find>
       <find>bef_fit = np.zeros(</find>
       <find>self.ae.predict</find>
@@ -173,6 +160,8 @@
       <find>get_next_cuboids_from_stream</find>
       <find>HERE</find>
       <find>models/</find>
+      <find>REDUCING</find>
+      <find>functio</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -229,13 +218,13 @@
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
-        <option value="$PROJECT_DIR$/model_pkg/models.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
         <option value="$PROJECT_DIR$/roc_score.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/logging.py" />
         <option value="$PROJECT_DIR$/test_algorithm.py" />
-        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+        <option value="$PROJECT_DIR$/model_pkg/models.py" />
+        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
       </list>
     </option>
@@ -247,10 +236,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1599" />
-    <option name="y" value="-11" />
-    <option name="width" value="1922" />
-    <option name="height" value="1092" />
+    <option name="x" value="1600" />
+    <option name="y" value="-4" />
+    <option name="width" value="1920" />
+    <option name="height" value="1084" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -271,6 +260,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -285,7 +275,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -878,7 +867,35 @@
       <option name="project" value="LOCAL" />
       <updated>1527881213610</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Reduce patience and lr on conv_ac_ucsd2">
+      <created>1528126771961</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1528126771961</updated>
+    </task>
+    <task id="LOCAL-00045" summary="print new lr">
+      <created>1528145983631</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1528145983631</updated>
+    </task>
+    <task id="LOCAL-00046" summary="fix patience issue">
+      <created>1528169040774</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1528169040774</updated>
+    </task>
+    <task id="LOCAL-00047" summary="skip feature if not able for distplot">
+      <created>1528170792454</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1528170792454</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -891,17 +908,17 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1599" y="-11" width="1922" height="1092" extended-state="6" />
+    <frame x="1600" y="-4" width="1920" height="1084" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5504587" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23139654" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.108053006" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3598369" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.85018724" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25586137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.165625" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1578125" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15125" sideWeight="0.50743496" order="2" side_tool="true" content_ui="tabs" />
@@ -950,10 +967,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="MaxPooling changed to average pooling. Discrete graphs instead of lines." />
-    <MESSAGE value="Testing phase added" />
-    <MESSAGE value="Added training without clustering in the deep-model." />
-    <MESSAGE value="Fix suffix issue" />
     <MESSAGE value="Add save gifs to cluster_ids and do more partial fit for models with clustering loss" />
     <MESSAGE value="Distance measure added to words for dictionary building" />
     <MESSAGE value="Separate kmeans from training and make test more modular." />
@@ -975,7 +988,11 @@
     <MESSAGE value="Fix Issues with TestVideoStream Module" />
     <MESSAGE value="add TestVideoStream to import" />
     <MESSAGE value="Fix TestVideoStream for normalization" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix TestVideoStream for normalization" />
+    <MESSAGE value="Reduce patience and lr on conv_ac_ucsd2" />
+    <MESSAGE value="print new lr" />
+    <MESSAGE value="fix patience issue" />
+    <MESSAGE value="skip feature if not able for distplot" />
+    <option name="LAST_COMMIT_MESSAGE" value="skip feature if not able for distplot" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -986,7 +1003,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="144" />
+      <option name="time" value="145" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1140,69 +1157,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="1303" column="94" lean-forward="false" selection-start-line="1303" selection-start-column="94" selection-end-line="1303" selection-end-column="94" />
-          <folding>
-            <element signature="e#1631#3302#0" expanded="false" />
-            <element signature="e#3347#5512#0" expanded="false" />
-            <element signature="e#5548#19276#0" expanded="false" />
-            <element signature="e#19682#21085#0" expanded="false" />
-            <element signature="e#21126#21281#0" expanded="false" />
-            <element signature="e#21321#21454#0" expanded="false" />
-            <element signature="e#21498#21635#0" expanded="false" />
-            <element signature="e#21676#21753#0" expanded="false" />
-            <element signature="e#21810#22238#0" expanded="false" />
-            <element signature="e#22288#22573#0" expanded="false" />
-            <element signature="e#22802#32357#0" expanded="false" />
-            <element signature="e#32579#36516#0" expanded="false" />
-            <element signature="e#36573#38043#0" expanded="false" />
-            <element signature="e#38088#39655#0" expanded="false" />
-            <element signature="e#39706#40507#0" expanded="false" />
-            <element signature="e#40576#41283#0" expanded="false" />
-            <element signature="e#41343#44335#0" expanded="false" />
-            <element signature="e#44401#45629#0" expanded="false" />
-            <element signature="e#45707#47147#0" expanded="false" />
-            <element signature="e#47254#48347#0" expanded="false" />
-            <element signature="e#48433#51235#0" expanded="false" />
-            <element signature="e#51570#51675#0" expanded="false" />
-            <element signature="e#51738#51863#0" expanded="false" />
-            <element signature="e#51926#52229#0" expanded="false" />
-            <element signature="e#52279#52745#0" expanded="false" />
-            <element signature="e#52804#54323#0" expanded="false" />
-            <element signature="e#54407#55478#0" expanded="false" />
-            <element signature="e#55517#55940#0" expanded="false" />
-            <element signature="e#55998#56402#0" expanded="false" />
-            <element signature="e#56475#57433#0" expanded="false" />
-            <element signature="e#57521#58073#0" expanded="false" />
-            <element signature="e#58178#60324#0" expanded="false" />
-            <element signature="e#60412#61809#0" expanded="false" />
-            <element signature="e#61899#63346#0" expanded="false" />
-            <element signature="e#63399#64063#0" expanded="false" />
-            <element signature="e#64134#64954#0" expanded="false" />
-            <element signature="e#65029#65878#0" expanded="false" />
-            <element signature="e#65929#66332#0" expanded="false" />
-            <element signature="e#66386#67116#0" expanded="false" />
-            <element signature="e#67179#68688#0" expanded="false" />
-            <element signature="e#68751#69431#0" expanded="false" />
-            <element signature="e#69531#72327#0" expanded="false" />
-            <element signature="e#72394#74615#0" expanded="false" />
-            <element signature="e#74757#81206#0" expanded="false" />
-            <element signature="e#81275#88236#0" expanded="false" />
-            <element signature="e#88303#95538#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/roc_score.py" />
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/logging.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="33" column="63" lean-forward="false" selection-start-line="33" selection-start-column="63" selection-end-line="33" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
@@ -1231,15 +1186,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="91" column="42" lean-forward="false" selection-start-line="91" selection-start-column="42" selection-end-line="91" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1584">
+          <caret line="1768" column="63" lean-forward="false" selection-start-line="1768" selection-start-column="63" selection-end-line="1768" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/logging.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="30" column="17" lean-forward="false" selection-start-line="30" selection-start-column="4" selection-end-line="30" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1412">
+          <caret line="222" column="18" lean-forward="true" selection-start-line="222" selection-start-column="18" selection-end-line="222" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="594">
-          <caret line="1378" column="54" lean-forward="false" selection-start-line="1378" selection-start-column="54" selection-end-line="1378" selection-end-column="54" />
+          <caret line="257" column="21" lean-forward="false" selection-start-line="257" selection-start-column="21" selection-end-line="257" selection-end-column="21" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#804#1080#0" expanded="false" />
             <element signature="e#1110#9051#0" expanded="false" />
-            <element signature="e#9080#57316#0" expanded="false" />
+            <element signature="e#9080#57426#0" expanded="false" />
             <element signature="e#9261#12781#0" expanded="false" />
             <element signature="e#11934#12781#0" expanded="false" />
             <element signature="e#12817#13936#0" expanded="false" />
@@ -1271,57 +1255,39 @@
             <element signature="e#46956#47705#0" expanded="false" />
             <element signature="e#47764#48673#0" expanded="false" />
             <element signature="e#48720#49237#0" expanded="false" />
-            <element signature="e#49291#51103#0" expanded="false" />
-            <element signature="e#51142#55043#0" expanded="false" />
-            <element signature="e#55104#56413#0" expanded="false" />
-            <element signature="e#56527#57237#0" expanded="false" />
-            <element signature="e#57346#65147#0" expanded="false" />
-            <element signature="e#57521#58294#0" expanded="false" />
-            <element signature="e#58347#58397#0" expanded="false" />
-            <element signature="e#58436#58769#0" expanded="false" />
-            <element signature="e#58827#59243#0" expanded="false" />
-            <element signature="e#59317#60012#0" expanded="false" />
-            <element signature="e#60116#61047#0" expanded="false" />
-            <element signature="e#61156#62148#0" expanded="false" />
-            <element signature="e#62214#62787#0" expanded="false" />
-            <element signature="e#62851#65147#0" expanded="false" />
-            <element signature="e#65180#69855#0" expanded="false" />
-            <element signature="e#68001#69517#0" expanded="false" />
-            <element signature="e#69555#69569#0" expanded="false" />
-            <element signature="e#69617#69855#0" expanded="false" />
-            <element signature="e#69930#70419#0" expanded="false" />
-            <element signature="e#70595#78117#0" expanded="false" />
-            <element signature="e#78174#78337#0" expanded="false" />
-            <element signature="e#78438#81945#0" expanded="false" />
-            <element signature="e#82053#83218#0" expanded="false" />
-            <element signature="e#83306#84251#0" expanded="false" />
-            <element signature="e#84339#85050#0" expanded="false" />
-            <element signature="e#85141#85685#0" expanded="false" />
-            <element signature="e#85774#86545#0" expanded="false" />
-            <element signature="e#86585#86899#0" expanded="false" />
-            <element signature="e#87010#87386#0" expanded="false" />
-            <element signature="e#87494#89366#0" expanded="false" />
-            <element signature="e#89437#90683#0" expanded="false" />
-            <element signature="e#90777#91316#0" expanded="false" />
-            <element signature="e#91351#91384#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="50" lean-forward="false" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1566">
-          <caret line="96" column="46" lean-forward="false" selection-start-line="96" selection-start-column="37" selection-end-line="96" selection-end-column="46" />
-          <folding>
-            <element signature="e#84#443#0" expanded="false" />
+            <element signature="e#49291#51213#0" expanded="false" />
+            <element signature="e#51252#55153#0" expanded="false" />
+            <element signature="e#55214#56523#0" expanded="false" />
+            <element signature="e#56637#57347#0" expanded="false" />
+            <element signature="e#57456#65257#0" expanded="false" />
+            <element signature="e#57631#58404#0" expanded="false" />
+            <element signature="e#58457#58507#0" expanded="false" />
+            <element signature="e#58546#58879#0" expanded="false" />
+            <element signature="e#58937#59353#0" expanded="false" />
+            <element signature="e#59427#60122#0" expanded="false" />
+            <element signature="e#60226#61157#0" expanded="false" />
+            <element signature="e#61266#62258#0" expanded="false" />
+            <element signature="e#62324#62897#0" expanded="false" />
+            <element signature="e#62961#65257#0" expanded="false" />
+            <element signature="e#65290#69965#0" expanded="false" />
+            <element signature="e#68111#69627#0" expanded="false" />
+            <element signature="e#69665#69679#0" expanded="false" />
+            <element signature="e#69727#69965#0" expanded="false" />
+            <element signature="e#70040#70529#0" expanded="false" />
+            <element signature="e#70705#78227#0" expanded="false" />
+            <element signature="e#78284#78447#0" expanded="false" />
+            <element signature="e#78548#82055#0" expanded="false" />
+            <element signature="e#82163#83328#0" expanded="false" />
+            <element signature="e#83416#84361#0" expanded="false" />
+            <element signature="e#84449#85160#0" expanded="false" />
+            <element signature="e#85251#85795#0" expanded="false" />
+            <element signature="e#85884#86655#0" expanded="false" />
+            <element signature="e#86695#87009#0" expanded="false" />
+            <element signature="e#87120#87496#0" expanded="false" />
+            <element signature="e#87604#89476#0" expanded="false" />
+            <element signature="e#89547#90793#0" expanded="false" />
+            <element signature="e#90887#91426#0" expanded="false" />
+            <element signature="e#91461#91494#0" expanded="false" />
           </folding>
         </state>
       </provider>

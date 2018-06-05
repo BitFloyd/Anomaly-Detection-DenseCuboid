@@ -33,6 +33,7 @@ import h5py
 from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.cm as cm
 from functionals_pkg import save_objects as so
+from functionals_pkg.logging import  message_print,debug_print
 from sklearn.mixture import GaussianMixture
 import seaborn as sns
 import itertools
@@ -1155,6 +1156,7 @@ class Super_autoencoder:
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START K-MEANS PARTIAL FITTING"
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        message_print("CLUSTERS :" + str(self.n_clusters))
 
         while (disp_track < means_patience and fit_tries<=max_fit_tries and exceptions <=100):
 
@@ -1238,6 +1240,7 @@ class Super_autoencoder:
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START KMEANS FITTING"
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        message_print("CLUSTERS :"+str(self.n_clusters))
 
         del self.km
         if(partial):
@@ -1781,6 +1784,7 @@ class Super_autoencoder:
 
         for i in range(0, self.n_clusters):
             list_assigns_summed.append(np.sum(list_assigns == i))
+            print list_assigns_summed[-1]
 
         plt.bar(x=range(0, self.n_clusters), height=list_assigns_summed, width=0.25)
         plt.title('Cluster Assignments')
@@ -1970,7 +1974,7 @@ class Super_autoencoder:
             del f_arr
 
         list_feats = np.array(list_feats)
-
+        features_h5.close()
         print "################################"
         print "FEATURES_SHAPE:", list_feats.shape
         print "################################"
