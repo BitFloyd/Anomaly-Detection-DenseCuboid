@@ -216,7 +216,7 @@ print "########################################################"
 tclass.feature_analysis_normvsanom()
 
 print "########################################################"
-print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "PERFORM GMM ANALYSIS ON ANOMALY VS NORMAL FEATURES"
 print "########################################################"
 score_dict = tclass.gmm_analysis()
 
@@ -226,6 +226,9 @@ data_h5_vp.close()
 data_h5_ap.close()
 
 threshold = score_dict['max_f1_th']
+print "########################################################"
+print "THRESHOLD: ", threshold
+print "########################################################"
 
 ae_model.load_gmm_model()
 

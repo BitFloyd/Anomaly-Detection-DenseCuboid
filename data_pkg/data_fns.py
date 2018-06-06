@@ -900,6 +900,7 @@ class TestDictionary:
         print "MAX F1:", max(f1_score_list)
         print "THRESHOLD:", lspace[f1_score_list.index(max(f1_score_list))]
         max_f1_threshold = lspace[f1_score_list.index(max(f1_score_list))]
+        print "##########################################################################"
         print "CONFUSION_MATRIX FOR MAX_F1"
         print cm_list[f1_score_list.index(max(f1_score_list))]
         print "##########################################################################"
@@ -934,6 +935,9 @@ class TestDictionary:
     def make_comparitive_plot(self,graph_name,array_to_consider,metric_name=None,lt=False):
 
         aclist = array_to_consider.tolist()
+        score_dict = self.evaluate_prfa(array_to_th=aclist)
+
+        threshold = score_dict['max_f1_th']
 
         y_true = np.array(self.list_of_cub_anom_gt_full_dataset)
 
@@ -956,6 +960,7 @@ class TestDictionary:
 
         im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
         ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+        ax1.axhline(y=threshold, label='best threshold', color='b')
         ax1.set_ylabel(metric_name)
         ax1.set_xlabel('Cuboid index')
         ax1.grid(True)
@@ -967,6 +972,7 @@ class TestDictionary:
         arr_anoms = array_to_consider[y_true_arr==1]
 
         im2 = ax2.scatter(range(0,len(arr_anoms)),arr_anoms,c='red',alpha=0.5)
+        ax2.axhline(y=threshold, label='best threshold', color='b')
         ax2.set_title('ANOMS:Red')
         ax2.set_ylabel(metric_name)
         ax2.set_xlabel('Cuboid index')
@@ -983,8 +989,6 @@ class TestDictionary:
 
         plt.savefig(os.path.join(self.image_store, graph_name), bbox_inches='tight')
         plt.close()
-
-        score_dict = self.evaluate_prfa(array_to_th=aclist)
 
         self.write_prf_details_to_file(filename='prf_details.txt',score_dict=score_dict,metric_name=metric_name)
 
@@ -1252,7 +1256,6 @@ class TestDictionary:
             full_list_scores_normal.extend(self.gm.score_samples(np.array(feats_normal)).tolist())
             full_list_scores_anomaly.extend(self.gm.score_samples(np.array(feats_anomaly)).tolist())
 
-
         full_list_scores_normal = np.sort(np.array(full_list_scores_normal))
         full_list_scores_anomaly = np.sort(np.array(full_list_scores_anomaly))
 
@@ -1287,8 +1290,11 @@ class TestDictionary:
 
         args_arr_sort = np.argsort(-list_all_scores)
 
-        y_true_arr = list_all_gt[args_arr_sort]
+        list_all_gt = list_all_gt[args_arr_sort]
         list_all_scores = list_all_scores[args_arr_sort]
+
+        score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores, gt_array=list_all_gt, lt=True)
+        threshold = score_dict['max_f1_th']
 
         colors = ['green', 'red']
 
@@ -1299,19 +1305,21 @@ class TestDictionary:
 
         plt.suptitle('Log probability Score plots of anomaly vs normal cuboids', fontsize=30)
 
-        im1 = ax1.scatter(range(0, len(list_all_scores)), list_all_scores, c=y_true_arr,
+        im1 = ax1.scatter(range(0, len(list_all_scores)), list_all_scores, c=list_all_gt,
                           cmap=ListedColormap(colors), alpha=0.5)
+        ax1.axhline(y=threshold,label='best threshold',color='b')
         ax1.set_title('ANOMS:Red, N-ANOMS:Green')
         ax1.set_ylabel('Log-probability score')
         ax1.set_xlabel('Cuboid index')
         ax1.grid(True)
         cb1 = fig.colorbar(im1, ax=ax1)
-        loc = np.arange(0, max(y_true_arr), max(y_true_arr) / float(len(colors)))
+        loc = np.arange(0, max(list_all_gt), max(list_all_gt) / float(len(colors)))
         cb1.set_ticks(loc)
         cb1.set_ticklabels(['normal', 'anomaly'])
-        arr_anoms = list_all_scores[y_true_arr == 1]
+        arr_anoms = list_all_scores[list_all_gt == 1]
 
         im2 = ax2.scatter(range(0, len(arr_anoms)), arr_anoms, c='red', alpha=0.5)
+        ax2.axhline(y=threshold, label='best threshold', color='b')
         ax2.set_title('ANOMS:Red')
         ax2.set_ylabel('Log-probability score')
         ax2.set_xlabel('Cuboid index')
@@ -1319,7 +1327,6 @@ class TestDictionary:
         plt.savefig(os.path.join(self.image_store, 'gmm_analysis_plot.png'))
         plt.close()
 
-        score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores,gt_array=list_all_gt,lt=True)
         self.write_prf_details_to_file(filename='prf_details.txt', score_dict=score_dict, metric_name='GMM probability score')
 
         message_print("START PLOTTING ROC CURVE")
