@@ -68,6 +68,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,gr
     if(ucsd2):
         dataset = 'ucsd2'
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+        if(guill):
+            path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
         tstrides = 1
         sp_strides = 12
     else:
