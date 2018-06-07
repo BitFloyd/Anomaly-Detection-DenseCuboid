@@ -950,6 +950,20 @@ class TestDictionary:
 
         array_to_consider = array_to_consider[args_arr_sort]
 
+        pdf_name = graph_name.split('.')[0] + '.pdf'
+
+        with PdfPages(pdf_name) as pdf:
+
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(40, 40), sharex='col', sharey='row')
+            plt.suptitle('Distribution of ' +metric_name+' scores from the dataset. Green:Scores of Normal Cuboids, Red:Scores of Anomaly Cuboids', fontsize=30)
+            plt.setp(ax.get_xticklabels(), visible=True)
+            sns.distplot(array_to_consider[y_true_arr==0], kde=False, rug=False, hist=True, ax=ax,color='green')
+            sns.distplot(array_to_consider[y_true_arr==1], kde=False, rug=False, hist=True, ax=ax,color='red')
+            pdf.savefig()  # saves the current figure into a pdf page
+            plt.close()
+            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
         colors = ['green', 'red']
 
         f, ax = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(80, 80))

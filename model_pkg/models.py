@@ -75,7 +75,7 @@ class CustomClusterLayer(Layer):
         sum_squares = K.tf.reduce_sum(K.square(rep_points - rep_centroids),reduction_indices=2)
         best_centroids = K.argmin(sum_squares, 1)
 
-        cl_loss = cl_loss = self.cl_loss_wt * (self.lamda) * K.mean(K.sqrt(K.sum(K.square(encoded_feats-K.gather(centroids,best_centroids)),axis=1)))
+        cl_loss = self.cl_loss_wt * (self.lamda) * K.mean(K.sqrt(K.sum(K.square(encoded_feats-K.gather(centroids,best_centroids)),axis=1)))
 
         return loss+cl_loss
 
@@ -1656,12 +1656,25 @@ class Super_autoencoder:
 
         return True
 
-    def create_tsne_plot(self, graph_name, n_chapters, total_chaps_trained):
+    def create_tsne_plot(self, graph_name, n_chapters):
 
         tsne_obj = TSNE(n_components=2, init='pca', random_state=0, verbose=0)
 
-        train_encodings, cluster_assigns = self.get_encodings_and_assigns(n_chapters=n_chapters,
-                                                                          total_chaps_trained_on=total_chaps_trained)
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, n_chapters):
+            f_arr = self.set_feats(id)
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        self.features_h5.close()
+
+        list_feats = shuffle(np.array(list_feats))
+
+        train_encodings = list_feats
+        cluster_assigns = self.get_assigns(self.means,list_feats)
 
         full_array_feats = np.vstack((train_encodings, self.means))
         full_array_labels = np.vstack(
@@ -1692,8 +1705,21 @@ class Super_autoencoder:
 
         tsne_obj = TSNE(n_components=3, init='pca', random_state=0, verbose=0)
 
-        train_encodings, cluster_assigns = self.get_encodings_and_assigns(n_chapters=n_chapters,
-                                                                          total_chaps_trained_on=total_chaps_trained)
+        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, n_chapters):
+            f_arr = self.set_feats(id)
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        self.features_h5.close()
+
+        list_feats = shuffle(np.array(list_feats))
+
+        train_encodings = list_feats
+        cluster_assigns = self.get_assigns(self.means, list_feats)
 
         full_array_feats = np.vstack((train_encodings, self.means))
         full_array_labels = np.vstack(
