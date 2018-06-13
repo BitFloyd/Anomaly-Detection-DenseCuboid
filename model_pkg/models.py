@@ -1021,12 +1021,12 @@ class Super_autoencoder:
         if(os.path.exists(pdf_name)):
             os.remove(pdf_name)
 
-        rows_plots = (list_feats.shape[1] / 8)
+        rows_plots = (list_feats.shape[1] / 16)
 
         with PdfPages(pdf_name) as pdf:
 
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-            fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
+            fig, ax = plt.subplots(ncols=16, nrows=rows_plots, figsize=(200, 200), sharex='col', sharey='row')
             list_feats_to_plot = list_feats
             plt.suptitle('Distribution of each feature in the dataset',fontsize=30)
 
@@ -1677,8 +1677,7 @@ class Super_autoencoder:
         cluster_assigns = self.get_assigns(self.means,list_feats)
 
         full_array_feats = np.vstack((train_encodings, self.means))
-        full_array_labels = np.vstack(
-            (cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
+        full_array_labels = np.vstack((cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
 
         colors = full_array_labels.reshape((full_array_labels.shape[0],))
 

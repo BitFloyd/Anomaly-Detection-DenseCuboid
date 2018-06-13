@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conv_ac_ucsd2.py" afterPath="$PROJECT_DIR$/conv_ac_ucsd2.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,6 +22,7 @@
     <SUITE FILE_PATH="coverage/densecub$analyze_frequencies_plot.coverage" NAME="analyze_frequencies_plot Coverage Results" MODIFIED="1520263166476" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/densecub$mnist_cl_test.coverage" NAME="mnist_cl_test Coverage Results" MODIFIED="1511119931289" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/densecub$analyze_data_chapters.coverage" NAME="analyze_data_chapters Coverage Results" MODIFIED="1517601424762" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/densecub$conv_ac_ucsd2.coverage" NAME="conv_ac_ucsd2 Coverage Results" MODIFIED="1528834655375" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
@@ -30,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="702">
-              <caret line="57" column="56" lean-forward="false" selection-start-line="57" selection-start-column="22" selection-end-line="57" selection-end-column="56" />
+            <state relative-caret-position="288">
+              <caret line="96" column="75" lean-forward="true" selection-start-line="96" selection-start-column="75" selection-end-line="96" selection-end-column="75" />
               <folding />
             </state>
           </provider>
@@ -43,8 +43,8 @@
       <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="13" column="4" lean-forward="false" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
+            <state relative-caret-position="401">
+              <caret line="183" column="0" lean-forward="true" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -53,7 +53,7 @@
       <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
+            <state relative-caret-position="594">
               <caret line="257" column="21" lean-forward="false" selection-start-line="257" selection-start-column="21" selection-end-line="257" selection-end-column="21" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
@@ -127,16 +127,16 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="2428" column="58" lean-forward="false" selection-start-line="2428" selection-start-column="58" selection-end-line="2428" selection-end-column="58" />
+            <state relative-caret-position="324">
+              <caret line="2626" column="0" lean-forward="true" selection-start-line="2626" selection-start-column="0" selection-end-line="2626" selection-end-column="0" />
               <folding>
                 <element signature="e#1694#3355#0" expanded="false" />
                 <element signature="e#3400#5565#0" expanded="false" />
                 <element signature="e#5601#19329#0" expanded="false" />
-                <element signature="e#19361#75675#0" expanded="false" />
+                <element signature="e#19361#75666#0" expanded="false" />
                 <element signature="e#19735#21138#0" expanded="false" />
                 <element signature="e#21179#21334#0" expanded="false" />
                 <element signature="e#21374#21507#0" expanded="false" />
@@ -146,42 +146,42 @@
                 <element signature="e#22341#22626#0" expanded="false" />
                 <element signature="e#22855#32598#0" expanded="false" />
                 <element signature="e#32820#36757#0" expanded="false" />
-                <element signature="e#36814#38382#0" expanded="false" />
-                <element signature="e#38427#39994#0" expanded="false" />
-                <element signature="e#40045#40846#0" expanded="false" />
-                <element signature="e#40915#41622#0" expanded="false" />
-                <element signature="e#41682#44733#0" expanded="false" />
-                <element signature="e#44799#46084#0" expanded="false" />
-                <element signature="e#46162#47602#0" expanded="false" />
-                <element signature="e#47709#48802#0" expanded="false" />
-                <element signature="e#48888#51690#0" expanded="false" />
-                <element signature="e#51731#51973#0" expanded="false" />
-                <element signature="e#52025#52130#0" expanded="false" />
-                <element signature="e#52193#52318#0" expanded="false" />
-                <element signature="e#52381#52684#0" expanded="false" />
-                <element signature="e#52734#53200#0" expanded="false" />
-                <element signature="e#53259#54778#0" expanded="false" />
-                <element signature="e#54862#55933#0" expanded="false" />
-                <element signature="e#55972#56395#0" expanded="false" />
-                <element signature="e#56453#56857#0" expanded="false" />
-                <element signature="e#56930#57888#0" expanded="false" />
-                <element signature="e#57976#58528#0" expanded="false" />
-                <element signature="e#58633#60779#0" expanded="false" />
-                <element signature="e#60846#62480#0" expanded="false" />
-                <element signature="e#62570#64255#0" expanded="false" />
-                <element signature="e#64308#64972#0" expanded="false" />
-                <element signature="e#65043#65863#0" expanded="false" />
-                <element signature="e#65938#66829#0" expanded="false" />
-                <element signature="e#66880#67283#0" expanded="false" />
-                <element signature="e#67337#68067#0" expanded="false" />
-                <element signature="e#68130#69639#0" expanded="false" />
-                <element signature="e#69702#70382#0" expanded="false" />
-                <element signature="e#70482#73278#0" expanded="false" />
-                <element signature="e#73345#75593#0" expanded="false" />
-                <element signature="e#75627#75675#0" expanded="false" />
-                <element signature="e#75735#82184#0" expanded="false" />
-                <element signature="e#82253#89214#0" expanded="false" />
-                <element signature="e#89281#96516#0" expanded="false" />
+                <element signature="e#36814#38386#0" expanded="false" />
+                <element signature="e#38431#39998#0" expanded="false" />
+                <element signature="e#40049#40850#0" expanded="false" />
+                <element signature="e#40919#41626#0" expanded="false" />
+                <element signature="e#41686#44737#0" expanded="false" />
+                <element signature="e#44803#46088#0" expanded="false" />
+                <element signature="e#46166#47606#0" expanded="false" />
+                <element signature="e#47713#48806#0" expanded="false" />
+                <element signature="e#48892#51694#0" expanded="false" />
+                <element signature="e#51735#51977#0" expanded="false" />
+                <element signature="e#52029#52134#0" expanded="false" />
+                <element signature="e#52197#52322#0" expanded="false" />
+                <element signature="e#52385#52688#0" expanded="false" />
+                <element signature="e#52738#53204#0" expanded="false" />
+                <element signature="e#53263#54782#0" expanded="false" />
+                <element signature="e#54866#55937#0" expanded="false" />
+                <element signature="e#55976#56399#0" expanded="false" />
+                <element signature="e#56457#56861#0" expanded="false" />
+                <element signature="e#56934#57892#0" expanded="false" />
+                <element signature="e#57980#58532#0" expanded="false" />
+                <element signature="e#58637#60783#0" expanded="false" />
+                <element signature="e#60850#62471#0" expanded="false" />
+                <element signature="e#62561#64246#0" expanded="false" />
+                <element signature="e#64299#64963#0" expanded="false" />
+                <element signature="e#65034#65854#0" expanded="false" />
+                <element signature="e#65929#66820#0" expanded="false" />
+                <element signature="e#66871#67274#0" expanded="false" />
+                <element signature="e#67328#68058#0" expanded="false" />
+                <element signature="e#68121#69630#0" expanded="false" />
+                <element signature="e#69693#70373#0" expanded="false" />
+                <element signature="e#70473#73269#0" expanded="false" />
+                <element signature="e#73336#75584#0" expanded="false" />
+                <element signature="e#75618#75666#0" expanded="false" />
+                <element signature="e#75726#82175#0" expanded="false" />
+                <element signature="e#82244#89205#0" expanded="false" />
+                <element signature="e#89272#96507#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -216,7 +216,6 @@
       <find>DEBUG</find>
       <find>reverse</find>
       <find>functionals</find>
-      <find>ntrain</find>
       <find>ANOMALY DETECTED</find>
       <find>TODO</find>
       <find>debug</find>
@@ -229,6 +228,7 @@
       <find>\newcommand*{\SetPrefaceName}[1]{\renewcommand*{\ETDPrefaceName}{#1}}%</find>
       <find>debug_print</find>
       <find>use_bas</find>
+      <find>ntrain</find>
     </findStrings>
     <replaceStrings>
       <replace>PREFACE</replace>
@@ -245,7 +245,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/conv_ac_test.py" />
         <option value="$PROJECT_DIR$/get_cuboid_stream.py" />
         <option value="$PROJECT_DIR$/conv_lstm_nostream_chapters.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/feature_fns.py" />
@@ -295,6 +294,7 @@
         <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
+        <option value="$PROJECT_DIR$/1" />
         <option value="$PROJECT_DIR$/model_pkg/models.py" />
       </list>
     </option>
@@ -329,6 +329,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -343,8 +345,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -364,26 +364,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.roc_score">
-    <configuration default="false" name="analyze_data_chapters" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="densecub" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Python.conv_ac_ucsd2">
     <configuration default="false" name="count_frames" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -455,6 +436,25 @@
       <module name="densecub" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/roc_score.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="conv_ac_ucsd2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="densecub" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -609,19 +609,19 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.analyze_data_chapters" />
-      <item index="1" class="java.lang.String" itemvalue="Python.count_frames" />
-      <item index="2" class="java.lang.String" itemvalue="Python.analyze_frequencies_plot" />
-      <item index="3" class="java.lang.String" itemvalue="Python.GMM_test" />
-      <item index="4" class="java.lang.String" itemvalue="Python.roc_score" />
+      <item index="0" class="java.lang.String" itemvalue="Python.count_frames" />
+      <item index="1" class="java.lang.String" itemvalue="Python.analyze_frequencies_plot" />
+      <item index="2" class="java.lang.String" itemvalue="Python.GMM_test" />
+      <item index="3" class="java.lang.String" itemvalue="Python.roc_score" />
+      <item index="4" class="java.lang.String" itemvalue="Python.conv_ac_ucsd2" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.roc_score" />
-        <item index="1" class="java.lang.String" itemvalue="Python.GMM_test" />
-        <item index="2" class="java.lang.String" itemvalue="Python.analyze_frequencies_plot" />
-        <item index="3" class="java.lang.String" itemvalue="Python.count_frames" />
-        <item index="4" class="java.lang.String" itemvalue="Python.analyze_data_chapters" />
+        <item index="0" class="java.lang.String" itemvalue="Python.conv_ac_ucsd2" />
+        <item index="1" class="java.lang.String" itemvalue="Python.roc_score" />
+        <item index="2" class="java.lang.String" itemvalue="Python.GMM_test" />
+        <item index="3" class="java.lang.String" itemvalue="Python.analyze_frequencies_plot" />
+        <item index="4" class="java.lang.String" itemvalue="Python.count_frames" />
       </list>
     </recent_temporary>
   </component>
@@ -635,13 +635,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
-    </task>
-    <task id="LOCAL-00004" summary="add LSTM model test">
-      <created>1516737982230</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1516737982230</updated>
     </task>
     <task id="LOCAL-00005" summary="add LSTM model test">
       <created>1516737990547</created>
@@ -979,7 +972,14 @@
       <option name="project" value="LOCAL" />
       <updated>1528403911740</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="change filter_size">
+      <created>1528405285319</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1528405285319</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -996,13 +996,13 @@
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5504587" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12945974" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12945974" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5667686" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25586137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15729167" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15677084" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15125" sideWeight="0.50743496" order="2" side_tool="true" content_ui="tabs" />
@@ -1017,6 +1017,7 @@
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958803" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282365" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1051,7 +1052,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added anomaly percentage factor to be graphed to see the effect." />
     <MESSAGE value="streamline autoencoder process to one single python script." />
     <MESSAGE value="fix graphing label anomperc to anomperc" />
     <MESSAGE value="multiple gpu support added." />
@@ -1076,7 +1076,8 @@
     <MESSAGE value="fix mem_set" />
     <MESSAGE value="fix path_to_data into guillimin." />
     <MESSAGE value="TSNE FIX and add PDF to all distribution generation" />
-    <option name="LAST_COMMIT_MESSAGE" value="TSNE FIX and add PDF to all distribution generation" />
+    <MESSAGE value="change filter_size" />
+    <option name="LAST_COMMIT_MESSAGE" value="change filter_size" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1092,14 +1093,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/conv_autoencoder_nostream_nocl_chaps.py" />
-    <entry file="file://$USER_HOME$/.PyCharm2017.1/system/remote_sources/-1342635288/50263148/keras/wrappers/scikit_learn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1206">
-          <caret line="71" column="67" lean-forward="true" selection-start-line="71" selection-start-column="67" selection-end-line="71" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/save_cuboids.py" />
     <entry file="file://$USER_HOME$/.PyCharm2017.1/system/remote_sources/-1342635288/53804424/scipy/spatial/distance.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1271,9 +1264,18 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lat.txt" />
+    <entry file="file://$PROJECT_DIR$/1" />
+    <entry file="file://$USER_HOME$/.PyCharm2017.1/system/remote_sources/-1342635288/53804424/keras/utils/multi_gpu_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3018">
+          <caret line="22" column="4" lean-forward="false" selection-start-line="22" selection-start-column="4" selection-end-line="22" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
+        <state relative-caret-position="594">
           <caret line="257" column="21" lean-forward="false" selection-start-line="257" selection-start-column="21" selection-end-line="257" selection-end-column="21" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -1346,23 +1348,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="96" column="75" lean-forward="true" selection-start-line="96" selection-start-column="75" selection-end-line="96" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="13" column="4" lean-forward="false" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
+        <state relative-caret-position="401">
+          <caret line="183" column="0" lean-forward="true" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="2428" column="58" lean-forward="false" selection-start-line="2428" selection-start-column="58" selection-end-line="2428" selection-end-column="58" />
+        <state relative-caret-position="324">
+          <caret line="2626" column="0" lean-forward="true" selection-start-line="2626" selection-start-column="0" selection-end-line="2626" selection-end-column="0" />
           <folding>
             <element signature="e#1694#3355#0" expanded="false" />
             <element signature="e#3400#5565#0" expanded="false" />
             <element signature="e#5601#19329#0" expanded="false" />
-            <element signature="e#19361#75675#0" expanded="false" />
+            <element signature="e#19361#75666#0" expanded="false" />
             <element signature="e#19735#21138#0" expanded="false" />
             <element signature="e#21179#21334#0" expanded="false" />
             <element signature="e#21374#21507#0" expanded="false" />
@@ -1372,51 +1382,43 @@
             <element signature="e#22341#22626#0" expanded="false" />
             <element signature="e#22855#32598#0" expanded="false" />
             <element signature="e#32820#36757#0" expanded="false" />
-            <element signature="e#36814#38382#0" expanded="false" />
-            <element signature="e#38427#39994#0" expanded="false" />
-            <element signature="e#40045#40846#0" expanded="false" />
-            <element signature="e#40915#41622#0" expanded="false" />
-            <element signature="e#41682#44733#0" expanded="false" />
-            <element signature="e#44799#46084#0" expanded="false" />
-            <element signature="e#46162#47602#0" expanded="false" />
-            <element signature="e#47709#48802#0" expanded="false" />
-            <element signature="e#48888#51690#0" expanded="false" />
-            <element signature="e#51731#51973#0" expanded="false" />
-            <element signature="e#52025#52130#0" expanded="false" />
-            <element signature="e#52193#52318#0" expanded="false" />
-            <element signature="e#52381#52684#0" expanded="false" />
-            <element signature="e#52734#53200#0" expanded="false" />
-            <element signature="e#53259#54778#0" expanded="false" />
-            <element signature="e#54862#55933#0" expanded="false" />
-            <element signature="e#55972#56395#0" expanded="false" />
-            <element signature="e#56453#56857#0" expanded="false" />
-            <element signature="e#56930#57888#0" expanded="false" />
-            <element signature="e#57976#58528#0" expanded="false" />
-            <element signature="e#58633#60779#0" expanded="false" />
-            <element signature="e#60846#62480#0" expanded="false" />
-            <element signature="e#62570#64255#0" expanded="false" />
-            <element signature="e#64308#64972#0" expanded="false" />
-            <element signature="e#65043#65863#0" expanded="false" />
-            <element signature="e#65938#66829#0" expanded="false" />
-            <element signature="e#66880#67283#0" expanded="false" />
-            <element signature="e#67337#68067#0" expanded="false" />
-            <element signature="e#68130#69639#0" expanded="false" />
-            <element signature="e#69702#70382#0" expanded="false" />
-            <element signature="e#70482#73278#0" expanded="false" />
-            <element signature="e#73345#75593#0" expanded="false" />
-            <element signature="e#75627#75675#0" expanded="false" />
-            <element signature="e#75735#82184#0" expanded="false" />
-            <element signature="e#82253#89214#0" expanded="false" />
-            <element signature="e#89281#96516#0" expanded="false" />
+            <element signature="e#36814#38386#0" expanded="false" />
+            <element signature="e#38431#39998#0" expanded="false" />
+            <element signature="e#40049#40850#0" expanded="false" />
+            <element signature="e#40919#41626#0" expanded="false" />
+            <element signature="e#41686#44737#0" expanded="false" />
+            <element signature="e#44803#46088#0" expanded="false" />
+            <element signature="e#46166#47606#0" expanded="false" />
+            <element signature="e#47713#48806#0" expanded="false" />
+            <element signature="e#48892#51694#0" expanded="false" />
+            <element signature="e#51735#51977#0" expanded="false" />
+            <element signature="e#52029#52134#0" expanded="false" />
+            <element signature="e#52197#52322#0" expanded="false" />
+            <element signature="e#52385#52688#0" expanded="false" />
+            <element signature="e#52738#53204#0" expanded="false" />
+            <element signature="e#53263#54782#0" expanded="false" />
+            <element signature="e#54866#55937#0" expanded="false" />
+            <element signature="e#55976#56399#0" expanded="false" />
+            <element signature="e#56457#56861#0" expanded="false" />
+            <element signature="e#56934#57892#0" expanded="false" />
+            <element signature="e#57980#58532#0" expanded="false" />
+            <element signature="e#58637#60783#0" expanded="false" />
+            <element signature="e#60850#62471#0" expanded="false" />
+            <element signature="e#62561#64246#0" expanded="false" />
+            <element signature="e#64299#64963#0" expanded="false" />
+            <element signature="e#65034#65854#0" expanded="false" />
+            <element signature="e#65929#66820#0" expanded="false" />
+            <element signature="e#66871#67274#0" expanded="false" />
+            <element signature="e#67328#68058#0" expanded="false" />
+            <element signature="e#68121#69630#0" expanded="false" />
+            <element signature="e#69693#70373#0" expanded="false" />
+            <element signature="e#70473#73269#0" expanded="false" />
+            <element signature="e#73336#75584#0" expanded="false" />
+            <element signature="e#75618#75666#0" expanded="false" />
+            <element signature="e#75726#82175#0" expanded="false" />
+            <element signature="e#82244#89205#0" expanded="false" />
+            <element signature="e#89272#96507#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="702">
-          <caret line="57" column="56" lean-forward="false" selection-start-line="57" selection-start-column="22" selection-end-line="57" selection-end-column="56" />
-          <folding />
         </state>
       </provider>
     </entry>
