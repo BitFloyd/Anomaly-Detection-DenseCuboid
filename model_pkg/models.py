@@ -601,6 +601,22 @@ class Super_autoencoder:
         K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(val))
         return True
 
+    def return_all_encodings(self):
+
+        features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+
+        list_feats = []
+
+        for id in range(0, len(features_h5)):
+            f_arr = np.array(features_h5.get('chapter_' + str(id)))
+            list_feats.extend(f_arr.tolist())
+            del f_arr
+
+        list_feats = np.array(list_feats)
+        features_h5.close()
+
+        return list_feats
+
     def make_ae_model_multi_gpu(self,n_gpus):
 
         try:
@@ -615,6 +631,8 @@ class Super_autoencoder:
             self.multi_gpu_model = False
             self.n_gpu = 1
 
+        return True
+
     def set_clusters_to_optimum(self):
 
         if(os.path.exists(os.path.join(self.model_store,'nclusters_optimized.pkl'))):
@@ -624,6 +642,137 @@ class Super_autoencoder:
 
         return True
 
+    def fit_model_using_datagen(self,generator, verbose=1, n_chapters=10, num_initial_epochs = 3, earlystopping=False, patience=10, least_loss=1e-5,
+                                num_max_epochs=100,reduce_lr = False, patience_lr=5 , factor=1.5):
+
+        if (self.notrain):
+            return True
+
+        # Make clustering loss weight to 0
+        K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(0.0))
+
+        # start_initial chapters training
+
+        history = self.ae.model.fit_generator(generator=generator,use_multiprocessing=True,workers=6,epochs=num_initial_epochs,verbose=verbose)
+
+        self.loss_list.append(history.history['loss'][0])
+
+
+
+        # Get means of predicted features
+        feats = self.encoder.predict_generator(generator=generator,use_multiprocessing=True,workers=6,verbose=verbose)
+
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "START INITIAL KMEANS FITTING"
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        message_print("CLUSTERS :"+str(self.n_clusters))
+
+        del self.km
+        self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=1,batch_size=self.means_batch,
+                                               compute_labels=False,tol=1e-9,max_no_improvement=self.means_patience*200)
+
+        start = time.time()
+        self.km.fit(feats)
+        end = time.time()
+
+        print "TIME TAKEN:",(end - start) / 3600.0, "HOURS"
+
+        self.means = np.copy(self.km.cluster_centers_).astype('float64')
+
+
+        print "$$$$$$$$$$$$$$$$$$"
+        print "MEANS_INITIAL"
+        print "$$$$$$$$$$$$$$$$$$"
+        print self.means
+
+        self.initial_means = np.copy(self.km.cluster_centers_)
+
+        np.save(os.path.join(self.model_store, 'initial_means.npy'), self.initial_means)
+
+        loss_track = 0
+        loss_track_lr = 0
+        lowest_loss_ever = 1000.0
+
+        # Make clustering loss weight to 1
+        K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(1.0))
+        K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+        lr = self.lr_model
+
+        for j in range(num_initial_epochs, num_max_epochs):
+
+            print (j), "/", num_max_epochs, ":"
+
+            history = self.ae.model.fit_generator(generator=generator,use_multiprocessing=True,workers=6,epochs=1,verbose=verbose)
+            current_loss = history.history['loss'][0]
+            self.loss_list.append(history.history['loss'][0])
+            feats = self.encoder.predict_generator(generator=generator,use_multiprocessing=True,workers=6,verbose=verbose)
+            self.cluster_assigns = self.get_assigns(self.means, feats)
+            means_pre = np.copy(self.means)
+            self.update_means(feats, self.cluster_assigns)
+
+            # update cluster assigns for the next loop
+            self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
+
+            K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+            del self.means
+            del self.cluster_assigns
+
+            if (lowest_loss_ever - current_loss > least_loss):
+                loss_track = 0
+                loss_track_lr = 0
+                print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
+                lowest_loss_ever = current_loss
+
+            else:
+                print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
+                loss_track += 1
+                loss_track_lr += 1
+                print "Loss track is :", loss_track, "/", patience
+                print "Loss track lr is :", loss_track_lr, "/", patience_lr
+
+            if (reduce_lr and loss_track_lr > patience_lr):
+                loss_track_lr = 0
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                print "REDUCING_LR AT EPOCH :", j
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                K.set_value(self.ae.optimizer.lr, lr / factor)
+                lr = lr / factor
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                print "REDUCING_LR TO:", lr
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+            if (earlystopping and loss_track > patience):
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                print "EARLY STOPPING AT EPOCH :", j
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                break
+
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        print "PICKLING LISTS AND SAVING WEIGHTS"
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+        with open(os.path.join(self.model_store, 'losslist.pkl'), 'wb') as f:
+            pickle.dump(self.loss_list, f)
+
+        with open(os.path.join(self.model_store, 'meandisp.pkl'), 'wb') as f:
+            pickle.dump(self.list_mean_disp, f)
+
+        self.save_weights()
+
+        #Create features h5 dataset
+        for i in range(0,n_chapters):
+            self.set_x_train(i)
+            feats = self.encoder.predict(self.x_train)
+            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
+                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
+                print(dset.shape)
+            del feats
+
+        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
+
+        return True
 
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
                            n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5):
@@ -883,10 +1032,7 @@ class Super_autoencoder:
                 print(dset.shape)
             del feats
 
-
-        self.means = np.copy(self.km.cluster_centers_).astype('float64')
         np.save(os.path.join(self.model_store, 'means.npy'), self.means)
-
 
         return True
 
@@ -1001,20 +1147,7 @@ class Super_autoencoder:
 
     def perform_feature_space_analysis(self):
 
-        features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, len(features_h5)):
-            f_arr = np.array(features_h5.get('chapter_' + str(id)))
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        features_h5.close()
-
-        list_feats = np.array(list_feats)
-
-        plots_done = 0
+        list_feats = self.return_all_encodings()
 
         pdf_name = os.path.join(self.model_store, 'features_kde.pdf')
 
@@ -1104,138 +1237,9 @@ class Super_autoencoder:
         decodeds = self.decoder.predict(encoded_feats)
         np.save(os.path.join(self.model_store, 'decoded_feats_sanity.npy'), decodeds)
 
-    def fit_model_single_chap(self, verbose=1,epochs=15):
+    def perform_kmeans(self,partial=False):
 
-        if (self.notrain):
-            return True
-
-        # Make clustering loss weight to 0
-        K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(0.0))
-
-        # start_initial chapters training
-
-        self.set_x_train(0)
-
-        history = self.ae.fit(self.x_train, shuffle=True, epochs=epochs, batch_size=self.batch_size, verbose=verbose)
-
-        self.loss_list.extend(history.history['loss'])
-
-        self.km = KMeans(n_clusters=self.n_clusters)
-
-        self.km.fit(self.encoder.predict(self.x_train))
-
-        self.means = np.copy(self.km.cluster_centers_).astype('float64')
-        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
-
-        self.save_weights()
-
-        return True
-
-    def perform_kmeans_partial(self,n_chapters):
-
-        if (os.path.exists(os.path.join(self.model_store, 'kmeans_fitting.txt'))):
-            os.remove(os.path.join(self.model_store, 'kmeans_fitting.txt'))
-
-        del self.km
-        self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=0)
-
-        # Open features h5 dataset to be used in training
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        # Get means of predicted features
-        fit_tries = 0
-        disp_track = 0
-        bef_fit = None
-        aft_fit = None
-        means_patience = self.means_patience
-        max_fit_tries = self.max_fit_tries
-        exceptions = 0
-
-        start = time.time()
-
-        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-        print "START K-MEANS PARTIAL FITTING"
-        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-        message_print("CLUSTERS :" + str(self.n_clusters))
-
-        while (disp_track < means_patience and fit_tries<=max_fit_tries and exceptions <=100):
-
-            for i in range(0, n_chapters):
-
-                if(disp_track >= means_patience or fit_tries>max_fit_tries):
-                    break
-
-                feats = self.set_feats(i)
-
-                if(fit_tries==0):
-                    bef_fit = np.zeros((self.n_clusters,self.h_units))
-                else:
-                    bef_fit = np.copy(self.km.cluster_centers_).astype('float64')
-
-                try:
-                    for k in range(0,len(feats),self.means_batch):
-
-                        if(k+self.means_batch<len(feats)):
-                            self.km.partial_fit(feats[k:k+self.means_batch])
-                        else:
-                            self.km.partial_fit(feats[k:])
-
-                    excep_flag = 0
-
-                except:
-                    print "ERROR OCCURED IN FIT BUT CONTINUING"
-                    exceptions+=1
-                    excep_flag = 1
-
-                if(not excep_flag):
-                    aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
-
-                    fit_tries +=1
-
-                    disp_means = np.sum(np.linalg.norm(bef_fit-aft_fit,axis=1))
-
-                    if(disp_means < self.means_tol):
-                        disp_track+=1
-                    else:
-                        disp_track = 0
-
-                    f = open(os.path.join(self.model_store,'kmeans_fitting.txt'), 'a+')
-                    f.write('fit_tries: ' + str(fit_tries) + '=> ' + str(disp_means) + '\n')
-                    f.close()
-
-                    print "-------------------------"
-                    print "DISP:", disp_means
-                    print "DISP_TRACK:", disp_track
-                    print "FIT_TRIES:", fit_tries
-                    print "-------------------------"
-
-                del feats
-
-
-        end = time.time()
-
-        print "TIME TAKEN = ", (start-end)/3600.0 , " HOURS"
-
-        self.means = np.copy(self.km.cluster_centers_).astype('float64')
-        np.save(os.path.join(self.model_store, 'means.npy'), self.means)
-        self.features_h5.close()
-
-        return True
-
-    def perform_kmeans(self,n_chapters,partial=False):
-
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, n_chapters):
-            f_arr = self.set_feats(id)
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        self.features_h5.close()
-
-        list_feats = shuffle(np.array(list_feats))
+        list_feats = shuffle(self.return_all_encodings())
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START KMEANS FITTING"
@@ -1263,20 +1267,9 @@ class Super_autoencoder:
 
         return True
 
-    def perform_dict_learn(self,n_chapters,guill=False,n_comp=64):
+    def perform_dict_learn(self,guill=False,n_comp=64):
 
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, n_chapters):
-            f_arr = self.set_feats(id)
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        self.features_h5.close()
-
-        list_feats = shuffle(np.array(list_feats))
+        list_feats = shuffle(self.return_all_encodings())
 
         if(n_comp<1):
             n_components = int(n_comp * len(list_feats))
@@ -1310,21 +1303,9 @@ class Super_autoencoder:
 
         return True
 
-    def perform_gmm_training(self,n_chapters=10,guill=False,n_comp=-1,covariance_type='full'):
+    def perform_gmm_training(self,guill=False,n_comp=-1,covariance_type='full'):
 
-
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, n_chapters):
-            f_arr = self.set_feats(id)
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        self.features_h5.close()
-
-        list_feats = shuffle(np.array(list_feats))
+        list_feats = shuffle(self.return_all_encodings())
 
         if(n_comp == -1):
             n_comp = self.n_clusters
@@ -1348,20 +1329,9 @@ class Super_autoencoder:
 
         return  True
 
-    def perform_gmm_analysis_and_training(self,n_chapters=10,guill=False):
+    def perform_gmm_analysis_and_training(self,guill=False):
 
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, n_chapters):
-            f_arr = self.set_feats(id)
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        self.features_h5.close()
-
-        list_feats = shuffle(np.array(list_feats))
+        list_feats = shuffle(self.return_all_encodings())
 
         lowest_bic = np.infty
         bic = []
@@ -1413,7 +1383,7 @@ class Super_autoencoder:
         spl.legend([b[0] for b in bars], cv_types)
         plt.savefig(os.path.join(self.model_store,'GMM_plot.png'))
 
-        self.perform_gmm_training(n_chapters=n_chapters,n_comp=best_n_components,covariance_type=best_cv_type)
+        self.perform_gmm_training(n_comp=best_n_components,covariance_type=best_cv_type)
 
         return True
 
@@ -1656,22 +1626,11 @@ class Super_autoencoder:
 
         return True
 
-    def create_tsne_plot(self, graph_name, n_chapters):
+    def create_tsne_plot(self, graph_name):
 
         tsne_obj = TSNE(n_components=2, init='pca', random_state=0, verbose=0)
 
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, n_chapters):
-            f_arr = self.set_feats(id)
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        self.features_h5.close()
-
-        list_feats = shuffle(np.array(list_feats))
+        list_feats = shuffle(self.return_all_encodings())
 
         train_encodings = list_feats
         cluster_assigns = self.get_assigns(self.means,list_feats)
@@ -1698,53 +1657,6 @@ class Super_autoencoder:
         plt.ylabel('Y')
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         pickle.dump(ax, file(os.path.join(self.model_store,'tsne2d.pickle'), 'w'))
-        plt.close()
-
-    def create_tsne_plot3d(self, graph_name, n_chapters, total_chaps_trained):
-
-        tsne_obj = TSNE(n_components=3, init='pca', random_state=0, verbose=0)
-
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, n_chapters):
-            f_arr = self.set_feats(id)
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        self.features_h5.close()
-
-        list_feats = shuffle(np.array(list_feats))
-
-        train_encodings = list_feats
-        cluster_assigns = self.get_assigns(self.means, list_feats)
-
-        full_array_feats = np.vstack((train_encodings, self.means))
-        full_array_labels = np.vstack(
-            (cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
-
-        colors = full_array_labels.reshape((full_array_labels.shape[0],))
-
-        print "##############################"
-        print "START TSNE FITTING 3D"
-        print "##############################"
-        train_tsne_embedding = tsne_obj.fit_transform(full_array_feats)
-
-        print "##############################"
-        print "TSNE FITTING DONE"
-        print "##############################"
-
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(train_tsne_embedding[:, 0], train_tsne_embedding[:, 1], train_tsne_embedding[:, 2], c=colors,
-                   cmap='jet', alpha=0.6)
-
-        ax.set_title('TSNE EMBEDDINGS OF THE CLUSTER MEANS AND THE ENCODED FEATURES')
-        ax.legend()
-
-        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
-        pickle.dump(ax, file(os.path.join(self.model_store, 'tsne3d.pickle'), 'w'))
         plt.close()
 
     def mean_displacement_distance(self):
@@ -1791,17 +1703,12 @@ class Super_autoencoder:
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
 
-    def generate_assignment_graph(self, graph_name,n_chapters):
-
-        self.features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
+    def generate_assignment_graph(self, graph_name):
 
         list_assigns = []
-
-        for i in range(0,n_chapters):
-
-            feats = self.set_feats(i)
-            assigns = self.get_assigns(self.means,feats)
-            list_assigns.extend(assigns.tolist())
+        feats = shuffle(self.return_all_encodings())
+        assigns = self.get_assigns(self.means,feats)
+        list_assigns.extend(assigns.tolist())
 
         list_assigns = np.array(list_assigns)
 
@@ -1983,23 +1890,12 @@ class Super_autoencoder:
 
         return silhouette_avg
 
-    def perform_num_clusters_analysis(self,n_chapters):
+    def perform_num_clusters_analysis(self):
 
         print "################################"
         print "LOAD_FEATURES"
         print "################################"
-
-        features_h5 = h5py.File(os.path.join(self.model_store, 'features.h5'), 'r')
-
-        list_feats = []
-
-        for id in range(0, n_chapters):
-            f_arr = np.array(features_h5.get('chapter_' + str(id)))
-            list_feats.extend(f_arr.tolist())
-            del f_arr
-
-        list_feats = np.array(list_feats)
-        features_h5.close()
+        list_feats = shuffle(self.return_all_encodings())
         print "################################"
         print "FEATURES_SHAPE:", list_feats.shape
         print "################################"
@@ -2044,7 +1940,6 @@ class Super_autoencoder:
         so.save_obj(self.n_clusters,os.path.join(self.model_store,'nclusters_optimized.pkl'))
 
         return True
-
 
     def __del__(self):
         print ("Destructor called for SuperAutoEncoder")

@@ -14,42 +14,31 @@ import time
 
 
 metric = af.getopts(argv)
+dataset = metric['-dataset']
 
-path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train'
+if(dataset =='ucsd2'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD2/TRAIN'
+elif(dataset=='triangle'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRIANGLE/TRAIN'
+elif(dataset=='ucsd1'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD1/TRAIN'
 
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
 tstrides = int(metric['-tstrd'])
-lstm = False
+size = int(metric['-size'])
 
-
-if(lstm):
-    ts = 'first'
-    ts_pos = 0
-    mainfol = 'chapter_store_lstm'
-
-else:
-    ts = 'last'
-    ts_pos = -1
-    mainfol = 'chapter_store_conv'
-
-
-
-if(gs):
-    folder = os.path.join(mainfol, 'ucsd2_data_store_greyscale_bkgsub' + str(tstrides))
-
-
-else:
-    # tv = 0.0
-    folder = os.path.join(mainfol, 'ucsd2_data_store_bksgub' + str(tstrides))
+ts = 'last'
+ts_pos = -1
 
 tv = 0.0
 
-if(not os.path.exists(mainfol)):
-    os.mkdir(mainfol)
 
-if(not os.path.exists(folder)):
-    os.mkdir(folder)
+if(not os.path.exists(save_folder)):
+    os.mkdir(save_folder)
 
 print "############################"
 print "SET UP VIDEO STREAM"
@@ -58,7 +47,7 @@ print "############################"
 #Get Data Stream
 train_test = 'Train'
 
-size_axis = 48
+size_axis = size
 n_frames = 8
 
 video_id = 0
@@ -112,7 +101,7 @@ while True:
     print "DELETING LIST_CUBATCH"
     del (list_cubatch[:])
 
-    with h5py.File(os.path.join(folder,'data_train.h5'), "a") as f:
+    with h5py.File(os.path.join(save_folder,'data_train.h5'), "a") as f:
         dset = f.create_dataset('chapter_'+str(chapter_id),data=np.array(flat_list_cubs))
         print(dset.shape)
 

@@ -82,19 +82,19 @@ else:
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 if(do_silhouette):
-    ae_model.perform_num_clusters_analysis(n_chapters=n_chapters)
+    ae_model.perform_num_clusters_analysis()
 
-ae_model.perform_kmeans(n_chapters=n_chapters,partial=True)
-ae_model.perform_dict_learn(n_chapters=n_chapters,guill=guill)
+ae_model.perform_kmeans(partial=True)
+ae_model.perform_dict_learn(guill=guill)
 ae_model.generate_loss_graph('loss_graph.png')
 ae_model.perform_feature_space_analysis()
 ae_model.create_recons(20)
 ae_model.mean_and_samples(n_per_mean=8)
-ae_model.generate_assignment_graph('assignment_graph.png',n_chapters=n_chapters)
+ae_model.generate_assignment_graph('assignment_graph.png')
 ae_model.decode_means('means_decoded')
 ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
-ae_model.perform_gmm_training(n_chapters=n_chapters,guill=guill,n_comp=nclusters)
-ae_model.create_tsne_plot(graph_name='tsne_plot.png',n_chapters=n_chapters)
+ae_model.perform_gmm_training(guill=guill,n_comp=nclusters)
+ae_model.create_tsne_plot(graph_name='tsne_plot.png')
 
 train_dset.close()
 

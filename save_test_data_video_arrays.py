@@ -11,40 +11,31 @@ import h5py
 
 metric = af.getopts(argv)
 
-path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+dataset = metric['-dataset']
+
+if(dataset =='ucsd2'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD2/TEST'
+elif(dataset=='triangle'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRIANGLE/TEST'
+elif(dataset=='ucsd1'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD1/TEST'
 
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
 tstrides = int(metric['-tstrd'])
-lstm = False
+size = int(metric['-size'])
 
-test = 1
-
-if(lstm):
-    ts = 'first'
-    ts_pos = 0
-    mainfol = 'chapter_store_lstm_test'
-
-else:
-    ts = 'last'
-    ts_pos = -1
-    mainfol = 'chapter_store_conv_test'
-
-
+ts = 'last'
+ts_pos = -1
 
 tv = 0.0
 
-if(gs):
-    folder = os.path.join(mainfol,'ucsd2_data_store_greyscale_test_bkgsub'+str(tstrides))
 
-else:
-    folder = os.path.join(mainfol,'ucsd2_data_store_test_bkgsub'+str(tstrides))
-
-if(not os.path.exists(mainfol)):
-    os.mkdir(mainfol)
-
-if(not os.path.exists(folder)):
-    os.mkdir(folder)
+if(not os.path.exists(save_folder)):
+    os.mkdir(save_folder)
 
 
 print "############################"
@@ -54,7 +45,7 @@ print "############################"
 #Get Data Stream
 train_test = 'Test'
 
-size_axis = 48
+size_axis = size
 n_frames = 8
 video_id = 0
 
@@ -116,19 +107,19 @@ while True:
 
     video_id += 1
 
-    with h5py.File(os.path.join(folder, 'data_test_video_cuboids.h5'), "a") as f:
+    with h5py.File(os.path.join(save_folder, 'data_test_video_cuboids.h5'), "a") as f:
         dset = f.create_dataset('video_cuboids_array_'+str(video_id), data=np.array(list_cuboids_full_video))
         print(dset.shape)
 
-    with h5py.File(os.path.join(folder, 'data_test_video_pixmap.h5'), "a") as f:
+    with h5py.File(os.path.join(save_folder, 'data_test_video_pixmap.h5'), "a") as f:
         dset = f.create_dataset('video_pixmap_array_'+str(video_id), data=np.array(list_cuboids_pixmap_full_video))
         print(dset.shape)
 
-    with h5py.File(os.path.join(folder, 'data_test_video_anomgt.h5'), "a") as f:
+    with h5py.File(os.path.join(save_folder, 'data_test_video_anomgt.h5'), "a") as f:
         dset = f.create_dataset('video_anomgt_array_'+str(video_id), data=np.array(list_cuboids_anomaly_full_video))
         print(dset.shape)
 
-    with h5py.File(os.path.join(folder, 'data_test_video_anomperc.h5'), "a") as f:
+    with h5py.File(os.path.join(save_folder, 'data_test_video_anomperc.h5'), "a") as f:
         dset = f.create_dataset('video_anomperc_array_'+str(video_id), data=np.array(list_cuboids_anompercentage_full_video))
         print(dset.shape)
 

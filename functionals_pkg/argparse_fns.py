@@ -66,14 +66,14 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,gr
     return_parse_dict['batch_size'] = batch_size
 
     if(ucsd2):
-        dataset = 'ucsd2'
+        dataset = 'UCSD2'
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
         if(guill):
             path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
         tstrides = 1
         sp_strides = 12
     else:
-        dataset = 'triangle'
+        dataset = 'TRIANGLE'
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'
         tstrides = 4
         sp_strides = 7
@@ -114,21 +114,13 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,gr
     suffix += '_hunits_' + str(h_units)
 
 
+    train_folder = os.path.join(data_store_suffix, 'DATA',dataset,'TRAIN')
+    test_data_store = os.path.join(data_store_suffix, 'DATA',dataset,'TEST')
 
     if (gs):
-
-        train_folder = os.path.join(data_store_suffix, 'chapter_store_conv',
-                                    dataset+'_data_store_greyscale_bkgsub' + str(tstrides))
-        test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test',
-                                       dataset+'_data_store_greyscale_test_bkgsub' + str(tstrides))
         nc = 1
 
     else:
-
-        train_folder = os.path.join(data_store_suffix, 'chapter_store_conv',
-                                    dataset+'_data_store_bksgub' + str(tstrides))
-        test_data_store = os.path.join(data_store_suffix, 'chapter_store_conv_test',
-                                       dataset+'_data_store_test_bkgsub' + str(tstrides))
         nc = 3
 
     return_parse_dict['nc']= nc

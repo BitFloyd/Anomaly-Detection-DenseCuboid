@@ -22,10 +22,61 @@ import imageio
 import h5py
 import time
 import shutil
+import keras
 
 sns.set(color_codes=True)
 
 list_anom_percentage = []
+
+class TrainDataGenerator(keras.utils.Sequence):
+
+    'Generates data for Keras'
+    def __init__(self, datafolder, batch_size=32, size=32, n_channels=1, n_timesteps = 8, shuffle=True):
+        'Initialization'
+        self.dim = (size,size,n_timesteps*n_channels)
+        self.size = size
+        self.n_timesteps = n_timesteps
+        self.n_channels = n_channels
+        self.batch_size = batch_size
+        self.list_datafiles = [os.path.join(datafolder,i) for i in os.listdir(datafolder)]
+        self.shuffle = shuffle
+        self.on_epoch_end()
+
+    def __len__(self):
+        'Denotes the number of batches per epoch'
+        return int(np.floor(len(self.list_datafiles) / self.batch_size))
+
+    def __getitem__(self, index):
+        'Generate one batch of data'
+        # Generate indexes of the batch
+        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+
+        # Find list of IDs
+        list_IDs_temp = [self.list_datafiles[k] for k in indexes]
+
+        # Generate data
+        X, y = self.__data_generation(list_IDs_temp)
+
+        return X, y
+
+    def on_epoch_end(self):
+        'Updates indexes after each epoch'
+        self.indexes = np.arange(len(self.list_datafiles))
+        if self.shuffle == True:
+            np.random.shuffle(self.indexes)
+
+    def __data_generation(self, list_IDs_temp):
+        'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
+        # Initialization
+        X = np.empty((self.batch_size,self.size,self.size,self.n_channels*self.n_timesteps))
+        y = X
+
+        # Generate data
+        for i, ID in enumerate(list_IDs_temp):
+            # Store sample
+            X[i,] = np.load(ID)
+
+        return X, y
 
 class TestImgClass:
 
