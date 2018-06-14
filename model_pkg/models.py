@@ -679,13 +679,12 @@ class Super_autoencoder:
 
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
 
-
         print "$$$$$$$$$$$$$$$$$$"
         print "MEANS_INITIAL"
         print "$$$$$$$$$$$$$$$$$$"
         print self.means
 
-        self.initial_means = np.copy(self.km.cluster_centers_)
+        self.initial_means = np.copy(self.km.cluster_centers_).astype('float64')
 
         np.save(os.path.join(self.model_store, 'initial_means.npy'), self.initial_means)
 
@@ -715,9 +714,6 @@ class Super_autoencoder:
             self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
 
             K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
-
-            del self.means
-            del self.cluster_assigns
 
             if (lowest_loss_ever - current_loss > least_loss):
                 loss_track = 0
@@ -762,13 +758,11 @@ class Super_autoencoder:
         self.save_weights()
 
         #Create features h5 dataset
-        for i in range(0,n_chapters):
-            self.set_x_train(i)
-            feats = self.encoder.predict(self.x_train)
-            with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
-                dset = f.create_dataset('chapter_' + str(i), data=np.array(feats))
-                print(dset.shape)
-            del feats
+        feats = self.encoder.predict_generator(generator=generator, use_multiprocessing=True, workers=6,
+                                               verbose=verbose)
+        with h5py.File(os.path.join(self.model_store, 'features.h5'), "a") as f:
+            dset = f.create_dataset('chapter_' + str(0), data=np.array(feats))
+            print(dset.shape)
 
         np.save(os.path.join(self.model_store, 'means.npy'), self.means)
 
