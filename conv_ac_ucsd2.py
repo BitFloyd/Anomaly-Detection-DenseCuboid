@@ -2,7 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream
+from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream,TrainDataGenerator
 from sys import argv
 import os
 import h5py
@@ -47,7 +47,7 @@ print "#############################"
 print "LOAD MODEL"
 print "#############################"
 
-notrain = False
+notrain = True
 
 if(h_units>0):
     ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size, n_channels=1,h_units=h_units,
@@ -78,7 +78,6 @@ if(nocl):
 else:
     ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
                             n_train=ntrain, reduce_lr = True, patience_lr=30 , factor=1.25)
-
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 if(do_silhouette):

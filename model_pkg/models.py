@@ -37,6 +37,7 @@ from functionals_pkg.logging import  message_print,debug_print
 from sklearn.mixture import GaussianMixture
 import seaborn as sns
 import itertools
+import multiprocessing
 sns.set(color_codes=True)
 
 
@@ -642,7 +643,7 @@ class Super_autoencoder:
 
         return True
 
-    def fit_model_using_datagen(self,generator, verbose=1, n_chapters=10, num_initial_epochs = 3, earlystopping=False, patience=10, least_loss=1e-5,
+    def fit_model_using_datagen(self,generator, verbose=1, num_initial_epochs = 3, earlystopping=False, patience=10, least_loss=1e-5,
                                 num_max_epochs=100,reduce_lr = False, patience_lr=5 , factor=1.5):
 
         if (self.notrain):
@@ -652,19 +653,19 @@ class Super_autoencoder:
         K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(0.0))
 
         # start_initial chapters training
-
-        history = self.ae.model.fit_generator(generator=generator,use_multiprocessing=True,workers=6,epochs=num_initial_epochs,verbose=verbose)
+        n_cpus = multiprocessing.cpu_count()
+        message_print("MULTITHREADING IN " + str(n_cpus) + "CPUS")
+        history = self.ae.fit_generator(generator=generator,use_multiprocessing=True,workers=n_cpus,epochs=num_initial_epochs,
+                                        verbose=verbose,max_queue_size=1000)
 
         self.loss_list.append(history.history['loss'][0])
 
 
 
         # Get means of predicted features
-        feats = self.encoder.predict_generator(generator=generator,use_multiprocessing=True,workers=6,verbose=verbose)
+        feats = self.encoder.predict_generator(generator=generator,use_multiprocessing=True,workers=n_cpus,verbose=verbose)
 
-        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-        print "START INITIAL KMEANS FITTING"
-        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        message_print("START INITIAL KMEANS FITTING")
         message_print("CLUSTERS :"+str(self.n_clusters))
 
         del self.km
@@ -679,9 +680,8 @@ class Super_autoencoder:
 
         self.means = np.copy(self.km.cluster_centers_).astype('float64')
 
-        print "$$$$$$$$$$$$$$$$$$"
-        print "MEANS_INITIAL"
-        print "$$$$$$$$$$$$$$$$$$"
+        message_print("MEANS_INITIAL")
+
         print self.means
 
         self.initial_means = np.copy(self.km.cluster_centers_).astype('float64')
@@ -702,10 +702,12 @@ class Super_autoencoder:
 
             print (j), "/", num_max_epochs, ":"
 
-            history = self.ae.model.fit_generator(generator=generator,use_multiprocessing=True,workers=6,epochs=1,verbose=verbose)
+            history = self.ae.fit_generator(generator=generator,use_multiprocessing=True,workers=n_cpus,epochs=1,verbose=verbose
+                                            ,max_queue_size=1000)
             current_loss = history.history['loss'][0]
             self.loss_list.append(history.history['loss'][0])
-            feats = self.encoder.predict_generator(generator=generator,use_multiprocessing=True,workers=6,verbose=verbose)
+            feats = self.encoder.predict_generator(generator=generator,use_multiprocessing=True,workers=n_cpus,verbose=verbose
+                                                   ,max_queue_size=1000)
             self.cluster_assigns = self.get_assigns(self.means, feats)
             means_pre = np.copy(self.means)
             self.update_means(feats, self.cluster_assigns)
@@ -1148,22 +1150,23 @@ class Super_autoencoder:
         if(os.path.exists(pdf_name)):
             os.remove(pdf_name)
 
-        rows_plots = (list_feats.shape[1] / 16)
+        cols_plots = 16
+        rows_plots = (list_feats.shape[1] / cols_plots)
 
         with PdfPages(pdf_name) as pdf:
 
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-            fig, ax = plt.subplots(ncols=16, nrows=rows_plots, figsize=(200, 200), sharex='col', sharey='row')
+            fig, ax = plt.subplots(ncols=cols_plots, nrows=rows_plots, figsize=(200, 200), sharex='col', sharey='row')
             list_feats_to_plot = list_feats
             plt.suptitle('Distribution of each feature in the dataset',fontsize=30)
 
             for i in range(0, list_feats_to_plot.shape[1]):
                 print "PROCESSING FEATURE:", i
-                ax[int(i / 8)][i % 8].set_title('feature: ' + str(i + 1),fontsize=20)
-                plt.setp(ax[int(i / 8)][i % 8].get_xticklabels(),visible=True)
+                ax[int(i / cols_plots)][i % cols_plots].set_title('feature: ' + str(i + 1),fontsize=20)
+                plt.setp(ax[int(i / cols_plots)][i % cols_plots].get_xticklabels(),visible=True)
                 try:
-                    sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
-                                 ax=ax[int(i / 8)][i % 8])
+                    sns.distplot(list_feats_to_plot[:, i], kde=False, rug=False, hist=True,
+                                 ax=ax[int(i / cols_plots)][i % cols_plots])
                 except:
                     print "SKIPPING FEATURE:", i
 

@@ -2,14 +2,14 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream
+from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream,TrainDataGenerator
 from sys import argv
 import os
 import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric,set_mem=True)
+rdict = af.parse_run_variables(metric,set_mem=True,set_mem_value=0.65)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']

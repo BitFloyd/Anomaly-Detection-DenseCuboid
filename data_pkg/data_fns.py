@@ -55,9 +55,9 @@ class TrainDataGenerator(keras.utils.Sequence):
         list_IDs_temp = [self.list_datafiles[k] for k in indexes]
 
         # Generate data
-        X, y = self.__data_generation(list_IDs_temp)
-
-        return X, y
+        X = self.__data_generation(list_IDs_temp)
+        y = None
+        return (X,y)
 
     def on_epoch_end(self):
         'Updates indexes after each epoch'
@@ -69,14 +69,13 @@ class TrainDataGenerator(keras.utils.Sequence):
         'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
         # Initialization
         X = np.empty((self.batch_size,self.size,self.size,self.n_channels*self.n_timesteps))
-        y = X
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
             # Store sample
             X[i,] = np.load(ID)
 
-        return X, y
+        return X
 
 class TestImgClass:
 
@@ -1277,26 +1276,26 @@ class TestDictionary:
 
         if (os.path.exists(pdf_name)):
             os.remove(pdf_name)
-
-        rows_plots = (full_list_feats_normal.shape[1] / 8)
+        cols_plots = 16
+        rows_plots = (full_list_feats_normal.shape[1] / cols_plots)
 
         with PdfPages(pdf_name) as pdf:
 
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-            fig, ax = plt.subplots(ncols=8, nrows=rows_plots, figsize=(40, 40), sharex='col', sharey='row')
+            fig, ax = plt.subplots(ncols=cols_plots, nrows=rows_plots, figsize=(200, 200), sharex='col', sharey='row')
             plt.suptitle('Distribution of each feature in the dataset. Green:Features of Normal Cuboids, Red: Features of Anomaly Cuboids', fontsize=30)
 
             for i in range(0, full_list_feats_normal.shape[1]):
                 print "PROCESSING FEATURE:", i
                 try:
-                    ax[int(i / 8)][i % 8].set_title('feature: ' + str(i + 1), fontsize=20)
-                    plt.setp(ax[int(i / 8)][i % 8].get_xticklabels(), visible=True)
+                    ax[int(i / cols_plots)][i % cols_plots].set_title('feature: ' + str(i + 1), fontsize=20)
+                    plt.setp(ax[int(i / cols_plots)][i % cols_plots].get_xticklabels(), visible=True)
 
-                    sns.distplot(full_list_feats_normal[:, i], kde=True, rug=False, hist=True,
-                                 ax=ax[int(i / 8)][i % 8],color='green')
+                    sns.distplot(full_list_feats_normal[:, i], kde=False, rug=False, hist=True,
+                                 ax=ax[int(i / cols_plots)][i % cols_plots],color='green')
 
-                    sns.distplot(full_list_feats_anomaly[:, i], kde=True, rug=False, hist=True,
-                             ax=ax[int(i / 8)][i % 8],color='red')
+                    sns.distplot(full_list_feats_anomaly[:, i], kde=False, rug=False, hist=True,
+                             ax=ax[int(i / cols_plots)][i % cols_plots],color='red')
                 except:
                     print "SKIPPING FEATURE:", i
 
