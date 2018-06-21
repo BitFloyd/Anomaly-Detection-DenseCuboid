@@ -1306,6 +1306,10 @@ class TestDictionary:
 
         return True
 
+    def return_gm_score(self,feats):
+
+       return self.gm.score_samples(np.array(feats)).tolist()
+
     def gmm_analysis(self):
 
         self.vid=1 #Reset vid
@@ -1317,8 +1321,8 @@ class TestDictionary:
         while (self.load_data()):
 
             feats_normal, feats_anomaly = self.create_feats_to_analyze_from_video()
-            full_list_scores_normal.extend(self.gm.score_samples(np.array(feats_normal)).tolist())
-            full_list_scores_anomaly.extend(self.gm.score_samples(np.array(feats_anomaly)).tolist())
+            full_list_scores_normal.extend(self.return_gm_score(feats_normal))
+            full_list_scores_anomaly.extend(self.return_gm_score(feats_anomaly))
 
         full_list_scores_normal = np.sort(np.array(full_list_scores_normal))
         full_list_scores_anomaly = np.sort(np.array(full_list_scores_anomaly))
