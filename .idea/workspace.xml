@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/visualize_model.py" />
+    <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="change dense layer in middle to conv-layer.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conv_ac_ucsd2.py" afterPath="$PROJECT_DIR$/conv_ac_ucsd2.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_pkg/data_fns.py" afterPath="$PROJECT_DIR$/data_pkg/data_fns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-270">
-              <caret line="46" column="18" lean-forward="true" selection-start-line="46" selection-start-column="18" selection-end-line="46" selection-end-column="18" />
+            <state relative-caret-position="342">
+              <caret line="83" column="23" lean-forward="false" selection-start-line="83" selection-start-column="9" selection-end-line="83" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -53,11 +50,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="814" column="0" lean-forward="false" selection-start-line="814" selection-start-column="0" selection-end-line="852" selection-end-column="25" />
+            <state relative-caret-position="270">
+              <caret line="1201" column="8" lean-forward="false" selection-start-line="1201" selection-start-column="8" selection-end-line="1201" selection-end-column="8" />
               <folding>
                 <element signature="e#1717#3378#0" expanded="false" />
                 <element signature="e#3423#5588#0" expanded="false" />
@@ -71,40 +68,39 @@
                 <element signature="e#22314#22763#0" expanded="false" />
                 <element signature="e#22813#23098#0" expanded="false" />
                 <element signature="e#23342#28444#0" expanded="false" />
-                <element signature="e#38562#42499#0" expanded="false" />
-                <element signature="e#42556#43883#0" expanded="false" />
-                <element signature="e#42874#43883#0" expanded="false" />
-                <element signature="e#43928#45495#0" expanded="false" />
-                <element signature="e#45546#46347#0" expanded="false" />
-                <element signature="e#46402#47397#0" expanded="false" />
-                <element signature="e#47464#48604#0" expanded="false" />
-                <element signature="e#48696#49499#0" expanded="false" />
-                <element signature="e#49571#52061#0" expanded="false" />
-                <element signature="e#52102#52344#0" expanded="false" />
-                <element signature="e#52396#52501#0" expanded="false" />
-                <element signature="e#52564#52689#0" expanded="false" />
-                <element signature="e#52752#53055#0" expanded="false" />
-                <element signature="e#53105#53571#0" expanded="false" />
-                <element signature="e#53630#55149#0" expanded="false" />
-                <element signature="e#55233#56304#0" expanded="false" />
-                <element signature="e#56343#56766#0" expanded="false" />
-                <element signature="e#56824#57228#0" expanded="false" />
-                <element signature="e#57301#58259#0" expanded="false" />
-                <element signature="e#58347#58899#0" expanded="false" />
-                <element signature="e#59004#61150#0" expanded="false" />
-                <element signature="e#62743#63407#0" expanded="false" />
-                <element signature="e#63478#64298#0" expanded="false" />
-                <element signature="e#64361#65149#0" expanded="false" />
-                <element signature="e#65200#65644#0" expanded="false" />
-                <element signature="e#65698#66491#0" expanded="false" />
-                <element signature="e#66554#68063#0" expanded="false" />
-                <element signature="e#68126#68806#0" expanded="false" />
-                <element signature="e#68906#71702#0" expanded="false" />
-                <element signature="e#71758#73707#0" expanded="false" />
-                <element signature="e#73740#73788#0" expanded="false" />
-                <element signature="e#73848#80518#0" expanded="false" />
-                <element signature="e#80587#87548#0" expanded="false" />
-                <element signature="e#87615#95071#0" expanded="false" />
+                <element signature="e#37587#41524#0" expanded="false" />
+                <element signature="e#41581#42908#0" expanded="false" />
+                <element signature="e#41899#42908#0" expanded="false" />
+                <element signature="e#42953#44520#0" expanded="false" />
+                <element signature="e#44571#45372#0" expanded="false" />
+                <element signature="e#45427#46422#0" expanded="false" />
+                <element signature="e#46489#47629#0" expanded="false" />
+                <element signature="e#48596#51086#0" expanded="false" />
+                <element signature="e#51127#51369#0" expanded="false" />
+                <element signature="e#51421#51526#0" expanded="false" />
+                <element signature="e#51589#51714#0" expanded="false" />
+                <element signature="e#51777#52080#0" expanded="false" />
+                <element signature="e#52130#52596#0" expanded="false" />
+                <element signature="e#52655#54174#0" expanded="false" />
+                <element signature="e#54258#55329#0" expanded="false" />
+                <element signature="e#55368#55791#0" expanded="false" />
+                <element signature="e#55849#56253#0" expanded="false" />
+                <element signature="e#56326#57284#0" expanded="false" />
+                <element signature="e#57372#57924#0" expanded="false" />
+                <element signature="e#58029#60175#0" expanded="false" />
+                <element signature="e#61768#62432#0" expanded="false" />
+                <element signature="e#62503#63323#0" expanded="false" />
+                <element signature="e#63386#64174#0" expanded="false" />
+                <element signature="e#64225#64669#0" expanded="false" />
+                <element signature="e#64723#65516#0" expanded="false" />
+                <element signature="e#65579#67088#0" expanded="false" />
+                <element signature="e#67151#67831#0" expanded="false" />
+                <element signature="e#67931#70727#0" expanded="false" />
+                <element signature="e#70783#72732#0" expanded="false" />
+                <element signature="e#72765#72813#0" expanded="false" />
+                <element signature="e#72873#79543#0" expanded="false" />
+                <element signature="e#79612#86573#0" expanded="false" />
+                <element signature="e#86640#94096#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -162,7 +158,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="TrainDictionary_added" />
       </map>
     </option>
   </component>
@@ -560,13 +556,6 @@
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
     </task>
-    <task id="LOCAL-00010" summary="Add save gifs to cluster_ids and do more partial fit for models with clustering loss">
-      <created>1521476901417</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1521476901417</updated>
-    </task>
     <task id="LOCAL-00011" summary="Add save gifs to cluster_ids and do more partial fit for models with clustering loss">
       <created>1522084078712</created>
       <option name="number" value="00011" />
@@ -903,7 +892,14 @@
       <option name="project" value="LOCAL" />
       <updated>1529552407162</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="change dense layer in middle to conv-layer.">
+      <created>1530586774289</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1530586774290</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -976,7 +972,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed memory leak problem. Added feature analysis on normal and anomalous cuboids." />
     <MESSAGE value="removed cuboid distance pdf creation from full_run" />
     <MESSAGE value="fix reverse to be False" />
     <MESSAGE value="move use_basis_dict to argparse" />
@@ -1001,7 +996,8 @@
     <MESSAGE value="fix tsne" />
     <MESSAGE value="create and make changes for datagenerator" />
     <MESSAGE value="fix gmm function" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix gmm function" />
+    <MESSAGE value="change dense layer in middle to conv-layer." />
+    <option name="LAST_COMMIT_MESSAGE" value="change dense layer in middle to conv-layer." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1277,6 +1273,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="818">
           <caret line="69" column="98" lean-forward="false" selection-start-line="69" selection-start-column="98" selection-end-line="69" selection-end-column="98" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1288,10 +1285,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="83" column="23" lean-forward="false" selection-start-line="83" selection-start-column="9" selection-end-line="83" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="814" column="0" lean-forward="false" selection-start-line="814" selection-start-column="0" selection-end-line="852" selection-end-column="25" />
+        <state relative-caret-position="270">
+          <caret line="1201" column="8" lean-forward="false" selection-start-line="1201" selection-start-column="8" selection-end-line="1201" selection-end-column="8" />
           <folding>
             <element signature="e#1717#3378#0" expanded="false" />
             <element signature="e#3423#5588#0" expanded="false" />
@@ -1305,49 +1310,40 @@
             <element signature="e#22314#22763#0" expanded="false" />
             <element signature="e#22813#23098#0" expanded="false" />
             <element signature="e#23342#28444#0" expanded="false" />
-            <element signature="e#38562#42499#0" expanded="false" />
-            <element signature="e#42556#43883#0" expanded="false" />
-            <element signature="e#42874#43883#0" expanded="false" />
-            <element signature="e#43928#45495#0" expanded="false" />
-            <element signature="e#45546#46347#0" expanded="false" />
-            <element signature="e#46402#47397#0" expanded="false" />
-            <element signature="e#47464#48604#0" expanded="false" />
-            <element signature="e#48696#49499#0" expanded="false" />
-            <element signature="e#49571#52061#0" expanded="false" />
-            <element signature="e#52102#52344#0" expanded="false" />
-            <element signature="e#52396#52501#0" expanded="false" />
-            <element signature="e#52564#52689#0" expanded="false" />
-            <element signature="e#52752#53055#0" expanded="false" />
-            <element signature="e#53105#53571#0" expanded="false" />
-            <element signature="e#53630#55149#0" expanded="false" />
-            <element signature="e#55233#56304#0" expanded="false" />
-            <element signature="e#56343#56766#0" expanded="false" />
-            <element signature="e#56824#57228#0" expanded="false" />
-            <element signature="e#57301#58259#0" expanded="false" />
-            <element signature="e#58347#58899#0" expanded="false" />
-            <element signature="e#59004#61150#0" expanded="false" />
-            <element signature="e#62743#63407#0" expanded="false" />
-            <element signature="e#63478#64298#0" expanded="false" />
-            <element signature="e#64361#65149#0" expanded="false" />
-            <element signature="e#65200#65644#0" expanded="false" />
-            <element signature="e#65698#66491#0" expanded="false" />
-            <element signature="e#66554#68063#0" expanded="false" />
-            <element signature="e#68126#68806#0" expanded="false" />
-            <element signature="e#68906#71702#0" expanded="false" />
-            <element signature="e#71758#73707#0" expanded="false" />
-            <element signature="e#73740#73788#0" expanded="false" />
-            <element signature="e#73848#80518#0" expanded="false" />
-            <element signature="e#80587#87548#0" expanded="false" />
-            <element signature="e#87615#95071#0" expanded="false" />
+            <element signature="e#37587#41524#0" expanded="false" />
+            <element signature="e#41581#42908#0" expanded="false" />
+            <element signature="e#41899#42908#0" expanded="false" />
+            <element signature="e#42953#44520#0" expanded="false" />
+            <element signature="e#44571#45372#0" expanded="false" />
+            <element signature="e#45427#46422#0" expanded="false" />
+            <element signature="e#46489#47629#0" expanded="false" />
+            <element signature="e#48596#51086#0" expanded="false" />
+            <element signature="e#51127#51369#0" expanded="false" />
+            <element signature="e#51421#51526#0" expanded="false" />
+            <element signature="e#51589#51714#0" expanded="false" />
+            <element signature="e#51777#52080#0" expanded="false" />
+            <element signature="e#52130#52596#0" expanded="false" />
+            <element signature="e#52655#54174#0" expanded="false" />
+            <element signature="e#54258#55329#0" expanded="false" />
+            <element signature="e#55368#55791#0" expanded="false" />
+            <element signature="e#55849#56253#0" expanded="false" />
+            <element signature="e#56326#57284#0" expanded="false" />
+            <element signature="e#57372#57924#0" expanded="false" />
+            <element signature="e#58029#60175#0" expanded="false" />
+            <element signature="e#61768#62432#0" expanded="false" />
+            <element signature="e#62503#63323#0" expanded="false" />
+            <element signature="e#63386#64174#0" expanded="false" />
+            <element signature="e#64225#64669#0" expanded="false" />
+            <element signature="e#64723#65516#0" expanded="false" />
+            <element signature="e#65579#67088#0" expanded="false" />
+            <element signature="e#67151#67831#0" expanded="false" />
+            <element signature="e#67931#70727#0" expanded="false" />
+            <element signature="e#70783#72732#0" expanded="false" />
+            <element signature="e#72765#72813#0" expanded="false" />
+            <element signature="e#72873#79543#0" expanded="false" />
+            <element signature="e#79612#86573#0" expanded="false" />
+            <element signature="e#86640#94096#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-270">
-          <caret line="46" column="18" lean-forward="true" selection-start-line="46" selection-start-column="18" selection-end-line="46" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>

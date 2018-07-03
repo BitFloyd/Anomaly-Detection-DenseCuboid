@@ -790,15 +790,6 @@ class Super_autoencoder:
             self.loss_list.append(history.history['loss'][0])
 
 
-
-        # Get means of predicted features
-        fit_tries = 0
-        disp_track = 0
-        bef_fit = None
-        aft_fit = None
-        means_patience = self.means_patience
-        max_fit_tries = n_chapters*500
-
         for i in range(0,n_chapters):
             self.set_x_train(i)
             feats = self.encoder.predict(self.x_train)
@@ -812,60 +803,34 @@ class Super_autoencoder:
 
         self.features_h5_pre = h5py.File(os.path.join(self.model_store, 'features_pre.h5'), 'r')
 
-        while (disp_track < means_patience and fit_tries <= max_fit_tries):
+        list_feats = []
 
-            for i in range(0, n_chapters):
+        for id in range(0, len(self.features_h5_pre)):
+            f_arr = np.array(self.features_h5_pre.get('chapter_' + str(id)))
+            list_feats.extend(f_arr.tolist())
+            del f_arr
 
-                if (disp_track >= means_patience or fit_tries > max_fit_tries):
-                    break
-
-                feats = self.set_feats_pre(i)
-
-                if (fit_tries == 0):
-                    bef_fit = np.zeros((self.n_clusters,self.h_units))
-                else:
-                    bef_fit = np.copy(self.km.cluster_centers_).astype('float64')
-
-                for k in range(0, len(feats), self.means_batch):
-                    if (k + self.means_batch < len(feats)):
-                        self.km.partial_fit(feats[k:k + self.means_batch])
-                    else:
-                        self.km.partial_fit(feats[k:])
-
-                aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
-
-                fit_tries += 1
-
-                disp_means = np.sum(np.linalg.norm(bef_fit - aft_fit, axis=1))
-
-                if (disp_means < self.means_tol):
-                    disp_track += 1
-                else:
-                    disp_track = 0
-
-
-                print "-------------------------"
-                print "DISP:", disp_means
-                print "DISP_TRACK:", disp_track
-                print "FIT_TRIES:", fit_tries
-                print "-------------------------"
-
-                del feats
-
-
-
-        print "FINISH MEANS INITIAL"
         self.features_h5_pre.close()
 
+        self.gm = GaussianMixture(n_components=self.n_clusters,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100,
+                                  covariance_type='full')
 
-        self.means = np.copy(self.km.cluster_centers_).astype('float64')
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        print "START GMM FITTING INITIAL: NUMBER OF COMPONENTS = ", self.n_clusters
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+
+        start = time.time()
+        self.gm.fit(list_feats)
+        end = time.time()
+
+        self.means = np.copy(self.gm.means_).astype('float64')
 
         print "$$$$$$$$$$$$$$$$$$"
         print "MEANS_INITIAL"
         print "$$$$$$$$$$$$$$$$$$"
         print self.means
 
-        self.initial_means = np.copy(self.km.cluster_centers_)
+        self.initial_means = np.copy(self.gm.means_)
         np.save(os.path.join(self.model_store, 'initial_means.npy'), self.initial_means)
 
         loss_track = 0
