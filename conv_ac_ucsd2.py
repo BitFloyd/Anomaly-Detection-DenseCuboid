@@ -47,7 +47,7 @@ print "#############################"
 print "LOAD MODEL"
 print "#############################"
 
-notrain = True
+notrain = False
 
 if(h_units>0):
     ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size, n_channels=1,h_units=h_units,
@@ -80,11 +80,8 @@ else:
                             n_train=ntrain, reduce_lr = True, patience_lr=30 , factor=1.25)
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
-if(do_silhouette):
-    ae_model.perform_num_clusters_analysis()
-
+ae_model.perform_dict_learn(guill,n_comp=0)
 ae_model.perform_kmeans(partial=True)
-ae_model.perform_dict_learn(guill=guill)
 ae_model.generate_loss_graph('loss_graph.png')
 ae_model.perform_feature_space_analysis()
 ae_model.create_recons(20)
@@ -96,33 +93,6 @@ ae_model.perform_gmm_training(guill=guill,n_comp=nclusters)
 ae_model.create_tsne_plot(graph_name='tsne_plot.png')
 
 train_dset.close()
-
-print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-print "CREATE AND SAVE DICTIONARY OF WORD FREQUENCIES FROM TRAINING DATA"
-print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-
-#Get Train cuboids
-data_h5_vc = h5py.File(os.path.join(train_folder,'data_train_video_cuboids.h5'))
-
-train_dict = TrainDictionary(ae_model,data_train_h5=data_h5_vc,model_store=model_store)
-
-print "############################"
-print "CREATING DICTIONARY FROM TRAINING DATA"
-print "############################"
-train_dict.update_dict_from_data()
-
-print "############################"
-print "PRINTING DEETS AND PLOT FREQUENCY"
-print "############################"
-train_dict.print_details_and_plot('word_frequency_in_dict.png')
-
-
-data_h5_vc.close()
-del TrainDictionary
-
-
-del ae_model
-
 
 print "################################"
 print "START TESTING"
@@ -158,8 +128,6 @@ else:
 
     ae_model.set_cl_loss(0.0)
 
-    if(do_silhouette):
-        ae_model.set_clusters_to_optimum()
 
 #Get Test class
 data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
@@ -177,17 +145,6 @@ print "############################"
 print "UPDATING DICT FROM DATA"
 print "############################"
 tclass.process_data()
-
-
-print "############################"
-print "MAKE LIST OF FULL CUBOID DATASET FREQUENCIES"
-print "############################"
-tclass.make_list_full_dset_cuboid_frequencies()
-
-print "############################"
-print "MAKE FREQUENCY SAMPLES PLOT"
-print "############################"
-tclass.plot_frequencies_of_samples('word_frequency_plot_udiw'+str(udiw)+'.png')
 
 print "############################"
 print "MAKE LOSS SAMPLES PLOT"

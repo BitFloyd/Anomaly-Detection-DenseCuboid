@@ -354,10 +354,10 @@ class TestDictionary:
         if(not os.path.exists(self.image_store)):
             os.mkdir(self.image_store)
 
-        keys = self.load_h5data('dictionary_keys')
-        keys_tuples = [tuple(i) for i in keys]
+        # keys = self.load_h5data('dictionary_keys')
+        # keys_tuples = [tuple(i) for i in keys]
 
-        self.dictionary_words = dict(zip(keys_tuples, self.load_h5data('dictionary_values')))
+        # self.dictionary_words = dict(zip(keys_tuples, self.load_h5data('dictionary_values')))
 
         self.use_basis_dict = use_basis_dict
 
@@ -366,8 +366,8 @@ class TestDictionary:
             self.basis_dict_comp = self.basis_dict.components_
             self.list_of_dict_recon_full_dataset=[]
 
-        del keys
-        del keys_tuples
+        # del keys
+        # del keys_tuples
 
         if(not notest):
             self.model_enc = model.encoder
@@ -591,7 +591,7 @@ class TestDictionary:
         # self.save_h5data('dictionary_keys',self.dictionary_words.keys())
         # self.save_h5data('dictionary_values',self.dictionary_words.values())
 
-        self.save_h5data('list_cub_words_full_dataset',self.list_of_cub_words_full_dataset)
+        # self.save_h5data('list_cub_words_full_dataset',self.list_of_cub_words_full_dataset)
 
         self.save_h5data('list_cub_anomgt_full_dataset',self.list_of_cub_anom_gt_full_dataset)
 
@@ -618,14 +618,14 @@ class TestDictionary:
                                                                              relevant_row_anom_gt=next_set_from_cubarray[1],
                                                                              relevant_row_anompercentage=next_set_from_cubarray[3])
 
-            predictions = self.predict_on_surroundings(surroundings_from_three_rows)
-            words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
+            # predictions = self.predict_on_surroundings(surroundings_from_three_rows)
+            # words_from_preds = self.create_words_from_predictions(predictions,sublist_full_dataset_distances)
             # self.update_dict_with_words(words_from_preds)
 
             self.list_of_cub_anom_gt_full_dataset.extend(sublist_full_dataset_anom_gt)
             self.list_of_cub_loss_full_dataset.extend(sublist_full_dataset_dssim_loss)
             self.list_full_dset_dist.extend(sublist_full_dataset_distances)
-            self.list_of_cub_words_full_dataset.extend(words_from_preds)
+            # self.list_of_cub_words_full_dataset.extend(words_from_preds)
             self.list_of_cub_anomperc_full_dataset.extend(sublist_full_dataset_anompercentage)
 
             next_set_from_cubarray = self.fetch_next_set_from_cubarray()

@@ -1165,7 +1165,7 @@ class Super_autoencoder:
                 ax[int(i / cols_plots)][i % cols_plots].set_title('feature: ' + str(i + 1),fontsize=20)
                 plt.setp(ax[int(i / cols_plots)][i % cols_plots].get_xticklabels(),visible=True)
                 try:
-                    sns.distplot(list_feats_to_plot[:, i], kde=False, rug=False, hist=True,
+                    sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
                                  ax=ax[int(i / cols_plots)][i % cols_plots])
                 except:
                     print "SKIPPING FEATURE:", i
@@ -1269,7 +1269,7 @@ class Super_autoencoder:
         list_feats = shuffle(self.return_all_encodings())
 
         if(n_comp<1):
-            n_components = int(n_comp * len(list_feats))
+            n_components = list_feats.shape[1]
         else:
             n_components = n_comp
 
@@ -1624,13 +1624,15 @@ class Super_autoencoder:
         return True
 
     def create_tsne_plot(self, graph_name):
-
+        message_print('DO TSNE FITTING')
         tsne_obj = TSNE(n_components=2, init='pca', random_state=0, verbose=0)
 
         list_feats = shuffle(self.return_all_encodings())
 
-        train_encodings = list_feats
-        cluster_assigns = self.get_assigns(self.means,list_feats)
+        select_indexes = np.random.randint(0, len(list_feats), int(0.01 * len(list_feats)))
+
+        train_encodings = list_feats[select_indexes]
+        cluster_assigns = self.get_assigns(self.means,train_encodings)
 
         full_array_feats = np.vstack((train_encodings, self.means))
         full_array_labels = np.vstack((cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
@@ -1701,7 +1703,7 @@ class Super_autoencoder:
         plt.close()
 
     def generate_assignment_graph(self, graph_name):
-
+        message_print('DO GENERATE ASSIGNMENT GRAPH')
         list_assigns = []
         feats = shuffle(self.return_all_encodings())
         assigns = self.get_assigns(self.means,feats)
@@ -1722,12 +1724,11 @@ class Super_autoencoder:
         plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
         plt.close()
 
-        self.features_h5.close()
-
         return True
 
     def decode_means(self, graph_name):
 
+        message_print('DO DECODE MEANS')
         means_decoded = self.decoder.predict(self.means)
 
         folder_name = 'means_decoded'
@@ -1741,6 +1742,8 @@ class Super_autoencoder:
         return True
 
     def mean_and_samples(self,n_per_mean):
+
+        message_print('DO MEAN RECONSTRUCTION WITH SAMPLING')
 
         assert((n_per_mean+1)%3==0),"n_per_mean+1 should be a multiple of 3 for columnwise display"
 
@@ -1919,7 +1922,7 @@ class Super_autoencoder:
 
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20, 20))
 
-            sns.regplot(x=np.array(range_n_clusters), y=np.array(silhouette_avg_score_list), ax=ax, fit_reg=True,
+            sns.regplot(x=np.array(range_n_clusters), y=np.array(silhouette_avg_score_list), ax=ax, fit_reg=False,
                         color='r')
             ax.set_xlabel('N_clusters')
             ax.set_ylabel('Average silhouette score')
@@ -1979,27 +1982,33 @@ class Conv_autoencoder_nostream (Super_autoencoder):
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 16x16
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 12x12
 
         x1 = GaussianNoise(0.03)(x1)
         x1 = Conv2D(f2, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 8x8
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 6x6
 
         x1 = GaussianNoise(0.02)(x1)
         x1 = Conv2D(f3, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 4x4
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
 
-        x1 = Flatten()(x1)
-        x1 = Dropout(0.3)(x1)
-        x1 = Dense(units=h_units)(x1)
+        # x1 = Flatten()(x1)
+        # x1 = Dropout(0.3)(x1)
+        # x1 = Dense(units=h_units)(x1)
+        # x1 = LeakyReLU(alpha=0.2)(x1)
+        # encoder = BatchNormalization()(x1)
+
+        x1 = GaussianNoise(0.01)(x1)
+        x1 = Conv2D(h_units, (3, 3), padding='valid')(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
-        encoder = BatchNormalization()(x1)
+        x1 = BatchNormalization()(x1)
+        encoder = Flatten()(x1)  # 1x1
 
         dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4)
         dec2 = LeakyReLU(alpha=0.2)
@@ -2382,11 +2391,17 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
         x1 = BatchNormalization()(x1)
         x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
 
-        x1 = Flatten()(x1)
-        x1 = Dropout(0.3)(x1)
-        x1 = Dense(units=h_units)(x1)
+        # x1 = Flatten()(x1)
+        # x1 = Dropout(0.3)(x1)
+        # x1 = Dense(units=h_units)(x1)
+        # x1 = LeakyReLU(alpha=0.2)(x1)
+        # encoder = BatchNormalization()(x1)
+
+        x1 = GaussianNoise(0.01)(x1)
+        x1 = Conv2D(h_units, (3, 3), padding='valid')(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
-        encoder = BatchNormalization()(x1)
+        x1 = BatchNormalization()(x1)
+        encoder = Flatten()(x1)  # 1x1
 
         dec1 = Dense(units=(size_y / 16) * (size_x / 16) * f4)
         dec2 = LeakyReLU(alpha=0.2)
