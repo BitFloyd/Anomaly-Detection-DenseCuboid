@@ -812,7 +812,7 @@ class Super_autoencoder:
 
         self.features_h5_pre.close()
 
-        self.gm = GaussianMixture(n_components=self.n_clusters,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100,
+        self.gm = GaussianMixture(n_components=self.n_clusters,max_iter=int(1e3),n_init=1,verbose=1,verbose_interval=100,
                                   covariance_type='full')
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -1272,7 +1272,7 @@ class Super_autoencoder:
         if(n_comp == -1):
             n_comp = self.n_clusters
 
-        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100,covariance_type=covariance_type)
+        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=1,verbose=1,verbose_interval=100,covariance_type=covariance_type)
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START GMM FITTING: NUMBER OF COMPONENTS = ", n_comp
@@ -1589,6 +1589,7 @@ class Super_autoencoder:
         return True
 
     def create_tsne_plot(self, graph_name):
+
         message_print('DO TSNE FITTING')
         tsne_obj = TSNE(n_components=2, init='pca', random_state=0, verbose=0)
 
@@ -1597,9 +1598,9 @@ class Super_autoencoder:
         select_indexes = np.random.randint(0, len(list_feats), int(0.01 * len(list_feats)))
 
         train_encodings = list_feats[select_indexes]
-        cluster_assigns = self.get_assigns(self.means,train_encodings)
+        cluster_assigns = self.gm.predict(train_encodings)
 
-        full_array_feats = np.vstack((train_encodings, self.means))
+        full_array_feats = np.vstack((train_encodings, self.gm.means_))
         full_array_labels = np.vstack((cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
 
         colors = full_array_labels.reshape((full_array_labels.shape[0],))
