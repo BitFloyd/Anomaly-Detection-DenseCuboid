@@ -815,6 +815,8 @@ class Super_autoencoder:
         self.gm = GaussianMixture(n_components=self.n_clusters,max_iter=int(1e3),n_init=1,verbose=1,verbose_interval=100,
                                   covariance_type='full')
 
+        list_feats = np.array(list_feats)
+
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START GMM FITTING INITIAL: NUMBER OF COMPONENTS = ", self.n_clusters
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -1964,17 +1966,12 @@ class Conv_autoencoder_nostream (Super_autoencoder):
         x1 = BatchNormalization()(x1)
         x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
 
-        # x1 = Flatten()(x1)
-        # x1 = Dropout(0.3)(x1)
-        # x1 = Dense(units=h_units)(x1)
-        # x1 = LeakyReLU(alpha=0.2)(x1)
-        # encoder = BatchNormalization()(x1)
-
-        x1 = GaussianNoise(0.01)(x1)
-        x1 = Conv2D(h_units, (3, 3), padding='valid')(x1)
+        x1 = Flatten()(x1)
+        x1 = Dropout(0.3)(x1)
+        x1 = Dense(units=h_units)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        encoder = Flatten()(x1)  # 1x1
+        encoder = BatchNormalization()(x1)
+
 
         dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4)
         dec2 = LeakyReLU(alpha=0.2)
@@ -2357,17 +2354,11 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
         x1 = BatchNormalization()(x1)
         x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
 
-        # x1 = Flatten()(x1)
-        # x1 = Dropout(0.3)(x1)
-        # x1 = Dense(units=h_units)(x1)
-        # x1 = LeakyReLU(alpha=0.2)(x1)
-        # encoder = BatchNormalization()(x1)
-
-        x1 = GaussianNoise(0.01)(x1)
-        x1 = Conv2D(h_units, (3, 3), padding='valid')(x1)
+        x1 = Flatten()(x1)
+        x1 = Dropout(0.3)(x1)
+        x1 = Dense(units=h_units)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        encoder = Flatten()(x1)  # 1x1
+        encoder = BatchNormalization()(x1)
 
         dec1 = Dense(units=(size_y / 16) * (size_x / 16) * f4)
         dec2 = LeakyReLU(alpha=0.2)
