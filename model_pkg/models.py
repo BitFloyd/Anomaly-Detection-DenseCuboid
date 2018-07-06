@@ -1603,7 +1603,8 @@ class Super_autoencoder:
         cluster_assigns = self.gm.predict(train_encodings)
 
         full_array_feats = np.vstack((train_encodings, self.gm.means_))
-        full_array_labels = np.vstack((cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((self.n_clusters, 1)) * self.n_clusters))
+        n_comps = self.gm.means_.shape[0]
+        full_array_labels = np.vstack((cluster_assigns.reshape(len(cluster_assigns), 1), np.ones((n_comps, 1)) * n_comps))
 
         colors = full_array_labels.reshape((full_array_labels.shape[0],))
 

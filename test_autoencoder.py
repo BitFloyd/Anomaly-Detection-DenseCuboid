@@ -47,7 +47,7 @@ print "#############################"
 print "LOAD MODEL"
 print "#############################"
 
-notrain = False
+notrain = True
 
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
@@ -93,33 +93,6 @@ ae_model.create_tsne_plot(graph_name='tsne_plot.png')
 
 train_dset.close()
 
-print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-print "CREATE AND SAVE DICTIONARY OF WORD FREQUENCIES FROM TRAINING DATA"
-print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-
-#Get Train cuboids
-data_h5_vc = h5py.File(os.path.join(train_folder,'data_train_video_cuboids.h5'))
-
-train_dict = TrainDictionary(ae_model,data_train_h5=data_h5_vc,model_store=model_store)
-
-print "############################"
-print "CREATING DICTIONARY FROM TRAINING DATA"
-print "############################"
-train_dict.update_dict_from_data()
-
-print "############################"
-print "PRINTING DEETS AND PLOT FREQUENCY"
-print "############################"
-train_dict.print_details_and_plot('word_frequency_in_dict.png')
-
-
-data_h5_vc.close()
-del TrainDictionary
-
-
-del ae_model
-
-
 print "################################"
 print "START TESTING"
 print "################################"
@@ -161,17 +134,6 @@ print "############################"
 print "UPDATING DICT FROM DATA"
 print "############################"
 tclass.process_data()
-
-
-print "############################"
-print "MAKE LIST OF FULL CUBOID DATASET FREQUENCIES"
-print "############################"
-tclass.make_list_full_dset_cuboid_frequencies()
-
-print "############################"
-print "MAKE FREQUENCY SAMPLES PLOT"
-print "############################"
-tclass.plot_frequencies_of_samples('word_frequency_plot_udiw'+str(udiw)+'.png')
 
 print "############################"
 print "MAKE LOSS SAMPLES PLOT"
