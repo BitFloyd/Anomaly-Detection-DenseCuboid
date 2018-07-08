@@ -1274,7 +1274,7 @@ class Super_autoencoder:
         if(n_comp == -1):
             n_comp = self.n_clusters
 
-        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=1,verbose=1,verbose_interval=100,covariance_type=covariance_type)
+        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100,covariance_type=covariance_type)
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START GMM FITTING: NUMBER OF COMPONENTS = ", n_comp
@@ -1913,7 +1913,7 @@ class Super_autoencoder:
     def __del__(self):
         print ("Destructor called for SuperAutoEncoder")
 
-class Conv_autoencoder_nostream (Super_autoencoder):
+class Conv_autoencoder_nostream(Super_autoencoder):
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10,lr_model=1e-4, lamda=0.01,

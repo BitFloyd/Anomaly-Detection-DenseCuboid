@@ -1032,7 +1032,11 @@ class TestDictionary:
         plt.close()
 
         self.write_prf_details_to_file(filename='prf_details.txt',score_dict=score_dict,metric_name=metric_name)
-
+        self.plot_roc_curve(plot_title='Reciever Operating Characteristic when using '+metric_name.upper(),
+                            array_scores=(array_to_consider),
+                            array_gt=y_true_arr,
+                            plot_filename='roc_for_'+metric_name+'.png'
+                            )
         return True
 
     def plot_frequencies_of_samples(self,anom_frequency_graph_name):
@@ -1287,10 +1291,31 @@ class TestDictionary:
 
        return self.gm.score_samples(np.array(feats)).tolist()
 
+    def return_maha_dist(self,feats):
+
+        distances = []
+
+        predicted_classes = self.gm.predict(feats)
+        mu = self.mu_array[predicted_classes]
+        covariance_invs = self.cov_inv[predicted_classes]
+
+        for idx,i in enumerate(feats):
+            ph1 = np.matmul((i - mu[idx]), covariance_invs[idx])
+            distances.append(np.matmul(ph1, (i - mu[idx]).T))
+
+        return distances
+
     def gmm_analysis(self):
 
         self.vid=1 #Reset vid
         self.gm = so.load_obj(os.path.join(self.model_store,'gmm.pkl'))
+
+        self.mu_array = self.gm.means_
+        self.cov_array = self.gm.covariances_
+        self.cov_inv = np.zeros((self.cov_array.shape))
+
+        for idx, i in enumerate(self.cov_array):
+            self.cov_inv[idx] = np.linalg.inv(i)
 
         full_list_scores_normal = []
         full_list_scores_anomaly = []
@@ -1298,8 +1323,8 @@ class TestDictionary:
         while (self.load_data()):
 
             feats_normal, feats_anomaly = self.create_feats_to_analyze_from_video()
-            full_list_scores_normal.extend(self.return_gm_score(feats_normal))
-            full_list_scores_anomaly.extend(self.return_gm_score(feats_anomaly))
+            full_list_scores_normal.extend(self.return_maha_dist(feats_normal))
+            full_list_scores_anomaly.extend(self.return_maha_dist(feats_anomaly))
 
         full_list_scores_normal = np.sort(np.array(full_list_scores_normal))
         full_list_scores_anomaly = np.sort(np.array(full_list_scores_anomaly))
@@ -1338,7 +1363,7 @@ class TestDictionary:
         list_all_gt = list_all_gt[args_arr_sort]
         list_all_scores = list_all_scores[args_arr_sort]
 
-        score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores, gt_array=list_all_gt, lt=True)
+        score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores, gt_array=list_all_gt, lt=False)
         threshold = score_dict['max_f1_th']
 
         colors = ['green', 'red']
@@ -1377,7 +1402,7 @@ class TestDictionary:
         message_print("START PLOTTING ROC CURVE")
 
         self.plot_roc_curve(plot_title='Reciever Operating Characteristic when using Gaussian Mixture Model',
-                            array_scores=(-list_all_scores),
+                            array_scores=(list_all_scores),
                             array_gt=list_all_gt,
                             plot_filename = 'roc_for_gmm.png')
         return score_dict

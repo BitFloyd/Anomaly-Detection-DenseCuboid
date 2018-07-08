@@ -2,15 +2,14 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream
+from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream,TrainDataGenerator
 from sys import argv
 import os
-import socket
 import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric,set_mem=True)
+rdict = af.parse_run_variables(metric,set_mem=True,set_mem_value=0.5)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']
@@ -46,7 +45,7 @@ print "################################"
 print "START TESTING"
 print "################################"
 
-notest = False
+notest = True
 udiw = False
 
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -63,7 +62,9 @@ else:
                                             reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
 
     ae_model.set_cl_loss(0.0)
-    ae_model.load_gmm_model()
+
+    if(do_silhouette):
+        ae_model.set_clusters_to_optimum()
 
 #Get Test class
 data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
@@ -76,9 +77,29 @@ tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
                         use_basis_dict=use_basis_dict)
 
+print "############################"
+print "MAKE LOSS SAMPLES PLOT"
+print "############################"
+tclass.plot_loss_of_samples('loss_'+tlm+'_samples_plot.png')
+
+
+if(use_basis_dict):
+
+    print "############################"
+    print "MAKE BASIS_DICT_RECON SAMPLES PLOT"
+    print "############################"
+    tclass.plot_basis_dict_recon_measure_of_samples('basis_dict_recon_error_samples_plot.png')
+
+print "############################"
+print "MAKE DISTANCE METRIC PLOT"
+print "############################"
+tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
+tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
+tclass.plot_distance_measure_of_samples('distance_target_samples_plot.png','distance')
+tclass.plot_distance_measure_of_samples('distancexloss_'+tlm+'_samples_plot.png','distancexloss')
 
 print "########################################################"
-print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "PERFORM GMM_ANALYSIS"
 print "########################################################"
 score_dict = tclass.gmm_analysis()
 
@@ -89,6 +110,7 @@ data_h5_ap.close()
 
 threshold = score_dict['max_f1_th']
 
+ae_model.load_gmm_model()
 
 tvs = TestVideoStream(PathToVideos=path_to_videos_test,
                       CubSizeY=size,

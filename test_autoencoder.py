@@ -47,7 +47,7 @@ print "#############################"
 print "LOAD MODEL"
 print "#############################"
 
-notrain = True
+notrain = False
 
 ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
@@ -162,7 +162,7 @@ print "########################################################"
 tclass.feature_analysis_normvsanom()
 
 print "########################################################"
-print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "PERFORM GMM_ANALYSIS"
 print "########################################################"
 score_dict = tclass.gmm_analysis()
 
