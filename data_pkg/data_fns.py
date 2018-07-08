@@ -941,6 +941,8 @@ class TestDictionary:
 
     def plot_roc_curve(self,plot_title,array_scores,array_gt,plot_filename):
 
+        message_print("START PLOTTING ROC CURVE")
+        message_print(plot_title)
         fpr,tpr ,_ = roc_curve(y_true=array_gt,y_score=array_scores)
         auc_score = auc(fpr,tpr)
 
@@ -1398,8 +1400,6 @@ class TestDictionary:
         plt.close()
 
         self.write_prf_details_to_file(filename='prf_details.txt', score_dict=score_dict, metric_name='GMM probability score')
-
-        message_print("START PLOTTING ROC CURVE")
 
         self.plot_roc_curve(plot_title='Reciever Operating Characteristic when using Gaussian Mixture Model',
                             array_scores=(list_all_scores),
