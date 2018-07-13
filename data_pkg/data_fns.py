@@ -1,6 +1,7 @@
 import numpy as np
 import os
-from skimage.io import imread
+from skimage.io import imread, imsave
+from skimage.transform import resize
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from skimage import color,img_as_float
@@ -1789,6 +1790,86 @@ class Video_Stream_ARTIF:
             self.seek+=1
 
         self.seek-=2
+
+        return True
+
+class Format_York_Videos:
+
+    def __init__(self,path,start_anomaly):
+
+        self.path = path
+        self.frames_path = os.path.join(path,'frames')
+        self.GT_frames_path = os.path.join(path,'GT')
+
+        frames_list = os.listdir(self.frames_path)
+        GT_frames_list = os.listdir(self.GT_frames_path)
+
+        frames_list.sort()
+        GT_frames_list.sort()
+
+        self.frames_list = [os.path.join(self.frames_path,i) for i in frames_list]
+        self.GT_frames_list = [os.path.join(self.GT_frames_path, i) for i in GT_frames_list]
+
+        self.end_train = start_anomaly
+        self.start_anomaly = start_anomaly
+
+        self.make_folder_structure()
+        self.get_image_shape()
+        self.copy_to_train()
+        self.copy_eval_test_files()
+
+
+
+    def make_folder_structure(self):
+        os.makedirs(os.path.join(self.path,'Train'))
+        os.makedirs(os.path.join(self.path, 'Test'))
+
+        os.makedirs(os.path.join(self.path, 'Train','Train001'))
+        os.makedirs(os.path.join(self.path, 'Test','Test001'))
+        os.makedirs(os.path.join(self.path, 'Test', 'Test001_gt'))
+
+        self.train_frames_path = os.path.join(self.path, 'Train','Train001')
+        self.test_frames_path = os.path.join(self.path, 'Test','Test001')
+        self.test_frames_gt_path = os.path.join(self.path, 'Test', 'Test001_gt')
+
+        return True
+
+    def get_image_shape(self):
+
+        filename = self.frames_list[0]
+        image = imread(filename)
+
+        self.image_height = image.shape[0]
+        self.image_width = image.shape[1]
+        self.image_channels = image.shape[2]
+
+        message_print('IMAGE_HEIGHT'+str(self.image_height)+' IMAGE_WIDTH'+str(self.image_width)+' IMAGE_CHANNELSS'+str(self.image_channels))
+
+        return True
+
+    def copy_to_train(self):
+
+        for i in range(0,self.end_train-1):
+            shutil.copy(src=self.frames_list[i],dst=os.path.join(self.train_frames_path,os.path.split(self.frames_list[i])[1]))
+
+        return True
+
+    def copy_eval_test_files(self):
+
+        test_images_start = int(os.path.split(self.GT_frames_list[0])[1].split('-')[1].split('.')[0])
+        test_images_end = int(os.path.split(self.GT_frames_list[-1])[1].split('-')[1].split('.')[0])
+
+        for i in range(test_images_start-1, test_images_end):
+            shutil.copy(src=self.frames_list[i],
+                        dst=os.path.join(self.test_frames_path, os.path.split(self.frames_list[i])[1]))
+
+        for idx,i in enumerate(self.GT_frames_list):
+
+            image = imread(i)
+            image_resized = resize(image,output_shape=(self.image_height,self.image_width))
+            image_resized = (image_resized > 0.0)
+
+            imsave(fname=os.path.join(self.test_frames_gt_path, os.path.split(i)[1]),arr=image_resized)
 
         return True
 
