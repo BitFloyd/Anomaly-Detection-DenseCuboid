@@ -23,6 +23,27 @@ elif(dataset=='ucsd1'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD1/TRAIN'
 
+elif(dataset=='boat_holborn'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/BOAT-HOLBORN/TRAIN'
+
+elif(dataset=='boat_sea'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/BOAT-SEA/TRAIN'
+
+elif(dataset=='camouflage'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/CAMOUFLAGE/TRAIN'
+
+elif(dataset=='canoe'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/CANOE/TRAIN'
+
+elif(dataset=='traffic_train'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRAFFIC-TRAIN/TRAIN'
+
+
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
 tstrides = int(metric['-tstrd'])
