@@ -19,12 +19,34 @@ dataset = metric['-dataset']
 if(dataset =='ucsd2'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD2/TRAIN'
+
 elif(dataset=='triangle'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Train'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRIANGLE/TRAIN'
 elif(dataset=='ucsd1'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD1/TRAIN'
+
+elif(dataset=='boat_holborn'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/BOAT-HOLBORN/TRAIN'
+
+elif(dataset=='boat_sea'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/BOAT-SEA/TRAIN'
+
+elif(dataset=='camouflage'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/CAMOUFLAGE/TRAIN'
+
+elif(dataset=='canoe'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/CANOE/TRAIN'
+
+elif(dataset=='traffic_train'):
+    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Train'
+    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRAFFIC-TRAIN/TRAIN'
+
 
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
@@ -36,6 +58,9 @@ ts_pos = -1
 
 tv = 0.0
 
+if(not os.path.exists(os.path.split(save_folder)[0])):
+    print (os.path.split(save_folder)[0])
+    os.mkdir(os.path.split(save_folder)[0])
 
 if(not os.path.exists(save_folder)):
     os.mkdir(save_folder)

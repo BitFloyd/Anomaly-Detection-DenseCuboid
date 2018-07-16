@@ -47,7 +47,7 @@ print "#############################"
 print "LOAD MODEL"
 print "#############################"
 
-notrain = True
+notrain = False
 
 if(h_units>0):
     ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size, n_channels=1,h_units=h_units,
