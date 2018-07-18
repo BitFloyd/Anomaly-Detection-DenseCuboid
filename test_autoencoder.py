@@ -37,7 +37,7 @@ use_basis_dict = rdict['use_basis_dict']
 path_to_videos_test = rdict['path_to_videos_test']
 sp_strides = rdict['sp_strides']
 size  = rdict['size']
-n_channels = rdict['n_channels']
+
 
 do_silhouette = True
 
