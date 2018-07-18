@@ -69,6 +69,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     return_parse_dict['batch_size'] = batch_size
 
     size = 48
+    min_data_threshold = 20000
 
     if(dataset=='UCSD2'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
@@ -116,6 +117,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 2
         sp_strides = 12
         greyscale = False
+        min_data_threshold = 7000
 
     elif(dataset=='TRAFFIC-TRAIN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Test'
@@ -144,6 +146,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     return_parse_dict['nocl']=nocl
     return_parse_dict['loss']=loss
     return_parse_dict['size']=size
+    return_parse_dict['min_data_threshold']=min_data_threshold
 
     if (nocl):
         suffix = 'nocl_tstrd_' + str(tstrides) + '_clusters_' + str(nclusters)
@@ -214,7 +217,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     suffix += '_lamda_' + str(lamda)
 
     # Get MODEL
-    model_store = dataset + 'models/' + suffix
+    model_store = dataset + '_models/' + suffix
 
 
 

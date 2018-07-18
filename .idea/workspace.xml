@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_autoencoder.py" afterPath="$PROJECT_DIR$/test_autoencoder.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,21 +31,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="577">
-              <caret line="73" column="31" lean-forward="false" selection-start-line="73" selection-start-column="13" selection-end-line="73" selection-end-column="31" />
+            <state relative-caret-position="541">
+              <caret line="74" column="128" lean-forward="false" selection-start-line="74" selection-start-column="128" selection-end-line="74" selection-end-column="128" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="402">
-              <caret line="984" column="64" lean-forward="true" selection-start-line="984" selection-start-column="64" selection-end-line="984" selection-end-column="64" />
+            <state relative-caret-position="-738">
+              <caret line="675" column="26" lean-forward="true" selection-start-line="675" selection-start-column="26" selection-end-line="675" selection-end-column="26" />
               <folding>
                 <element signature="e#1717#3378#0" expanded="false" />
                 <element signature="e#3423#5588#0" expanded="false" />
@@ -59,9 +60,12 @@
       <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="757">
-              <caret line="168" column="0" lean-forward="true" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="72">
+              <caret line="13" column="67" lean-forward="false" selection-start-line="13" selection-start-column="67" selection-end-line="13" selection-end-column="67" />
+              <folding>
+                <element signature="e#84#443#0" expanded="false" />
+                <element signature="e#518#7319#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -173,9 +177,9 @@
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/format_york_videos.py" />
-        <option value="$PROJECT_DIR$/test_autoencoder.py" />
-        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
         <option value="$PROJECT_DIR$/model_pkg/models.py" />
+        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+        <option value="$PROJECT_DIR$/test_autoencoder.py" />
       </list>
     </option>
   </component>
@@ -516,13 +520,6 @@
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
     </task>
-    <task id="LOCAL-00024" summary="fix graphing label anomperc to anomperc">
-      <created>1525718658429</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1525718658429</updated>
-    </task>
     <task id="LOCAL-00025" summary="fix graphing label anomperc to anomperc">
       <created>1525891025089</created>
       <option name="number" value="00025" />
@@ -859,7 +856,14 @@
       <option name="project" value="LOCAL" />
       <updated>1531936480507</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="fix test_autoencoder for all datasets">
+      <created>1531937830315</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1531937830315</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -1234,26 +1238,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="757">
-          <caret line="168" column="0" lean-forward="true" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="577">
-          <caret line="73" column="31" lean-forward="false" selection-start-line="73" selection-start-column="13" selection-end-line="73" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="984" column="64" lean-forward="true" selection-start-line="984" selection-start-column="64" selection-end-line="984" selection-end-column="64" />
+        <state relative-caret-position="-738">
+          <caret line="675" column="26" lean-forward="true" selection-start-line="675" selection-start-column="26" selection-end-line="675" selection-end-column="26" />
           <folding>
             <element signature="e#1717#3378#0" expanded="false" />
             <element signature="e#3423#5588#0" expanded="false" />
@@ -1261,6 +1249,25 @@
             <element signature="e#81034#87995#0" expanded="false" />
             <element signature="e#88062#95297#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="13" column="67" lean-forward="false" selection-start-line="13" selection-start-column="67" selection-end-line="13" selection-end-column="67" />
+          <folding>
+            <element signature="e#84#443#0" expanded="false" />
+            <element signature="e#518#7319#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="541">
+          <caret line="74" column="128" lean-forward="false" selection-start-line="74" selection-start-column="128" selection-end-line="74" selection-end-column="128" />
+          <folding />
         </state>
       </provider>
     </entry>
