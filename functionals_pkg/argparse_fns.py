@@ -11,7 +11,7 @@ def getopts(argv):
         argv = argv[1:]  # Reduce the argument list by copying it starting from index 1.
     return opts
 
-def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,dataset='TRIANGLE'):
+def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     return_parse_dict = {}
 
@@ -59,6 +59,9 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,dataset='TRIAN
         batch_size = 256 * n_gpus
     else:
         batch_size = 256
+
+    if('-dataset' in metric.keys()):
+        dataset = metric['-dataset']
 
     return_parse_dict['n_gpus'] = n_gpus
     return_parse_dict['data_store_suffix']=data_store_suffix
@@ -116,7 +119,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,dataset='TRIAN
 
     elif(dataset=='TRAFFIC-TRAIN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Test'
-        tstrides = 2
+        tstrides = 4
         sp_strides = 12
         greyscale = False
 
