@@ -214,7 +214,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     suffix += '_lamda_' + str(lamda)
 
     # Get MODEL
-    model_store = 'models/' + suffix
+    model_store = dataset + 'models/' + suffix
 
 
 
