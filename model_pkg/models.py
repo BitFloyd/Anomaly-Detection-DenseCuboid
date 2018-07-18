@@ -771,7 +771,7 @@ class Super_autoencoder:
         return True
 
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
-                           n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5):
+                           n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5 , min_data_threshold=20000):
 
         if (self.notrain):
             return True
@@ -912,7 +912,7 @@ class Super_autoencoder:
             del self.means
             del self.cluster_assigns
 
-            if (len(self.x_train) > 20000):
+            if (len(self.x_train) > min_data_threshold):
                 if (lowest_loss_ever - current_loss > least_loss):
                     loss_track = 0
                     loss_track_lr = 0
@@ -982,7 +982,7 @@ class Super_autoencoder:
                     del feats
                     del self.cluster_assigns
 
-                    if (len(self.x_train) > 20000):
+                    if (len(self.x_train) > min_data_threshold):
                         if (lowest_loss_ever - current_loss > least_loss):
                             loss_track = 0
                             loss_track_lr = 0

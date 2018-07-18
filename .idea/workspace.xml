@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -33,34 +33,34 @@
       <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
-              <caret line="51" column="43" lean-forward="false" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="43" />
+            <state relative-caret-position="577">
+              <caret line="73" column="31" lean-forward="false" selection-start-line="73" selection-start-column="13" selection-end-line="73" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="534" column="34" lean-forward="false" selection-start-line="534" selection-start-column="23" selection-end-line="534" selection-end-column="34" />
+            <state relative-caret-position="402">
+              <caret line="984" column="64" lean-forward="true" selection-start-line="984" selection-start-column="64" selection-end-line="984" selection-end-column="64" />
               <folding>
                 <element signature="e#1717#3378#0" expanded="false" />
                 <element signature="e#3423#5588#0" expanded="false" />
                 <element signature="e#5624#19352#0" expanded="false" />
-                <element signature="e#80981#87942#0" expanded="false" />
-                <element signature="e#88009#95244#0" expanded="false" />
+                <element signature="e#81034#87995#0" expanded="false" />
+                <element signature="e#88062#95297#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3727">
-              <caret line="216" column="46" lean-forward="true" selection-start-line="216" selection-start-column="46" selection-end-line="216" selection-end-column="46" />
+            <state relative-caret-position="757">
+              <caret line="168" column="0" lean-forward="true" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -169,13 +169,13 @@
         <option value="$PROJECT_DIR$/create_convolution_outputs.py" />
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
         <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
-        <option value="$PROJECT_DIR$/model_pkg/models.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/format_york_videos.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+        <option value="$PROJECT_DIR$/model_pkg/models.py" />
       </list>
     </option>
   </component>
@@ -516,13 +516,6 @@
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
     </task>
-    <task id="LOCAL-00023" summary="fix graphing label anomperc to anomperc">
-      <created>1525118999338</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1525118999338</updated>
-    </task>
     <task id="LOCAL-00024" summary="fix graphing label anomperc to anomperc">
       <created>1525718658429</created>
       <option name="number" value="00024" />
@@ -859,7 +852,14 @@
       <option name="project" value="LOCAL" />
       <updated>1531935503686</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="fix test_autoencoder for all datasets">
+      <created>1531936480507</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1531936480507</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -1234,33 +1234,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="534" column="34" lean-forward="false" selection-start-line="534" selection-start-column="23" selection-end-line="534" selection-end-column="34" />
-          <folding>
-            <element signature="e#1717#3378#0" expanded="false" />
-            <element signature="e#3423#5588#0" expanded="false" />
-            <element signature="e#5624#19352#0" expanded="false" />
-            <element signature="e#80981#87942#0" expanded="false" />
-            <element signature="e#88009#95244#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="757">
+          <caret line="168" column="0" lean-forward="true" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="51" column="43" lean-forward="false" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="43" />
+        <state relative-caret-position="577">
+          <caret line="73" column="31" lean-forward="false" selection-start-line="73" selection-start-column="13" selection-end-line="73" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3727">
-          <caret line="216" column="46" lean-forward="true" selection-start-line="216" selection-start-column="46" selection-end-line="216" selection-end-column="46" />
-          <folding />
+        <state relative-caret-position="402">
+          <caret line="984" column="64" lean-forward="true" selection-start-line="984" selection-start-column="64" selection-end-line="984" selection-end-column="64" />
+          <folding>
+            <element signature="e#1717#3378#0" expanded="false" />
+            <element signature="e#3423#5588#0" expanded="false" />
+            <element signature="e#5624#19352#0" expanded="false" />
+            <element signature="e#81034#87995#0" expanded="false" />
+            <element signature="e#88062#95297#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
