@@ -36,8 +36,8 @@ model_store = rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
 path_to_videos_test = rdict['path_to_videos_test']
 sp_strides = rdict['sp_strides']
-
-size = 24
+size  = rdict['size']
+n_channels = rdict['n_channels']
 
 do_silhouette = True
 
@@ -49,7 +49,7 @@ print "#############################"
 
 notrain = False
 
-ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=3, h_units=h_units,
+ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=nc, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                             lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
                                             reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
@@ -108,7 +108,7 @@ print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 if(notest):
     ae_model = None
 else:
-    ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
+    ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=nc, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
                                             reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)

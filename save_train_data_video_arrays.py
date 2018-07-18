@@ -95,6 +95,7 @@ while True:
 
 
     while True:
+        print vstream.seek, '/', len(vstream.seek_dict.values())
 
         anom_stats = False
 

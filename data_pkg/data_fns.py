@@ -1818,15 +1818,20 @@ class Format_York_Videos:
         self.copy_to_train()
         self.copy_eval_test_files()
 
+    def create_dir(self,path):
+        if (not os.path.exists(path)):
+            os.makedirs(path)
+
+        return True
 
 
     def make_folder_structure(self):
-        os.makedirs(os.path.join(self.path,'Train'))
-        os.makedirs(os.path.join(self.path, 'Test'))
+        self.create_dir(os.path.join(self.path,'Train'))
+        self.create_dir(os.path.join(self.path, 'Test'))
 
-        os.makedirs(os.path.join(self.path, 'Train','Train001'))
-        os.makedirs(os.path.join(self.path, 'Test','Test001'))
-        os.makedirs(os.path.join(self.path, 'Test', 'Test001_gt'))
+        self.create_dir(os.path.join(self.path, 'Train','Train001'))
+        self.create_dir(os.path.join(self.path, 'Test','Test001'))
+        self.create_dir(os.path.join(self.path, 'Test', 'Test001_gt'))
 
         self.train_frames_path = os.path.join(self.path, 'Train','Train001')
         self.test_frames_path = os.path.join(self.path, 'Test','Test001')
@@ -1838,7 +1843,6 @@ class Format_York_Videos:
 
         filename = self.frames_list[0]
         image = imread(filename)
-
         self.image_height = image.shape[0]
         self.image_width = image.shape[1]
         self.image_channels = image.shape[2]
@@ -1923,8 +1927,8 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
 
 
         if(test_or_train=='Test'):
-            local_collection_gt = imread_collection(list_images_gt[i],as_grey=gs)
-
+            local_collection_gt = imread_collection(list_images_gt[i],as_grey=True)
+            n_channels_gt = 1
 
         if(bkgsub):
             #Subtract mean
@@ -1952,12 +1956,12 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
             lc = np.zeros((n_frames, frame_size_y, frame_size_x, n_channels))
 
             if (test_or_train == 'Test'):
-                lcgt = np.zeros((n_frames, frame_size_y, frame_size_x, n_channels))
+                lcgt = np.zeros((n_frames, frame_size_y, frame_size_x, n_channels_gt))
 
             for l in range(0, len(local_collection)):
                 lc[l] = local_collection[l].reshape(frame_size_y, frame_size_x, n_channels)
                 if (test_or_train == 'Test'):
-                    lcgt[l] = local_collection_gt[l].reshape(frame_size_y, frame_size_x, n_channels)
+                    lcgt[l] = local_collection_gt[l].reshape(frame_size_y, frame_size_x, n_channels_gt)
 
             del local_collection
             local_collection = lc
@@ -1971,7 +1975,7 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
             lc = np.zeros((frame_size_y, frame_size_x, n_channels*n_frames))
 
             if (test_or_train == 'Test'):
-                lcgt = np.zeros((frame_size_y, frame_size_x, n_channels*n_frames))
+                lcgt = np.zeros((frame_size_y, frame_size_x, n_channels_gt*n_frames))
 
             for l in range(0,len(local_collection)):
                 lc[:,:,l*n_channels:(l+1)*n_channels] = local_collection[l].reshape(frame_size_y, frame_size_x, n_channels)
@@ -1979,7 +1983,7 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
 
             if (test_or_train == 'Test'):
                 for l in range(0, len(local_collection_gt)):
-                    lcgt[:, :, l * n_channels:(l + 1) * n_channels] = local_collection_gt[l].reshape(frame_size_y,frame_size_x, n_channels)
+                    lcgt[:, :, l * n_channels_gt:(l + 1) * n_channels_gt] = local_collection_gt[l].reshape(frame_size_y,frame_size_x, n_channels_gt)
 
 
             del local_collection
@@ -2017,10 +2021,7 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
                     elif (ts_first_last == 'last'):
                         anomaly_gt_sum = np.sum(local_collection_gt[start_rows:end_rows, start_cols:end_cols, :])
 
-                    if(gs):
-                        anompercentage = anomaly_gt_sum/((end_cols-start_cols)*(end_rows-start_rows)*n_channels*n_frames)
-                    else:
-                        anompercentage = anomaly_gt_sum / ((end_cols - start_cols) * (end_rows - start_rows) * n_channels * n_frames*255.0)
+                    anompercentage = anomaly_gt_sum/((end_cols-start_cols)*(end_rows-start_rows)*n_channels_gt*n_frames)
 
                     if(anompercentage>0.0):
                         list_anom_percentage.append(anompercentage)

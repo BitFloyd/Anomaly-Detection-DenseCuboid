@@ -1156,8 +1156,12 @@ class Super_autoencoder:
         if(os.path.exists(pdf_name)):
             os.remove(pdf_name)
 
-        cols_plots = 16
-        rows_plots = (list_feats.shape[1] / cols_plots)
+        if(list_feats.shape[1]<=16):
+            cols_plots = list_feats.shape[1]
+            rows_plots = 1
+        else:
+            cols_plots = 16
+            rows_plots = (list_feats.shape[1] / cols_plots)
 
         with PdfPages(pdf_name) as pdf:
 
@@ -1168,11 +1172,17 @@ class Super_autoencoder:
 
             for i in range(0, list_feats_to_plot.shape[1]):
                 print "PROCESSING FEATURE:", i
-                ax[int(i / cols_plots)][i % cols_plots].set_title('feature: ' + str(i + 1),fontsize=20)
-                plt.setp(ax[int(i / cols_plots)][i % cols_plots].get_xticklabels(),visible=True)
+
+                if(list_feats.shape[1]<=16):
+                    ax_object = ax[int(i / cols_plots)]
+                else:
+                    ax_object = ax[int(i / cols_plots)][i % cols_plots]
+
+                ax_object.set_title('feature: ' + str(i + 1),fontsize=20)
+                plt.setp(ax_object.get_xticklabels(),visible=True)
                 try:
                     sns.distplot(list_feats_to_plot[:, i], kde=True, rug=False, hist=True,
-                                 ax=ax[int(i / cols_plots)][i % cols_plots])
+                                 ax=ax_object)
                 except:
                     print "SKIPPING FEATURE:", i
 

@@ -100,6 +100,9 @@ while True:
 
     start_time = time.time()
     while True:
+
+        print vstream.seek,'/',len(vstream.seek_dict.values())
+
         cubatch = bf.return_relevant_cubs(vstream,thresh_variance=tv,gs=gs,ts_pos=ts_pos)
         list_cubatch.append(cubatch.tolist())
 

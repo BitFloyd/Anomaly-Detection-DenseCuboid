@@ -11,7 +11,7 @@ def getopts(argv):
         argv = argv[1:]  # Reduce the argument list by copying it starting from index 1.
     return opts
 
-def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,greyscale=False):
+def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,dataset='TRIANGLE'):
 
     return_parse_dict = {}
 
@@ -65,19 +65,60 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,gr
     return_parse_dict['guill'] = guill
     return_parse_dict['batch_size'] = batch_size
 
-    if(ucsd2):
-        dataset = 'UCSD2'
+    size = 48
+
+    if(dataset=='UCSD2'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
         if(guill):
             path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
         tstrides = 1
         sp_strides = 12
-    else:
-        dataset = 'TRIANGLE'
+        greyscale=True
+
+    if(dataset=='UCSD1'):
+        path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+        if(guill):
+            path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+        tstrides = 1
+        sp_strides = 12
+        greyscale = True
+
+    elif(dataset=='TRIANGLE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'
         tstrides = 4
         sp_strides = 7
+        greyscale = False
+        size = 24
 
+    elif(dataset=='BOAT-HOLBORN'):
+        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Test'
+        tstrides = 2
+        sp_strides = 12
+        greyscale = False
+
+    elif(dataset=='BOAT-SEA'):
+        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Test'
+        tstrides = 4
+        sp_strides = 12
+        greyscale = False
+
+    elif(dataset=='CAMOUFLAGE'):
+        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Test'
+        tstrides = 1
+        sp_strides = 12
+        greyscale = False
+
+    elif(dataset=='CANOE'):
+        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Test'
+        tstrides = 2
+        sp_strides = 12
+        greyscale = False
+
+    elif(dataset=='TRAFFIC-TRAIN'):
+        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Test'
+        tstrides = 2
+        sp_strides = 12
+        greyscale = False
 
     n_chapters = 0
     gs = greyscale
@@ -99,7 +140,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50,ucsd2=False,gr
     return_parse_dict['nclusters'] = nclusters
     return_parse_dict['nocl']=nocl
     return_parse_dict['loss']=loss
-
+    return_parse_dict['size']=size
 
     if (nocl):
         suffix = 'nocl_tstrd_' + str(tstrides) + '_clusters_' + str(nclusters)
