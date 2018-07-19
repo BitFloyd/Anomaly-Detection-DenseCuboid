@@ -101,6 +101,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 2
         sp_strides = 12
         greyscale = False
+        min_data_threshold = 3000
         ntrain = 300
         patience = 10
 
@@ -109,6 +110,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 4
         sp_strides = 12
         greyscale = False
+        min_data_threshold = 3000
         ntrain = 300
         patience =10
 
@@ -117,6 +119,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 1
         sp_strides = 12
         greyscale = False
+        min_data_threshold = 3000
         ntrain = 300
         patience = 10
 
@@ -125,7 +128,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 2
         sp_strides = 12
         greyscale = False
-        min_data_threshold = 7000
+        min_data_threshold = 3000
         ntrain = 300
         patience = 10
 
@@ -134,6 +137,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 4
         sp_strides = 12
         greyscale = False
+        min_data_threshold = 3000
         ntrain = 300
         patience = 10
 
