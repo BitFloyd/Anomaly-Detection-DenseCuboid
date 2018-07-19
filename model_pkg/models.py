@@ -1433,7 +1433,7 @@ class Super_autoencoder:
     def create_recons(self, n_recons):
 
         print "CREATING RECONSTRUCTIONS"
-        self.set_x_train(np.random.randint(0,10))
+        self.set_x_train(np.random.randint(0,len(self.dat_h5)))
 
         folder_name = 'cuboid_reconstructions'
 

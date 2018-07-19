@@ -1298,6 +1298,9 @@ class TestDictionary:
 
         distances = []
 
+        if(len(feats) == 0):
+            return distances
+
         predicted_classes = self.gm.predict(feats)
         mu = self.mu_array[predicted_classes]
         covariance_invs = self.cov_inv[predicted_classes]
@@ -1326,6 +1329,9 @@ class TestDictionary:
         while (self.load_data()):
 
             feats_normal, feats_anomaly = self.create_feats_to_analyze_from_video()
+
+            message_print('Number of anomalies: '+str(len(feats_anomaly)))
+
             full_list_scores_normal.extend(self.return_maha_dist(feats_normal))
             full_list_scores_anomaly.extend(self.return_maha_dist(feats_anomaly))
 
