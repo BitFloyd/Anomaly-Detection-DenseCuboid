@@ -70,8 +70,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     size = 48
     min_data_threshold = 20000
-    ntrain = 100
-    patience = 100
+    ntrain = 200
+    patience = 10
 
     if(dataset=='UCSD2'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'

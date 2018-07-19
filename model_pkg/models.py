@@ -148,388 +148,6 @@ class CustomClusterLayer_Test(Layer):
         # We don't use this output.
         return x_pred
 
-class Conv_LSTM_autoencoder:
-
-    means = None
-    initial_means = None
-    list_mean_disp = []
-    loss_list = []
-
-    def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps = 5,
-                 loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01, lamda_assign=0.01,n_gpus=1):
-
-        self.clustering_lr = clustering_lr
-        self.batch_size = batch_size
-        self.model_store = model_store
-        self.loss = loss
-        self.n_clusters = n_clusters
-        self.size_y = size_y
-        self.size_x = size_x
-        self.lr_model = lr_model
-        self.lamda = lamda
-        self.means = np.zeros((n_clusters, h_units))
-        self.cluster_assigns = None
-        self.assignment_lamda = lamda_assign
-        self.ntsteps = n_timesteps
-        self.km = MiniBatchKMeans(n_clusters=self.n_clusters, verbose=0)
-
-
-        if not os.path.exists(self.model_store):
-            os.makedirs(self.model_store)
-
-        # MODEL CREATION
-        inp = Input(shape=(n_timesteps, size_y, size_x, n_channels))
-
-        x1 = GaussianNoise(0.05)(inp)
-        x1 = ConvLSTM2D(64, (3, 3), padding='same',return_sequences=True,dropout=0.5)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 14x14
-
-        x1 = GaussianNoise(0.03)(x1)
-        x1 = ConvLSTM2D(128, (3, 3), padding='same',return_sequences=True,dropout=0.5)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 7x7
-
-        x1 = GaussianNoise(0.02)(x1)
-        x1 = ConvLSTM2D(256, (3, 3), padding='same',return_sequences=True,dropout=0.5)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        x1 = BatchNormalization()(x1)
-        x1 = TimeDistributed(MaxPooling2D(pool_size=(2, 2)))(x1)  # 4x4
-
-        x1 = Flatten()(x1)
-        x1 = Dropout(0.3)(x1)
-        x1 = Dense(units=h_units)(x1)
-        x1 = LeakyReLU(alpha=0.2)(x1)
-        encoder = BatchNormalization()(x1)
-
-        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * 512 * n_timesteps)
-        dec2 = LeakyReLU(alpha=0.2)
-        dec3 = Reshape((n_timesteps, size_x / 8, size_y / 8, 512))
-
-        dec4 = TimeDistributed(UpSampling2D(size=(2, 2)))
-        dec5 = ConvLSTM2D(256, (3, 3), padding='same',return_sequences=True)
-        dec6 = LeakyReLU(alpha=0.2)
-        dec7 = BatchNormalization()  # 8x8
-
-        dec8 = TimeDistributed(UpSampling2D(size=(2, 2)))
-        dec9 = ConvLSTM2D(128, (3, 3), padding='same',return_sequences=True)
-        dec10 = LeakyReLU(alpha=0.2)
-        dec11 = BatchNormalization()  # 16x16
-
-        dec12 = TimeDistributed(UpSampling2D(size=(2, 2)))
-        dec13 = ConvLSTM2D(64, (3, 3), padding='same',return_sequences=True)
-        dec14 = LeakyReLU(alpha=0.2)
-        dec15 = BatchNormalization()  # 32x32
-
-        dec16 = ConvLSTM2D(32, (3, 3), padding='same',return_sequences=True)
-        dec17 = LeakyReLU(alpha=0.2)  # 32x32
-
-        recon = ConvLSTM2D(n_channels, (3, 3), activation='sigmoid', padding='same',return_sequences=True)
-
-        ae1 = dec1(encoder)
-        ae2 = dec2(ae1)
-        ae3 = dec3(ae2)
-        ae4 = dec4(ae3)
-        ae5 = dec5(ae4)
-        ae6 = dec6(ae5)
-        ae7 = dec7(ae6)
-        ae8 = dec8(ae7)
-        ae9 = dec9(ae8)
-        ae10 = dec10(ae9)
-        ae11 = dec11(ae10)
-        ae12 = dec12(ae11)
-        ae13 = dec13(ae12)
-        ae14 = dec14(ae13)
-        ae15 = dec15(ae14)
-        ae16 = dec16(ae15)
-        ae17 = dec17(ae16)
-        ae18 = recon(ae17)
-
-        adam_ae = Adam(lr=self.lr_model)
-        dssim = DSSIMObjective(kernel_size=4)
-
-        if (loss == 'mse'):
-            self.loss_fn = mean_squared_error
-        elif (loss == 'dssim'):
-            self.loss_fn = dssim
-        elif (loss == 'bce'):
-            self.loss_fn = binary_crossentropy
-
-        self.encoder = Model(inputs=[inp], outputs=[encoder])
-
-        dinp = Input(shape=(h_units,))
-        de1 = dec1(dinp)
-        de2 = dec2(de1)
-        de3 = dec3(de2)
-        de4 = dec4(de3)
-        de5 = dec5(de4)
-        de6 = dec6(de5)
-        de7 = dec7(de6)
-        de8 = dec8(de7)
-        de9 = dec9(de8)
-        de10 = dec10(de9)
-        de11 = dec11(de10)
-        de12 = dec12(de11)
-        de13 = dec13(de12)
-        de14 = dec14(de13)
-        de15 = dec15(de14)
-        de16 = dec16(de15)
-        de17 = dec17(de16)
-        de18 = recon(de17)
-
-        inp_assignments = Input(shape=(1,))
-
-        self.y_obj = CustomClusterLayer_Test(self.loss_fn, self.means, self.lamda, self.n_clusters, h_units,
-                                             self.assignment_lamda)
-
-        y = self.y_obj([inp, ae18, encoder, inp_assignments])
-
-        self.decoder = Model(inputs=[dinp], outputs=[de18])
-
-        self.ae = Model(inputs=[inp, inp_assignments], outputs=[y])
-
-        if(n_gpus>1):
-            self.ae = make_parallel(self.ae,n_gpus)
-
-        self.ae.compile(optimizer=adam_ae, loss=None)
-
-        if (os.path.isfile(os.path.join(model_store, 'ae_weights.h5'))):
-            print "LOADING AE MODEL WEIGHTS FROM WEIGHTS FILE"
-            self.ae.load_weights(os.path.join(model_store, 'ae_weights.h5'))
-
-        if (os.path.isfile(os.path.join(model_store, 'decoder_weights.h5'))):
-            print "LOADING DECODER MODEL WEIGHTS FROM WEIGHTS FILE"
-            self.decoder.load_weights(os.path.join(model_store, 'decoder_weights.h5'))
-
-        if (os.path.isfile(os.path.join(model_store, 'encoder_weights.h5'))):
-            print "LOADING ENCODER MODEL WEIGHTS FROM WEIGHTS FILE"
-            self.encoder.load_weights(os.path.join(model_store, 'encoder_weights.h5'))
-
-
-    def change_clustering_weight(self,flag):
-        K.set_value(self.y_obj.cl_loss_wt, K.cast_to_floatx(flag))
-
-    def set_graph_means(self,means):
-        K.set_value(self.y_obj.means, K.cast_to_floatx(means))
-
-    def kmeans_on_data(self,batch):
-
-        feats = self.encoder.predict(batch)
-        # Get means of predicted features
-        self.km.partial_fit(feats)
-
-        return True
-
-    def kmeans_conclude(self):
-
-        self.means = np.copy(self.km.cluster_centers_).astype('float64')
-        print "$$$$$$$$$$$$$$$$$$"
-        print "MEANS_INITIAL"
-        print "$$$$$$$$$$$$$$$$$$"
-        print self.means
-
-        self.initial_means = np.copy(self.km.cluster_centers_)
-
-        return True
-
-    def fit_model_ae_on_batch(self, batch):
-
-        # start_initial epoch_of_training
-        feats = self.encoder.predict(batch)
-        self.cluster_assigns = self.get_assigns(self.means, feats)
-
-        current_loss = self.ae.train_on_batch([batch, self.cluster_assigns],None)
-
-        self.loss_list.append(current_loss)
-
-    def update_means_on_batch(self,batch):
-        feats = self.encoder.predict(batch)
-        self.cluster_assigns = self.get_assigns(self.means, feats)
-        means_pre = np.copy(self.means)
-        self.update_means(feats, self.cluster_assigns)
-
-        self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
-        self.set_graph_means(self.means)
-
-    def get_assigns(self, means, feats):
-
-        dist_matrix = cdist(feats, means)
-        assigns = np.argmin(dist_matrix, axis=1)
-        return assigns
-
-    def update_means(self, feats, cluster_assigns):
-
-        ck = np.zeros((self.means.shape[0]))
-
-        for idx, i in enumerate(feats):
-            ck[cluster_assigns[idx]] += 1
-            cki = ck[cluster_assigns[idx]]
-            self.means[cluster_assigns[idx]] -= (1 / cki) * (self.means[cluster_assigns[idx]] - feats[idx]) * self.clustering_lr
-
-    def generate_loss_graph(self, graph_name):
-
-        hfm, = plt.plot(self.loss_list, label='loss')
-        plt.legend(handles=[hfm])
-        plt.title('Losses per epoch')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss Value')
-        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
-        plt.close()
-
-    def create_tsne_plot(self, graph_name,batch):
-
-        tsne_obj = TSNE(n_components=2, init='pca', random_state=0, verbose=0)
-        train_encodings = self.encoder.predict(batch)
-        means = self.means
-        full_array_feats = np.vstack((train_encodings, means))
-        cla = self.get_assigns(means,train_encodings)
-        full_array_labels = np.vstack((cla, np.ones((self.n_clusters, 1)) * 10))
-        colors = full_array_labels.reshape((full_array_labels.shape[0],))
-
-        print "##############################"
-        print "START TSNE FITTING"
-        print "##############################"
-        train_tsne_embedding = tsne_obj.fit_transform(full_array_feats)
-
-        print "##############################"
-        print "TSNE FITTING DONE"
-        print "##############################"
-
-        plt.scatter(x=train_tsne_embedding[:, 0], y=train_tsne_embedding[:, 1], c=colors, cmap=plt.get_cmap('Set3'),
-                    alpha=0.6)
-        plt.colorbar()
-        plt.title('TSNE EMBEDDINGS OF THE CLUSTER MEANS AND THE ENCODED FEATURES')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
-        plt.close()
-
-    def create_tsne_plot3d(self, graph_name,batch):
-
-        tsne_obj = TSNE(n_components=3, init='pca', random_state=0, verbose=0)
-        train_encodings = self.encoder.predict(batch)
-        means = self.means
-        full_array_feats = np.vstack((train_encodings, means))
-        cla = self.get_assigns(means, train_encodings)
-        full_array_labels = np.vstack((cla, np.ones((self.n_clusters, 1)) * 10))
-        colors = full_array_labels.reshape((full_array_labels.shape[0],))
-
-        print "##############################"
-        print "START TSNE FITTING 3D"
-        print "##############################"
-        train_tsne_embedding = tsne_obj.fit_transform(full_array_feats)
-
-        print "##############################"
-        print "TSNE FITTING DONE"
-        print "##############################"
-
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(train_tsne_embedding[:, 0], train_tsne_embedding[:, 1], train_tsne_embedding[:, 2], c=colors,
-                   cmap=plt.get_cmap('Set3'), alpha=0.6)
-        ax.set_title('TSNE EMBEDDINGS OF THE CLUSTER MEANS AND THE ENCODED FEATURES')
-        ax.legend()
-
-        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
-        plt.close()
-
-    def mean_displacement_distance(self):
-
-        difference = self.means - self.initial_means
-
-        print "####################################"
-        print "Mean difference : "
-        print  difference
-        print "####################################"
-
-        square = np.square(difference)
-        sum_squares = np.sum(square, axis=1)
-
-        print "####################################"
-        print "Sum squares : "
-        print  sum_squares
-        print "####################################"
-
-        displacement = np.sqrt(sum_squares)
-        print "####################################"
-        print "Mean displacement : ", displacement
-        print "####################################"
-
-    def generate_mean_displacement_graph(self, graph_name):
-
-        mean_displacement = np.array(self.list_mean_disp)
-        print mean_displacement.shape
-        list_labels = []
-
-        for i in range(0, mean_displacement.shape[1]):
-            x, = plt.plot(mean_displacement[:, i], label='cluster_' + str(i + 1))
-            list_labels.append(x)
-
-        plt.legend(handles=list_labels)
-        plt.title('Mean displacements over iterations')
-        plt.xlabel('Iteration Index')
-        plt.ylabel('Displacement Value')
-        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
-        plt.close()
-
-    def generate_assignment_graph(self, graph_name, batch):
-
-        feats = self.encoder.predict(batch)
-        assigns = self.get_assigns(self.means, feats)
-        list_assigns = []
-
-        for i in range(0, self.n_clusters):
-            list_assigns.append(np.sum(assigns == i))
-
-        plt.bar(x=range(0, self.n_clusters), height=list_assigns, width=0.25)
-        plt.title('Cluster Assignments')
-        plt.xlabel('Cluster ids')
-        plt.ylabel('Number of assignments')
-        plt.savefig(os.path.join(self.model_store, graph_name), bbox_inches='tight')
-        plt.close()
-
-    def do_gif_recon(self,input_cuboid,name):
-
-
-        input_cuboid = np.expand_dims(input_cuboid,0)
-        output_cuboid = self.ae.predict([input_cuboid,np.array([0])])
-
-        input_cuboid = np.uint8(input_cuboid[0]*255.0)
-        output_cuboid = np.uint8(output_cuboid[0]*255.0)
-
-
-
-        for i in range(0,len(input_cuboid)):
-
-            f, (ax1, ax2) = plt.subplots(2, 1)
-
-            ax1.imshow(input_cuboid[i])
-            ax1.set_title('Input Cuboid')
-            ax1.set_axis_off()
-
-            ax2.imshow(output_cuboid[i])
-            ax2.set_title('Output Cuboid')
-            ax2.set_axis_off()
-
-            plt.axis('off')
-            plt.savefig(os.path.join(self.model_store, str(i)+'.png'), bbox_inches='tight')
-            plt.close()
-
-        images = []
-        for i in range(0, len(input_cuboid)):
-            images.append(imageio.imread(os.path.join(self.model_store, str(i)+'.png')))
-
-        imageio.mimsave(os.path.join(self.model_store, name+'.gif'), images)
-
-        return True
-
-    def save_weights(self):
-        self.ae.save_weights(filepath=os.path.join(self.model_store, 'ae_weights.h5'))
-        self.decoder.save_weights(filepath=os.path.join(self.model_store, 'decoder_weights.h5'))
-        self.encoder.save_weights(filepath=os.path.join(self.model_store, 'encoder_weights.h5'))
-
 class Super_autoencoder:
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
@@ -771,7 +389,7 @@ class Super_autoencoder:
         return True
 
     def fit_model_ae_chaps(self, verbose=1, n_initial_chapters=10, earlystopping=False, patience=10, least_loss=1e-5,
-                           n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5 , min_data_threshold=20000):
+                           n_chapters=20,n_train=2,reduce_lr = False, patience_lr=5 , factor=1.5):
 
         if (self.notrain):
             return True
@@ -860,7 +478,6 @@ class Super_autoencoder:
                 del feats
 
 
-
         print "FINISH MEANS INITIAL"
         self.features_h5_pre.close()
 
@@ -884,23 +501,23 @@ class Super_autoencoder:
 
         lr = self.lr_model
 
+        total_num_samples = 0
+        total_loss = 0.0
+
         for j in range(n_initial_chapters, n_chapters):
 
             print (j), "/", n_chapters, ":"
             self.set_x_train(j)
 
+            total_num_samples+=len(self.x_train)
+
             history = self.ae.fit(self.x_train, batch_size=self.batch_size, epochs=1,
                                   verbose=verbose, shuffle=True)
 
-            current_loss = history.history['loss'][0]
-            self.loss_list.append(history.history['loss'][0])
-
+            total_loss += history.history['loss'][0]*len(self.x_train)
 
             feats = self.encoder.predict(self.x_train)
-
-
             self.cluster_assigns = self.get_assigns(self.means, feats)
-
             means_pre = np.copy(self.means)
             self.update_means(feats, self.cluster_assigns)
 
@@ -912,7 +529,58 @@ class Super_autoencoder:
             del self.means
             del self.cluster_assigns
 
-            if (len(self.x_train) > min_data_threshold):
+        if(n_initial_chapters < n_chapters):
+
+            current_loss = total_loss/total_num_samples
+            lowest_loss_ever = current_loss
+            self.loss_list.append(current_loss)
+
+        if(n_train > 1):
+
+            for i in range(1,n_train+1):
+
+                print "#############################"
+                print "N_TRAIN: ", i
+                print "#############################"
+
+                if (earlystopping and loss_track > patience):
+                    break
+
+                total_num_samples = 0
+                total_loss = 0.0
+
+                for j in range(0, n_chapters):
+
+                    print (j), "/", n_chapters, ":"
+                    self.set_x_train(j)
+
+                    total_num_samples += len(self.x_train)
+
+                    history = self.ae.fit(self.x_train, batch_size=self.batch_size, epochs=1,
+                                          verbose=verbose, shuffle=True)
+
+                    total_loss += history.history['loss'][0] * len(self.x_train)
+
+                    print "NTRAIN: ", i, '/', n_train
+
+                    feats = self.encoder.predict(self.x_train)
+
+                    self.cluster_assigns = self.get_assigns(self.means, feats)
+
+                    means_pre = np.copy(self.means)
+                    self.update_means(feats, self.cluster_assigns)
+
+
+                    self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
+
+                    K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
+
+                    del feats
+                    del self.cluster_assigns
+
+                current_loss = total_loss / total_num_samples
+                self.loss_list.append(current_loss)
+
                 if (lowest_loss_ever - current_loss > least_loss):
                     loss_track = 0
                     loss_track_lr = 0
@@ -943,75 +611,6 @@ class Super_autoencoder:
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                     break
 
-
-        if(n_train > 1):
-            for i in range(1,n_train+1):
-
-                print "#############################"
-                print "N_TRAIN: ", i
-                print "#############################"
-
-                if (earlystopping and loss_track > patience):
-                    break
-
-                for j in range(0, n_chapters):
-
-                    print (j), "/", n_chapters, ":"
-                    self.set_x_train(j)
-
-
-                    history = self.ae.fit(self.x_train, batch_size=self.batch_size, epochs=1,
-                                          verbose=verbose, shuffle=True)
-                    current_loss = history.history['loss'][0]
-                    self.loss_list.append(history.history['loss'][0])
-
-                    print "NTRAIN: ", i, '/', n_train
-
-                    feats = self.encoder.predict(self.x_train)
-
-                    self.cluster_assigns = self.get_assigns(self.means, feats)
-
-                    means_pre = np.copy(self.means)
-                    self.update_means(feats, self.cluster_assigns)
-
-
-                    self.list_mean_disp.append(np.sqrt(np.sum(np.square(self.means - means_pre), axis=1)))
-
-                    K.set_value(self.y_obj.means, K.cast_to_floatx(self.means))
-
-                    del feats
-                    del self.cluster_assigns
-
-                    if (len(self.x_train) > min_data_threshold):
-                        if (lowest_loss_ever - current_loss > least_loss):
-                            loss_track = 0
-                            loss_track_lr = 0
-                            print "LOSS IMPROVED FROM :", lowest_loss_ever, " to ", current_loss
-                            lowest_loss_ever = current_loss
-
-                        else:
-                            print "LOSS DEGRADED FROM :", lowest_loss_ever, " to ", current_loss
-                            loss_track += 1
-                            loss_track_lr += 1
-                            print "Loss track is :", loss_track, "/", patience
-                            print "Loss track lr is :", loss_track_lr, "/", patience_lr
-
-                        if (reduce_lr and loss_track_lr > patience_lr):
-                            loss_track_lr = 0
-                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                            print "REDUCING_LR AT EPOCH :", j
-                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                            K.set_value(self.ae.optimizer.lr, lr / factor)
-                            lr = lr / factor
-                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                            print "REDUCING_LR TO:", lr
-                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-
-                        if (earlystopping and loss_track > patience):
-                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                            print "EARLY STOPPING AT EPOCH :", j
-                            print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                            break
 
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
         print "PICKLING LISTS AND SAVING WEIGHTS"
@@ -1993,28 +1592,40 @@ class Conv_autoencoder_nostream(Super_autoencoder):
             f7 = 32
             f8 = 16
 
+        if(size_x==48):
+            resize_factor = 12
+            avgpool_3 = True
+
+        else:
+            resize_factor = 8
+            avgpool_3 = False
+
         # MODEL CREATION
-        inp = Input(shape=(size_y, size_x, n_channels * n_timesteps))
+        inp = Input(shape=(size_y, size_x, n_channels * n_timesteps)) #24,24 #48,48
         x1 = GaussianNoise(0.05)(inp)
         x1 = Conv2D(f1, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 12x12
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 12x12 #24,24
 
         x1 = GaussianNoise(0.03)(x1)
         x1 = Conv2D(f2, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 6x6
+        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 6x6 #12,12
 
         x1 = GaussianNoise(0.02)(x1)
         x1 = Conv2D(f3, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
-        x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
+
+        if(avgpool_3):
+            x1 = AveragePooling2D(pool_size=(3, 3))(x1) #3x3
+        else:
+            x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
 
         x1 = Flatten()(x1)
         x1 = Dropout(0.3)(x1)
@@ -2023,11 +1634,15 @@ class Conv_autoencoder_nostream(Super_autoencoder):
         encoder = BatchNormalization()(x1)
 
 
-        dec1 = Dense(units=(size_y / 8) * (size_x / 8) * f4)
+        dec1 = Dense(units=(size_y / resize_factor) * (size_x / resize_factor) * f4)
         dec2 = LeakyReLU(alpha=0.2)
-        dec3 = Reshape((size_x / 8, size_y / 8, f4))
+        dec3 = Reshape((size_x / resize_factor, size_y / resize_factor, f4))
 
-        dec4 = UpSampling2D(size=(2, 2))
+        if(avgpool_3):
+            dec4 = UpSampling2D(size=(3, 3))
+        else:
+            dec4 = UpSampling2D(size=(2, 2))
+
         dec5 = Conv2D(f5, (3, 3), padding='same')
         dec6 = LeakyReLU(alpha=0.2)
         dec7 = BatchNormalization()  # 8x8

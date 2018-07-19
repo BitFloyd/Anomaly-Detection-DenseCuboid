@@ -75,7 +75,7 @@ if(nocl):
 else:
     ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=patience,n_chapters=n_chapters,
                                 n_train=ntrain, reduce_lr = True, patience_lr=int(patience*0.75),
-                                factor=1.25,min_data_threshold=min_data_threshold)
+                                factor=1.25)
 
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
