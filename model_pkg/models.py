@@ -424,6 +424,9 @@ class Super_autoencoder:
         means_patience = self.means_patience
         max_fit_tries = n_chapters*10*500
 
+        if(n_chapters<20):
+            max_fit_tries = n_chapters*5e10
+
         for i in range(0,n_chapters):
             self.set_x_train(i)
             feats = self.encoder.predict(self.x_train)
