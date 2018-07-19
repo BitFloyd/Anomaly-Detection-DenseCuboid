@@ -70,6 +70,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     size = 48
     min_data_threshold = 20000
+    ntrain = 100
+    patience = 100
 
     if(dataset=='UCSD2'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
@@ -99,18 +101,24 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 2
         sp_strides = 12
         greyscale = False
+        ntrain = 300
+        patience = 10
 
     elif(dataset=='BOAT-SEA'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Test'
         tstrides = 4
         sp_strides = 12
         greyscale = False
+        ntrain = 300
+        patience =10
 
     elif(dataset=='CAMOUFLAGE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Test'
         tstrides = 1
         sp_strides = 12
         greyscale = False
+        ntrain = 300
+        patience = 10
 
     elif(dataset=='CANOE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Test'
@@ -118,12 +126,16 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         sp_strides = 12
         greyscale = False
         min_data_threshold = 7000
+        ntrain = 300
+        patience = 10
 
     elif(dataset=='TRAFFIC-TRAIN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Test'
         tstrides = 4
         sp_strides = 12
         greyscale = False
+        ntrain = 300
+        patience = 10
 
     n_chapters = 0
     gs = greyscale
@@ -131,7 +143,6 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     lassign = 0.0
     h_units = int(metric['-h'])
     loss = 'dssim'
-    ntrain = 100
     nclusters = int(metric['-nclust'])
     nocl = bool(int(metric['-nocl']))
 
@@ -147,6 +158,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     return_parse_dict['loss']=loss
     return_parse_dict['size']=size
     return_parse_dict['min_data_threshold']=min_data_threshold
+    return_parse_dict['patience']=patience
 
     if (nocl):
         suffix = 'nocl_tstrd_' + str(tstrides) + '_clusters_' + str(nclusters)
