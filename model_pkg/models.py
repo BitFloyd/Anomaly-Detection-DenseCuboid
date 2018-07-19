@@ -597,7 +597,7 @@ class Super_autoencoder:
                 if (reduce_lr and loss_track_lr > patience_lr):
                     loss_track_lr = 0
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                    print "REDUCING_LR AT EPOCH :", j
+                    print "REDUCING_LR AT EPOCH :", i
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                     K.set_value(self.ae.optimizer.lr, lr / factor)
                     lr = lr / factor
@@ -607,7 +607,7 @@ class Super_autoencoder:
 
                 if (earlystopping and loss_track > patience):
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-                    print "EARLY STOPPING AT EPOCH :", j
+                    print "EARLY STOPPING AT EPOCH :", i
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                     break
 
