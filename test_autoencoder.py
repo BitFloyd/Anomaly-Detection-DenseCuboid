@@ -68,13 +68,13 @@ if(guill and '-ngpu' in metric.keys()):
 
 if(nocl):
     ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=patience, n_chapters=n_chapters,
-                                        n_train=ntrain, reduce_lr=True, patience_lr=int(patience*0.75),
+                                        n_train=ntrain, reduce_lr=True, patience_lr=int(patience*0.66),
                                         factor=1.25)
 
 
 else:
     ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=patience,n_chapters=n_chapters,
-                                n_train=ntrain, reduce_lr = True, patience_lr=int(patience*0.75),
+                                n_train=ntrain, reduce_lr = True, patience_lr=int(patience*0.66),
                                 factor=1.25)
 
     ae_model.generate_mean_displacement_graph('mean_displacements.png')

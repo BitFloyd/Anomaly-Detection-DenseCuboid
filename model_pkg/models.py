@@ -422,7 +422,7 @@ class Super_autoencoder:
         fit_tries = 0
         disp_track = 0
         means_patience = self.means_patience
-        max_fit_tries = n_chapters*500
+        max_fit_tries = n_chapters*10*500
 
         for i in range(0,n_chapters):
             self.set_x_train(i)
@@ -773,7 +773,7 @@ class Super_autoencoder:
                 print "PROCESSING FEATURE:", i
 
                 if(list_feats.shape[1]<=16):
-                    ax_object = ax[int(i / cols_plots)]
+                    ax_object = ax[int(i % cols_plots)]
                 else:
                     ax_object = ax[int(i / cols_plots)][i % cols_plots]
 
@@ -1682,7 +1682,7 @@ class Conv_autoencoder_nostream(Super_autoencoder):
         ae18 = recon(ae17)
 
         self.adam_ae = Adam(lr=self.lr_model)
-        dssim = DSSIMObjective(kernel_size=8)
+        dssim = DSSIMObjective(kernel_size=4)
 
         if (loss == 'mse'):
             self.loss_fn = mean_squared_error

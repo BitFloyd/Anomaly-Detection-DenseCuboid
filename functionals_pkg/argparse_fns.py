@@ -71,7 +71,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     size = 48
     min_data_threshold = 20000
     ntrain = 200
-    patience = 10
+    patience = 15
 
     if(dataset=='UCSD2'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
@@ -103,7 +103,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale = False
         min_data_threshold = 3000
         ntrain = 300
-        patience = 10
+        patience = 15
 
     elif(dataset=='BOAT-SEA'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Test'
@@ -112,7 +112,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale = False
         min_data_threshold = 3000
         ntrain = 300
-        patience =10
+        patience = 15
 
     elif(dataset=='CAMOUFLAGE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Test'
@@ -121,7 +121,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale = False
         min_data_threshold = 3000
         ntrain = 300
-        patience = 10
+        patience = 15
 
     elif(dataset=='CANOE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Test'
@@ -130,7 +130,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale = False
         min_data_threshold = 3000
         ntrain = 300
-        patience = 10
+        patience = 15
 
     elif(dataset=='TRAFFIC-TRAIN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Test'
@@ -139,7 +139,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale = False
         min_data_threshold = 3000
         ntrain = 300
-        patience = 10
+        patience = 15
 
     n_chapters = 0
     gs = greyscale
