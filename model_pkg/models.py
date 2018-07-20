@@ -153,7 +153,7 @@ class Super_autoencoder:
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10, lr_model=1e-4, lamda=0.01,
                  gs=False, notrain=False, reverse=False, data_folder='data_store',
-                 dat_h5=None,large=True, means_tol=1e-5, means_patience=200, max_fit_tries=500000):
+                 dat_h5=None,large=True, means_tol=5e-5, means_patience=200, max_fit_tries=500000):
 
         self.means = None
         self.initial_means = None
@@ -422,10 +422,10 @@ class Super_autoencoder:
         fit_tries = 0
         disp_track = 0
         means_patience = self.means_patience
-        max_fit_tries = n_chapters*10*500
+        max_fit_tries = n_chapters*500
 
         if(n_chapters<20):
-            max_fit_tries = n_chapters*5e10
+            max_fit_tries = n_chapters*5e4
 
         for i in range(0,n_chapters):
             self.set_x_train(i)
@@ -542,6 +542,7 @@ class Super_autoencoder:
 
             for i in range(1,n_train+1):
 
+                it_start_time = time.time()
                 print "#############################"
                 print "N_TRAIN: ", i
                 print "#############################"
@@ -614,6 +615,10 @@ class Super_autoencoder:
                     print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
                     break
 
+                it_end_time = time.time()
+
+                message_print("TIME_TAKEN: " + str((it_end_time-it_start_time)/60) + " MINUTES")
+                message_print("TIME_LEFT: " + str((it_end_time-it_start_time)/60)*(n_train-i) + "MINUTES")
 
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
         print "PICKLING LISTS AND SAVING WEIGHTS"
@@ -1569,7 +1574,7 @@ class Conv_autoencoder_nostream(Super_autoencoder):
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
                  loss='mse', batch_size=64, n_clusters=10,lr_model=1e-4, lamda=0.01,
                  gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
-                 large=True, means_tol = 1e-5,means_patience=200,max_fit_tries=500000):
+                 large=True, means_tol = 5e-5,means_patience=200,max_fit_tries=500000):
 
         Super_autoencoder.__init__(self,model_store, size_y=size_y, size_x=size_x, n_channels=n_channels, h_units=h_units, n_timesteps=n_timesteps,
                  loss=loss, batch_size=batch_size, n_clusters=n_clusters,lr_model=lr_model, lamda=lamda,gs=gs, notrain=notrain,
@@ -1596,8 +1601,8 @@ class Conv_autoencoder_nostream(Super_autoencoder):
             f8 = 16
 
         if(size_x==48):
-            resize_factor = 12
-            avgpool_3 = True
+            resize_factor = 16
+            avgpool_4 = True
 
         else:
             resize_factor = 8
@@ -1625,8 +1630,8 @@ class Conv_autoencoder_nostream(Super_autoencoder):
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
 
-        if(avgpool_3):
-            x1 = AveragePooling2D(pool_size=(3, 3))(x1) #3x3
+        if(avgpool_4):
+            x1 = AveragePooling2D(pool_size=(4, 4))(x1)  #3x3
         else:
             x1 = AveragePooling2D(pool_size=(2, 2))(x1)  # 3x3
 
@@ -1641,8 +1646,8 @@ class Conv_autoencoder_nostream(Super_autoencoder):
         dec2 = LeakyReLU(alpha=0.2)
         dec3 = Reshape((size_x / resize_factor, size_y / resize_factor, f4))
 
-        if(avgpool_3):
-            dec4 = UpSampling2D(size=(3, 3))
+        if(avgpool_4):
+            dec4 = UpSampling2D(size=(4, 4))
         else:
             dec4 = UpSampling2D(size=(2, 2))
 
