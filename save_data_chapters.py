@@ -15,14 +15,18 @@ import time
 
 metric = af.getopts(argv)
 dataset = metric['-dataset']
+bkgsub = False
 
 if(dataset =='ucsd2'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD2/TRAIN'
 
+
 elif(dataset=='triangle'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Train'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRIANGLE/TRAIN'
+    bkgsub = True
+
 elif(dataset=='ucsd1'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD1/TRAIN'
@@ -81,7 +85,7 @@ chapter_id = 0
 while True:
 
     vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
-                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,bkgsub=True)
+                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,bkgsub=bkgsub)
 
 
     print "############################"

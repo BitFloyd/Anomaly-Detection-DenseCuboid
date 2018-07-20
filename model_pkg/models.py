@@ -540,6 +540,7 @@ class Super_autoencoder:
 
         if(n_train > 1):
 
+            it_time_mins = 0
             for i in range(1,n_train+1):
 
                 it_start_time = time.time()
@@ -617,8 +618,10 @@ class Super_autoencoder:
 
                 it_end_time = time.time()
 
-                message_print("TIME_TAKEN: " + str((it_end_time-it_start_time)/60) + " MINUTES")
-                message_print("TIME_LEFT: " + str((it_end_time-it_start_time)/60)*(n_train-i) + "MINUTES")
+                it_time_mins = (it_time_mins*(i)+(it_end_time-it_start_time)/60.0)/(i+1)
+
+                message_print("TIME_TAKEN : " + str(it_time_mins) + " MINUTES")
+                message_print("TIME_LEFT : " + str(it_time_mins) + "MINUTES")
 
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
         print "PICKLING LISTS AND SAVING WEIGHTS"

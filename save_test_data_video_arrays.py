@@ -12,13 +12,17 @@ import h5py
 metric = af.getopts(argv)
 
 dataset = metric['-dataset']
+bkgsub = False
 
 if(dataset =='ucsd2'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD2/TEST'
+
 elif(dataset=='triangle'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRIANGLE/TEST'
+    bkgsub = True
+
 elif(dataset=='ucsd1'):
     path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
     save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD1/TEST'
@@ -73,7 +77,7 @@ video_id = 0
 while True:
     vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
                                 timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.20,
-                                bkgsub=True)
+                                bkgsub=bkgsub)
 
 
     print "############################"

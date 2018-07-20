@@ -4,6 +4,9 @@
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_data_chapters.py" afterPath="$PROJECT_DIR$/save_data_chapters.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_test_data_video_arrays.py" afterPath="$PROJECT_DIR$/save_test_data_video_arrays.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_train_data_video_arrays.py" afterPath="$PROJECT_DIR$/save_train_data_video_arrays.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -33,18 +36,18 @@
       <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
+            <state relative-caret-position="288">
               <caret line="75" column="31" lean-forward="false" selection-start-line="75" selection-start-column="13" selection-end-line="75" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-911">
-              <caret line="427" column="38" lean-forward="false" selection-start-line="427" selection-start-column="28" selection-end-line="427" selection-end-column="38" />
+            <state relative-caret-position="810">
+              <caret line="623" column="64" lean-forward="false" selection-start-line="623" selection-start-column="64" selection-end-line="623" selection-end-column="64" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#1717#3378#0" expanded="false" />
@@ -61,43 +64,73 @@
                 <element signature="e#9578#14680#0" expanded="false" />
                 <element signature="e#15164#15399#0" expanded="false" />
                 <element signature="e#15452#15848#0" expanded="false" />
-                <element signature="e#16105#16501#0" expanded="false" />
-                <element signature="e#18815#19675#0" expanded="false" />
-                <element signature="e#23952#27889#0" expanded="false" />
-                <element signature="e#27946#29511#0" expanded="false" />
-                <element signature="e#29556#31123#0" expanded="false" />
-                <element signature="e#31174#31975#0" expanded="false" />
-                <element signature="e#32030#33025#0" expanded="false" />
-                <element signature="e#33092#34232#0" expanded="false" />
-                <element signature="e#34324#35127#0" expanded="false" />
-                <element signature="e#35199#37689#0" expanded="false" />
-                <element signature="e#37730#37972#0" expanded="false" />
-                <element signature="e#38024#38129#0" expanded="false" />
-                <element signature="e#38192#38317#0" expanded="false" />
-                <element signature="e#38380#38683#0" expanded="false" />
-                <element signature="e#38733#39213#0" expanded="false" />
-                <element signature="e#39272#40791#0" expanded="false" />
-                <element signature="e#40875#41946#0" expanded="false" />
-                <element signature="e#41985#42408#0" expanded="false" />
-                <element signature="e#42466#42870#0" expanded="false" />
-                <element signature="e#42943#43901#0" expanded="false" />
-                <element signature="e#43989#44541#0" expanded="false" />
-                <element signature="e#44646#46792#0" expanded="false" />
-                <element signature="e#46847#48351#0" expanded="false" />
-                <element signature="e#48404#49068#0" expanded="false" />
-                <element signature="e#49139#49959#0" expanded="false" />
-                <element signature="e#50022#50810#0" expanded="false" />
-                <element signature="e#50861#51305#0" expanded="false" />
-                <element signature="e#51359#52152#0" expanded="false" />
-                <element signature="e#52215#53724#0" expanded="false" />
-                <element signature="e#53787#54467#0" expanded="false" />
-                <element signature="e#54567#57363#0" expanded="false" />
-                <element signature="e#57419#59368#0" expanded="false" />
-                <element signature="e#59401#59449#0" expanded="false" />
-                <element signature="e#59508#66384#0" expanded="false" />
-                <element signature="e#66453#73414#0" expanded="false" />
-                <element signature="e#73481#80716#0" expanded="false" />
+                <element signature="e#16101#16497#0" expanded="false" />
+                <element signature="e#18811#19671#0" expanded="false" />
+                <element signature="e#24312#28249#0" expanded="false" />
+                <element signature="e#28306#29871#0" expanded="false" />
+                <element signature="e#29916#31483#0" expanded="false" />
+                <element signature="e#31534#32335#0" expanded="false" />
+                <element signature="e#32390#33385#0" expanded="false" />
+                <element signature="e#33452#34592#0" expanded="false" />
+                <element signature="e#34684#35487#0" expanded="false" />
+                <element signature="e#35559#38049#0" expanded="false" />
+                <element signature="e#38090#38332#0" expanded="false" />
+                <element signature="e#38384#38489#0" expanded="false" />
+                <element signature="e#38552#38677#0" expanded="false" />
+                <element signature="e#38740#39043#0" expanded="false" />
+                <element signature="e#39093#39573#0" expanded="false" />
+                <element signature="e#39632#41151#0" expanded="false" />
+                <element signature="e#41235#42306#0" expanded="false" />
+                <element signature="e#42345#42768#0" expanded="false" />
+                <element signature="e#42826#43230#0" expanded="false" />
+                <element signature="e#43303#44261#0" expanded="false" />
+                <element signature="e#44349#44901#0" expanded="false" />
+                <element signature="e#45006#47152#0" expanded="false" />
+                <element signature="e#47207#48711#0" expanded="false" />
+                <element signature="e#48764#49428#0" expanded="false" />
+                <element signature="e#49499#50319#0" expanded="false" />
+                <element signature="e#50382#51170#0" expanded="false" />
+                <element signature="e#51221#51665#0" expanded="false" />
+                <element signature="e#51719#52512#0" expanded="false" />
+                <element signature="e#52575#54084#0" expanded="false" />
+                <element signature="e#54147#54827#0" expanded="false" />
+                <element signature="e#54927#57723#0" expanded="false" />
+                <element signature="e#57779#59728#0" expanded="false" />
+                <element signature="e#59761#59809#0" expanded="false" />
+                <element signature="e#59868#66745#0" expanded="false" />
+                <element signature="e#66814#73775#0" expanded="false" />
+                <element signature="e#73842#81077#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="save_data_chapters.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="87" column="118" lean-forward="false" selection-start-line="87" selection-start-column="118" selection-end-line="87" selection-end-column="118" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="save_test_data_video_arrays.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="79" column="45" lean-forward="false" selection-start-line="79" selection-start-column="45" selection-end-line="79" selection-end-column="45" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="save_train_data_video_arrays.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/save_train_data_video_arrays.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="528">
+              <caret line="79" column="49" lean-forward="false" selection-start-line="79" selection-start-column="49" selection-end-line="79" selection-end-column="49" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -203,15 +236,15 @@
         <option value="$PROJECT_DIR$/test_algorithm.py" />
         <option value="$PROJECT_DIR$/create_convolution_outputs.py" />
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
-        <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
-        <option value="$PROJECT_DIR$/save_data_chapters.py" />
-        <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/format_york_videos.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/rand.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
         <option value="$PROJECT_DIR$/model_pkg/models.py" />
+        <option value="$PROJECT_DIR$/save_data_chapters.py" />
+        <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
+        <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
       </list>
     </option>
   </component>
@@ -222,10 +255,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1599" />
-    <option name="y" value="-11" />
-    <option name="width" value="1922" />
-    <option name="height" value="1092" />
+    <option name="x" value="1600" />
+    <option name="y" value="-4" />
+    <option name="width" value="1920" />
+    <option name="height" value="1084" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -246,6 +279,7 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -260,7 +294,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -551,20 +584,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
-    </task>
-    <task id="LOCAL-00032" summary="move use_basis_dict to argparse">
-      <created>1526927773299</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1526927773299</updated>
-    </task>
-    <task id="LOCAL-00033" summary="make loading of clusters based on the optimized number as given by silhouette analysis">
-      <created>1526928459874</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1526928459874</updated>
     </task>
     <task id="LOCAL-00034" summary="add gaussian mixture functions to training and test.">
       <created>1527026221855</created>
@@ -895,7 +914,21 @@
       <option name="project" value="LOCAL" />
       <updated>1532029469311</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="fix test_autoencoder for all datasets">
+      <created>1532030848293</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1532030848293</updated>
+    </task>
+    <task id="LOCAL-00082" summary="fix test_autoencoder for all datasets">
+      <created>1532107774851</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1532107774852</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -908,21 +941,21 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1599" y="-11" width="1922" height="1092" extended-state="6" />
+    <frame x="1600" y="-4" width="1920" height="1084" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5504587" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15086646" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14882773" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25586137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.474407" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25586137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16770834" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1671875" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15125" sideWeight="0.50743496" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41573033" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15125" sideWeight="0.50743496" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296875" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1163,20 +1196,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/save_train_data_video_arrays.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="98" column="0" lean-forward="false" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-54">
-          <caret line="69" column="12" lean-forward="true" selection-start-line="69" selection-start-column="12" selection-end-line="69" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/format_york_videos.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -1188,13 +1207,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1800">
           <caret line="100" column="14" lean-forward="true" selection-start-line="100" selection-start-column="14" selection-end-line="100" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-252">
-          <caret line="70" column="0" lean-forward="true" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1218,15 +1230,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1188">
           <caret line="141" column="21" lean-forward="false" selection-start-line="141" selection-start-column="21" selection-end-line="141" selection-end-column="21" />
-          <folding>
-            <element signature="e#84#443#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
+        <state relative-caret-position="288">
           <caret line="75" column="31" lean-forward="false" selection-start-line="75" selection-start-column="13" selection-end-line="75" selection-end-column="31" />
           <folding />
         </state>
@@ -1234,8 +1243,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-911">
-          <caret line="427" column="38" lean-forward="false" selection-start-line="427" selection-start-column="28" selection-end-line="427" selection-end-column="38" />
+        <state relative-caret-position="810">
+          <caret line="623" column="64" lean-forward="false" selection-start-line="623" selection-start-column="64" selection-end-line="623" selection-end-column="64" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#1717#3378#0" expanded="false" />
@@ -1252,43 +1261,67 @@
             <element signature="e#9578#14680#0" expanded="false" />
             <element signature="e#15164#15399#0" expanded="false" />
             <element signature="e#15452#15848#0" expanded="false" />
-            <element signature="e#16105#16501#0" expanded="false" />
-            <element signature="e#18815#19675#0" expanded="false" />
-            <element signature="e#23952#27889#0" expanded="false" />
-            <element signature="e#27946#29511#0" expanded="false" />
-            <element signature="e#29556#31123#0" expanded="false" />
-            <element signature="e#31174#31975#0" expanded="false" />
-            <element signature="e#32030#33025#0" expanded="false" />
-            <element signature="e#33092#34232#0" expanded="false" />
-            <element signature="e#34324#35127#0" expanded="false" />
-            <element signature="e#35199#37689#0" expanded="false" />
-            <element signature="e#37730#37972#0" expanded="false" />
-            <element signature="e#38024#38129#0" expanded="false" />
-            <element signature="e#38192#38317#0" expanded="false" />
-            <element signature="e#38380#38683#0" expanded="false" />
-            <element signature="e#38733#39213#0" expanded="false" />
-            <element signature="e#39272#40791#0" expanded="false" />
-            <element signature="e#40875#41946#0" expanded="false" />
-            <element signature="e#41985#42408#0" expanded="false" />
-            <element signature="e#42466#42870#0" expanded="false" />
-            <element signature="e#42943#43901#0" expanded="false" />
-            <element signature="e#43989#44541#0" expanded="false" />
-            <element signature="e#44646#46792#0" expanded="false" />
-            <element signature="e#46847#48351#0" expanded="false" />
-            <element signature="e#48404#49068#0" expanded="false" />
-            <element signature="e#49139#49959#0" expanded="false" />
-            <element signature="e#50022#50810#0" expanded="false" />
-            <element signature="e#50861#51305#0" expanded="false" />
-            <element signature="e#51359#52152#0" expanded="false" />
-            <element signature="e#52215#53724#0" expanded="false" />
-            <element signature="e#53787#54467#0" expanded="false" />
-            <element signature="e#54567#57363#0" expanded="false" />
-            <element signature="e#57419#59368#0" expanded="false" />
-            <element signature="e#59401#59449#0" expanded="false" />
-            <element signature="e#59508#66384#0" expanded="false" />
-            <element signature="e#66453#73414#0" expanded="false" />
-            <element signature="e#73481#80716#0" expanded="false" />
+            <element signature="e#16101#16497#0" expanded="false" />
+            <element signature="e#18811#19671#0" expanded="false" />
+            <element signature="e#24312#28249#0" expanded="false" />
+            <element signature="e#28306#29871#0" expanded="false" />
+            <element signature="e#29916#31483#0" expanded="false" />
+            <element signature="e#31534#32335#0" expanded="false" />
+            <element signature="e#32390#33385#0" expanded="false" />
+            <element signature="e#33452#34592#0" expanded="false" />
+            <element signature="e#34684#35487#0" expanded="false" />
+            <element signature="e#35559#38049#0" expanded="false" />
+            <element signature="e#38090#38332#0" expanded="false" />
+            <element signature="e#38384#38489#0" expanded="false" />
+            <element signature="e#38552#38677#0" expanded="false" />
+            <element signature="e#38740#39043#0" expanded="false" />
+            <element signature="e#39093#39573#0" expanded="false" />
+            <element signature="e#39632#41151#0" expanded="false" />
+            <element signature="e#41235#42306#0" expanded="false" />
+            <element signature="e#42345#42768#0" expanded="false" />
+            <element signature="e#42826#43230#0" expanded="false" />
+            <element signature="e#43303#44261#0" expanded="false" />
+            <element signature="e#44349#44901#0" expanded="false" />
+            <element signature="e#45006#47152#0" expanded="false" />
+            <element signature="e#47207#48711#0" expanded="false" />
+            <element signature="e#48764#49428#0" expanded="false" />
+            <element signature="e#49499#50319#0" expanded="false" />
+            <element signature="e#50382#51170#0" expanded="false" />
+            <element signature="e#51221#51665#0" expanded="false" />
+            <element signature="e#51719#52512#0" expanded="false" />
+            <element signature="e#52575#54084#0" expanded="false" />
+            <element signature="e#54147#54827#0" expanded="false" />
+            <element signature="e#54927#57723#0" expanded="false" />
+            <element signature="e#57779#59728#0" expanded="false" />
+            <element signature="e#59761#59809#0" expanded="false" />
+            <element signature="e#59868#66745#0" expanded="false" />
+            <element signature="e#66814#73775#0" expanded="false" />
+            <element signature="e#73842#81077#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="87" column="118" lean-forward="false" selection-start-line="87" selection-start-column="118" selection-end-line="87" selection-end-column="118" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="79" column="45" lean-forward="false" selection-start-line="79" selection-start-column="45" selection-end-line="79" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_train_data_video_arrays.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="79" column="49" lean-forward="false" selection-start-line="79" selection-start-column="49" selection-end-line="79" selection-end-column="49" />
+          <folding />
         </state>
       </provider>
     </entry>
