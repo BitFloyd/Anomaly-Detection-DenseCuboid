@@ -1481,6 +1481,13 @@ class TestVideoStream:
         self.Encoder = Encoder
         self.GMM = GMM
 
+        self.mu_array = self.GMM.means_
+        self.cov_array = self.GMM.covariances_
+        self.cov_inv = np.zeros((self.cov_array.shape))
+
+        for idx, i in enumerate(self.cov_array):
+            self.cov_inv[idx] = np.linalg.inv(i)
+
         if(self.GrayScale):
             self.NumChannels = 1
         else:
@@ -1497,6 +1504,24 @@ class TestVideoStream:
         self.ThresholdGMM = threshold
 
         return True
+
+    def return_maha_dist(self,feats):
+
+        distances = []
+
+        if(len(feats) == 0):
+            return distances
+
+        predicted_classes = self.GMM.predict(feats)
+        mu = self.mu_array[predicted_classes]
+        covariance_invs = self.cov_inv[predicted_classes]
+
+        for idx,i in enumerate(feats):
+            ph1 = np.matmul((i - mu[idx]), covariance_invs[idx])
+            distances.append(np.matmul(ph1, (i - mu[idx]).T))
+
+        return distances
+
 
     def process_data(self):
 
@@ -1576,7 +1601,7 @@ class TestVideoStream:
         array_relevant_rows_cols_map_cuboids = array_relevant_rows_cols_map_cuboids.reshape(-1,*array_relevant_rows_cols_map_cuboids.shape[2:])
 
         encodings_of_cuboids = self.Encoder.predict(array_cuboids_present)
-        score_samples = self.GMM.score_samples(encodings_of_cuboids)
+        score_samples = self.return_maha_dist(encodings_of_cuboids)
 
         thresholded = (score_samples<self.ThresholdGMM)
 

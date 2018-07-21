@@ -621,7 +621,7 @@ class Super_autoencoder:
                 it_time_mins = (it_time_mins*(i)+(it_end_time-it_start_time)/60.0)/(i+1)
 
                 message_print("TIME_TAKEN : " + str(it_time_mins) + " MINUTES")
-                message_print("TIME_LEFT : " + str(it_time_mins) + "MINUTES")
+                message_print("TIME_LEFT : " + str((it_time_mins)*(n_train-i)/60) + "HOURS")
 
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
         print "PICKLING LISTS AND SAVING WEIGHTS"
