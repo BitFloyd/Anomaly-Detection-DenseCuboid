@@ -1301,13 +1301,19 @@ class TestDictionary:
         if(len(feats) == 0):
             return distances
 
-        predicted_classes = self.gm.predict(feats)
-        mu = self.mu_array[predicted_classes]
-        covariance_invs = self.cov_inv[predicted_classes]
-
         for idx,i in enumerate(feats):
-            ph1 = np.matmul((i - mu[idx]), covariance_invs[idx])
-            distances.append(np.matmul(ph1, (i - mu[idx]).T))
+
+            feat = i.reshape(1,-1)
+            predicted_class = self.gm.predict(feat)
+
+            mu = self.mu_array[predicted_class].reshape(1,-1)
+            covariance_invs = self.cov_inv[predicted_class]
+
+            ph1 = np.matmul((feat - mu), covariance_invs)
+            d = np.matmul(ph1, (feat - mu).T)
+            d = d[0][0][0]
+
+            distances.append(d)
 
         return distances
 
@@ -1371,7 +1377,6 @@ class TestDictionary:
 
         list_all_gt = list_all_gt[args_arr_sort]
         list_all_scores = list_all_scores[args_arr_sort]
-
         score_dict = self.evaluate_prfa_on_specific(array_to_th=list_all_scores, gt_array=list_all_gt, lt=False)
         threshold = score_dict['max_f1_th']
 
@@ -1512,13 +1517,19 @@ class TestVideoStream:
         if(len(feats) == 0):
             return distances
 
-        predicted_classes = self.GMM.predict(feats)
-        mu = self.mu_array[predicted_classes]
-        covariance_invs = self.cov_inv[predicted_classes]
-
         for idx,i in enumerate(feats):
-            ph1 = np.matmul((i - mu[idx]), covariance_invs[idx])
-            distances.append(np.matmul(ph1, (i - mu[idx]).T))
+
+            feat = i.reshape(1,-1)
+            predicted_class = self.GMM.predict(feat)
+
+            mu = self.mu_array[predicted_class].reshape(1,-1)
+            covariance_invs = self.cov_inv[predicted_class]
+
+            ph1 = np.matmul((feat - mu), covariance_invs)
+            d = np.matmul(ph1, (feat - mu).T)
+            d = d[0][0][0]
+
+            distances.append(d)
 
         return distances
 
