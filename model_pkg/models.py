@@ -425,7 +425,7 @@ class Super_autoencoder:
         max_fit_tries = n_chapters*500
 
         if(n_chapters<20):
-            max_fit_tries = n_chapters*5e4
+            max_fit_tries = n_chapters*5e3
 
         for i in range(0,n_chapters):
             self.set_x_train(i)

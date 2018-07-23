@@ -2,17 +2,17 @@
 <project version="4">
   <component name="PublishConfigData" serverName="puck">
     <serverData>
+      <paths name="godiva">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/usr/local/data/sejacob/densecub" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="guillimin">
         <serverdata>
           <mappings>
             <mapping deploy="/gs/project/suu-621-aa/sejacob/densecub/" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="helios">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/scratch/suu-621-aa/ANOMALY/densecub" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

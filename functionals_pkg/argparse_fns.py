@@ -17,6 +17,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     n_gpus = 1
     guill = False
+    godiva = False
     use_basis_dict = True
 
     if (socket.gethostname() == 'puck'):
@@ -41,6 +42,15 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         verbose = 1
         os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
         data_store_suffix = '/scratch/suu-621-aa/ANOMALY/densecub'
+
+    elif ('godiva' in socket.gethostname()):
+        print "############################################"
+        print "DETECTED RUN ON GODIVA"
+        print "############################################"
+        verbose = 1
+        data_store_suffix = '/usr/local/data/sejacob/densecub'
+        use_basis_dict = False
+        godiva = True
 
     else:
         print socket.gethostname()
@@ -77,6 +87,9 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
         if(guill):
             path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+
         tstrides = 1
         sp_strides = 12
         greyscale=True
@@ -85,6 +98,9 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
         if(guill):
             path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+
         tstrides = 1
         sp_strides = 12
         greyscale = True
