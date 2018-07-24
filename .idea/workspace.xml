@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/webServers.xml" afterPath="$PROJECT_DIR$/.idea/webServers.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_data_chapters.py" afterPath="$PROJECT_DIR$/save_data_chapters.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_test_data_video_arrays.py" afterPath="$PROJECT_DIR$/save_test_data_video_arrays.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_train_data_video_arrays.py" afterPath="$PROJECT_DIR$/save_train_data_video_arrays.py" />
@@ -39,28 +35,38 @@
       <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1476">
-              <caret line="82" column="42" lean-forward="false" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="42" />
+            <state relative-caret-position="726">
+              <caret line="169" column="32" lean-forward="false" selection-start-line="169" selection-start-column="20" selection-end-line="169" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="save_data_chapters.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="save_data_chapters.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2106">
-              <caret line="117" column="62" lean-forward="true" selection-start-line="117" selection-start-column="62" selection-end-line="117" selection-end-column="62" />
+            <state relative-caret-position="342">
+              <caret line="19" column="109" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="109" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="save_test_data_video_arrays.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="save_test_data_video_arrays.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="954">
-              <caret line="53" column="72" lean-forward="false" selection-start-line="53" selection-start-column="72" selection-end-line="53" selection-end-column="72" />
+            <state relative-caret-position="456">
+              <caret line="29" column="17" lean-forward="true" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="209">
+              <caret line="1238" column="19" lean-forward="true" selection-start-line="1238" selection-start-column="19" selection-end-line="1238" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -69,81 +75,9 @@
       <file leaf-file-name="save_train_data_video_arrays.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/save_train_data_video_arrays.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="954">
-              <caret line="53" column="75" lean-forward="false" selection-start-line="53" selection-start-column="75" selection-end-line="53" selection-end-column="75" />
+            <state relative-caret-position="249">
+              <caret line="16" column="109" lean-forward="false" selection-start-line="16" selection-start-column="109" selection-end-line="16" selection-end-column="109" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="756">
-              <caret line="45" column="6" lean-forward="false" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="78" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2916">
-              <caret line="1547" column="58" lean-forward="false" selection-start-line="1547" selection-start-column="37" selection-end-line="1547" selection-end-column="58" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-                <element signature="e#1717#3378#0" expanded="false" />
-                <element signature="e#1804#2275#0" expanded="false" />
-                <element signature="e#3423#5588#0" expanded="false" />
-                <element signature="e#5994#7397#0" expanded="false" />
-                <element signature="e#7438#7593#0" expanded="false" />
-                <element signature="e#7633#7766#0" expanded="false" />
-                <element signature="e#7810#7947#0" expanded="false" />
-                <element signature="e#7988#8065#0" expanded="false" />
-                <element signature="e#8112#8493#0" expanded="false" />
-                <element signature="e#8550#8999#0" expanded="false" />
-                <element signature="e#9049#9334#0" expanded="false" />
-                <element signature="e#9578#14680#0" expanded="false" />
-                <element signature="e#14908#24105#0" expanded="false" />
-                <element signature="e#15164#15399#0" expanded="false" />
-                <element signature="e#15452#15848#0" expanded="false" />
-                <element signature="e#16101#16497#0" expanded="false" />
-                <element signature="e#18811#19671#0" expanded="false" />
-                <element signature="e#24327#28264#0" expanded="false" />
-                <element signature="e#28321#29886#0" expanded="false" />
-                <element signature="e#29931#31498#0" expanded="false" />
-                <element signature="e#31549#32350#0" expanded="false" />
-                <element signature="e#32405#33400#0" expanded="false" />
-                <element signature="e#33467#34607#0" expanded="false" />
-                <element signature="e#34699#35502#0" expanded="false" />
-                <element signature="e#35574#38064#0" expanded="false" />
-                <element signature="e#38105#38347#0" expanded="false" />
-                <element signature="e#38399#38504#0" expanded="false" />
-                <element signature="e#38567#38692#0" expanded="false" />
-                <element signature="e#38755#39058#0" expanded="false" />
-                <element signature="e#39108#39588#0" expanded="false" />
-                <element signature="e#39647#41166#0" expanded="false" />
-                <element signature="e#41250#42321#0" expanded="false" />
-                <element signature="e#42360#42783#0" expanded="false" />
-                <element signature="e#42841#43245#0" expanded="false" />
-                <element signature="e#43318#44276#0" expanded="false" />
-                <element signature="e#44364#44916#0" expanded="false" />
-                <element signature="e#45021#47167#0" expanded="false" />
-                <element signature="e#47222#48726#0" expanded="false" />
-                <element signature="e#48779#49443#0" expanded="false" />
-                <element signature="e#49514#50334#0" expanded="false" />
-                <element signature="e#50397#51185#0" expanded="false" />
-                <element signature="e#51236#51680#0" expanded="false" />
-                <element signature="e#51734#52527#0" expanded="false" />
-                <element signature="e#52590#54099#0" expanded="false" />
-                <element signature="e#54162#54842#0" expanded="false" />
-                <element signature="e#54942#57738#0" expanded="false" />
-                <element signature="e#59861#59909#0" expanded="false" />
-                <element signature="e#59968#66845#0" expanded="false" />
-                <element signature="e#66914#73875#0" expanded="false" />
-                <element signature="e#73942#81177#0" expanded="false" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -161,7 +95,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>bkgsub</find>
       <find>ucsd</find>
       <find>suffix</find>
       <find>anompth</find>
@@ -191,6 +124,7 @@
       <find>model</find>
       <find>ntrain</find>
       <find>self.mu_arra</find>
+      <find>as_grey</find>
     </findStrings>
     <replaceStrings>
       <replace>PREFACE</replace>
@@ -250,14 +184,14 @@
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
         <option value="$PROJECT_DIR$/format_york_videos.py" />
         <option value="$PROJECT_DIR$/rand.py" />
-        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
         <option value="$PROJECT_DIR$/env_test.py" />
         <option value="$PROJECT_DIR$/model_pkg/models.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
-        <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
+        <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
       </list>
     </option>
   </component>
@@ -598,13 +532,6 @@
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
     </task>
-    <task id="LOCAL-00038" summary="fix conv_ac_ucsd2 and make train-test-save without multiple calls.">
-      <created>1527270951653</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1527270951653</updated>
-    </task>
     <task id="LOCAL-00039" summary="gmm analysis for gaussian mixture introduced.">
       <created>1527706208604</created>
       <option name="number" value="00039" />
@@ -941,7 +868,14 @@
       <option name="project" value="LOCAL" />
       <updated>1532371703794</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="fix for godiva">
+      <created>1532446870946</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1532446870947</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -958,12 +892,13 @@
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5504587" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31906217" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.47315854" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25586137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16614583" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16614583" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15125" sideWeight="0.50743496" order="2" side_tool="true" content_ui="tabs" />
@@ -973,7 +908,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17977528" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960325" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958803" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -1231,41 +1165,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="1512" column="37" lean-forward="false" selection-start-line="1512" selection-start-column="37" selection-end-line="1512" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/env_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1476">
-          <caret line="82" column="42" lean-forward="false" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="954">
-          <caret line="53" column="72" lean-forward="false" selection-start-line="53" selection-start-column="72" selection-end-line="53" selection-end-column="72" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_train_data_video_arrays.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="954">
-          <caret line="53" column="75" lean-forward="false" selection-start-line="53" selection-start-column="75" selection-end-line="53" selection-end-column="75" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1282,7 +1185,7 @@
         <state relative-caret-position="2916">
           <caret line="1547" column="58" lean-forward="false" selection-start-line="1547" selection-start-column="37" selection-end-line="1547" selection-end-column="58" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="false" />
             <element signature="e#1717#3378#0" expanded="false" />
             <element signature="e#1804#2275#0" expanded="false" />
             <element signature="e#3423#5588#0" expanded="false" />
@@ -1337,10 +1240,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="1238" column="19" lean-forward="true" selection-start-line="1238" selection-start-column="19" selection-end-line="1238" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="726">
+          <caret line="169" column="32" lean-forward="false" selection-start-line="169" selection-start-column="20" selection-end-line="169" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2106">
-          <caret line="117" column="62" lean-forward="true" selection-start-line="117" selection-start-column="62" selection-end-line="117" selection-end-column="62" />
+        <state relative-caret-position="342">
+          <caret line="19" column="109" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="109" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_train_data_video_arrays.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="16" column="109" lean-forward="false" selection-start-line="16" selection-start-column="109" selection-end-line="16" selection-end-column="109" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="29" column="17" lean-forward="true" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
           <folding />
         </state>
       </provider>

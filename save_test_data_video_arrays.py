@@ -14,7 +14,7 @@ metric = af.getopts(argv)
 dataset = metric['-dataset']
 bkgsub = False
 
-if ('godiva' in socket.gethostname() or 'soma' in socket.gethostname()):
+if ('godiva' in socket.gethostname() or 'soma' in socket.gethostname() or 'richart' in socket.gethostname()):
     an_path = "/usr/local/data/sejacob/"
 else:
     an_path = "/usr/local/data/sejacob/ANOMALY/"
