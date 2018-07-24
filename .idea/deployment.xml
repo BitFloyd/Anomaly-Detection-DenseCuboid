@@ -2,13 +2,6 @@
 <project version="4">
   <component name="PublishConfigData" serverName="puck">
     <serverData>
-      <paths name="godiva">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/usr/local/data/sejacob/densecub" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
       <paths name="guillimin">
         <serverdata>
           <mappings>
@@ -20,6 +13,13 @@
         <serverdata>
           <mappings>
             <mapping deploy="/usr/local/data/sejacob/ANOMALY/densecub" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="soma">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/usr/local/data/sejacob/densecub" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

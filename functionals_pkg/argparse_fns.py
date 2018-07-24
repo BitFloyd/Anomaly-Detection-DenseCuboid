@@ -43,7 +43,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
         data_store_suffix = '/scratch/suu-621-aa/ANOMALY/densecub'
 
-    elif ('godiva' in socket.gethostname()):
+    elif ('godiva' in socket.gethostname() or 'soma' in socket.gethostname()):
         print "############################################"
         print "DETECTED RUN ON GODIVA"
         print "############################################"

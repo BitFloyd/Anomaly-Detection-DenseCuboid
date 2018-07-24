@@ -17,39 +17,44 @@ metric = af.getopts(argv)
 dataset = metric['-dataset']
 bkgsub = False
 
+if ('godiva' in socket.gethostname() or 'soma' in socket.gethostname()):
+    an_path = "/usr/local/data/sejacob/"
+else:
+    an_path = "/usr/local/data/sejacob/ANOMALY/"
+
 if(dataset =='ucsd2'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD2/TRAIN'
+    path_videos = os.path.join(an_path,'data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/UCSD2/TRAIN')
 
 
 elif(dataset=='triangle'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRIANGLE/TRAIN'
+    path_videos = os.path.join(an_path,'data/art_videos_triangle/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/TRIANGLE/TRAIN')
     bkgsub = True
 
 elif(dataset=='ucsd1'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/UCSD1/TRAIN'
+    path_videos = os.path.join(an_path,'data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/UCSD1/TRAIN')
 
 elif(dataset=='boat_holborn'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/BOAT-HOLBORN/TRAIN'
+    path_videos = os.path.join(an_path,'data/york/Boat-Holborn/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/BOAT-HOLBORN/TRAIN')
 
 elif(dataset=='boat_sea'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/BOAT-SEA/TRAIN'
+    path_videos = os.path.join(an_path,'data/york/Boat-Sea/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/BOAT-SEA/TRAIN')
 
 elif(dataset=='camouflage'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/CAMOUFLAGE/TRAIN'
+    path_videos = os.path.join(an_path,'data/york/Camouflage/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/CAMOUFLAGE/TRAIN')
 
 elif(dataset=='canoe'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/CANOE/TRAIN'
+    path_videos = os.path.join(an_path,'data/york/Canoe/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/CANOE/TRAIN')
 
 elif(dataset=='traffic_train'):
-    path_videos = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Train'
-    save_folder = '/usr/local/data/sejacob/ANOMALY/densecub/DATA/TRAFFIC-TRAIN/TRAIN'
+    path_videos = os.path.join(an_path,'data/york/Traffic-Train/Train')
+    save_folder = os.path.join(an_path,'densecub/DATA/TRAFFIC-TRAIN/TRAIN')
 
 
 strides = int(metric['-strd'])

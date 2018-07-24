@@ -1544,7 +1544,10 @@ class Super_autoencoder:
         with PdfPages(pdf_name) as pdf:
 
             for n_clusters in tqdm(range_n_clusters):
-                avg_score = self.kmeans_and_update_pdf(list_feats,select_indexes,n_clusters, pdf)
+                try:
+                    avg_score = self.kmeans_and_update_pdf(list_feats,select_indexes,n_clusters, pdf)
+                except:
+                    avg_score = 0.0
 
                 silhouette_avg_score_list.append(avg_score)
 

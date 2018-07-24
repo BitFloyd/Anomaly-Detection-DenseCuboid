@@ -18,8 +18,8 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
-      <webServer id="acbe8f4a-da2c-4143-991a-d0efeabe40b3" name="godiva" url="http://godiva.cim.mcgill.ca">
-        <fileTransfer host="godiva.cim.mcgill.ca" port="22" accessType="SFTP">
+      <webServer id="acbe8f4a-da2c-4143-991a-d0efeabe40b3" name="soma" url="http://soma.cim.mcgill.ca">
+        <fileTransfer host="soma.cim.mcgill.ca" port="22" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
           </advancedOptions>
