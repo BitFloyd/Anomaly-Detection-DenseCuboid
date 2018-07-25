@@ -5,8 +5,6 @@ path = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn'
 
 fyv = Format_York_Videos(path,start_anomaly=73)
 
-sys.exit()
-
 path = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea'
 
 fyv = Format_York_Videos(path,start_anomaly=871)
@@ -14,7 +12,6 @@ fyv = Format_York_Videos(path,start_anomaly=871)
 path = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage'
 
 fyv = Format_York_Videos(path,start_anomaly=20)
-
 
 path = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe'
 
