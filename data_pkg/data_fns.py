@@ -1895,8 +1895,27 @@ class Format_York_Videos:
 
     def copy_to_train(self):
 
+        train_idx = 0
+
         for i in range(0,self.end_train-1):
-            shutil.copy(src=self.frames_list[i],dst=os.path.join(self.train_frames_path,os.path.split(self.frames_list[i])[1]))
+
+            if(i%200==0):
+
+                train_idx+=1
+                self.create_dir(os.path.join(self.path, 'Train', 'Train'+str(train_idx).zfill(3)))
+                self.train_frames_path = os.path.join(self.path, 'Train', 'Train'+str(train_idx).zfill(3))
+
+            filename_of_img = os.path.split(self.frames_list[i])[1]
+            filename_ext = filename_of_img.split('.')[1]
+            filename_number = filename_of_img.split('.')[0].split('_')[1]
+            filename_pre_number = filename_of_img.split('.')[0].split('_')[0]
+            filename_number = filename_number.zfill(10)
+
+            filename = filename_pre_number+'_'+filename_number+'.'+filename_ext
+
+            filename = os.path.join(self.train_frames_path,filename)
+
+            shutil.copy(src=self.frames_list[i],dst=filename)
 
         return True
 
@@ -1905,19 +1924,55 @@ class Format_York_Videos:
         test_images_start = int(os.path.split(self.GT_frames_list[0])[1].split('-')[1].split('.')[0])
         test_images_end = int(os.path.split(self.GT_frames_list[-1])[1].split('-')[1].split('.')[0])
 
-        for i in range(test_images_start-1, test_images_end):
+        test_idx = 0
+
+        for idx,i in enumerate(range(test_images_start-1, test_images_end)):
+
+            if(idx%200==0):
+                test_idx+=1
+                self.create_dir(os.path.join(self.path, 'Test', 'Test'+str(test_idx).zfill(3)))
+                self.test_frames_path = os.path.join(self.path, 'Test', 'Test'+str(test_idx).zfill(3))
+
+            filename_of_img = os.path.split(self.frames_list[i])[1]
+            filename_ext = filename_of_img.split('.')[1]
+            filename_number = filename_of_img.split('.')[0].split('_')[1]
+            filename_pre_number = filename_of_img.split('.')[0].split('_')[0]
+            filename_number = filename_number.zfill(10)
+
+            filename = filename_pre_number+'_'+filename_number+'.'+filename_ext
+
+            filename = os.path.join(self.test_frames_path,filename)
+
             shutil.copy(src=self.frames_list[i],
-                        dst=os.path.join(self.test_frames_path, os.path.split(self.frames_list[i])[1]))
+                        dst=filename)
+
+        test_idx = 0
 
         for idx,i in enumerate(self.GT_frames_list):
+
+            if(idx%200==0):
+                test_idx+=1
+                self.create_dir(os.path.join(self.path, 'Test', 'Test'+str(test_idx).zfill(3)+'_gt'))
+                self.test_frames_gt_path = os.path.join(self.path, 'Test', 'Test'+str(test_idx).zfill(3)+'_gt')
 
             image = imread(i)
             image_resized = resize(image,output_shape=(self.image_height,self.image_width))
             image_resized[image_resized>0.0] = 1.0
 
+            filename_of_img = os.path.split(self.GT_frames_list[idx])[1]
+            filename_ext = filename_of_img.split('.')[1]
+            filename_number = filename_of_img.split('.')[0].split('-')[1]
+            filename_pre_number = filename_of_img.split('.')[0].split('-')[0]
+            filename_number = filename_number.zfill(10)
 
+            filename = filename_pre_number+'_'+filename_number+'.'+filename_ext
 
-            imsave(fname=os.path.join(self.test_frames_gt_path, os.path.split(i)[1]),arr=image_resized)
+            filename = os.path.join(self.test_frames_gt_path,filename)
+
+            shutil.copy(src=self.GT_frames_list[idx],
+                        dst=filename)
+
+            imsave(fname=filename,arr=image_resized)
 
         return True
 

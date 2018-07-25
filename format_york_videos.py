@@ -7,7 +7,7 @@ fyv = Format_York_Videos(path,start_anomaly=73)
 
 path = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea'
 
-fyv = Format_York_Videos(path,start_anomaly=871)
+fyv = Format_York_Videos(path,start_anomaly=164)
 
 path = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage'
 
