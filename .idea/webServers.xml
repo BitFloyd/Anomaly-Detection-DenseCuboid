@@ -26,6 +26,22 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
+      <webServer id="00d925ad-9335-41a1-b0a8-24ab737807f7" name="richart" url="http://richart.cim.mcgill.ca">
+        <fileTransfer host="richart.cim.mcgill.ca" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="e9b94878-9f42-4c0a-92f2-5cc3e49cbc29" name="godiva" url="http://godiva.cim.mcgill.ca">
+        <fileTransfer host="godiva.cim.mcgill.ca" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>
