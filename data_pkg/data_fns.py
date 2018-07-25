@@ -1913,7 +1913,9 @@ class Format_York_Videos:
 
             image = imread(i)
             image_resized = resize(image,output_shape=(self.image_height,self.image_width))
-            image_resized = (image_resized > 0.0)
+            image_resized[image_resized>0.0] = 1.0
+
+
 
             imsave(fname=os.path.join(self.test_frames_gt_path, os.path.split(i)[1]),arr=image_resized)
 

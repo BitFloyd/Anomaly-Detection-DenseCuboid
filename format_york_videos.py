@@ -1,8 +1,11 @@
 from data_pkg.data_fns import Format_York_Videos
+import sys
 
 path = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn'
 
 fyv = Format_York_Videos(path,start_anomaly=73)
+
+sys.exit()
 
 path = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea'
 

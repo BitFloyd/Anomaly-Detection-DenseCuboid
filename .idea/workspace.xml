@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_autoencoder.py" afterPath="$PROJECT_DIR$/test_autoencoder.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_pkg/data_fns.py" afterPath="$PROJECT_DIR$/data_pkg/data_fns.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/format_york_videos.py" afterPath="$PROJECT_DIR$/format_york_videos.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,11 +31,33 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="92" column="98" lean-forward="false" selection-start-line="92" selection-start-column="98" selection-end-line="92" selection-end-column="98" />
+            <state relative-caret-position="408">
+              <caret line="93" column="29" lean-forward="false" selection-start-line="93" selection-start-column="9" selection-end-line="93" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="format_york_videos.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/format_york_videos.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="9" column="59" lean-forward="true" selection-start-line="9" selection-start-column="59" selection-end-line="9" selection-end-column="59" />
+              <folding>
+                <element signature="e#0#48#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="253">
+              <caret line="1917" column="0" lean-forward="true" selection-start-line="1917" selection-start-column="0" selection-end-line="1917" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -150,16 +173,16 @@
         <option value="$PROJECT_DIR$/test_algorithm.py" />
         <option value="$PROJECT_DIR$/create_convolution_outputs.py" />
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
-        <option value="$PROJECT_DIR$/format_york_videos.py" />
         <option value="$PROJECT_DIR$/rand.py" />
         <option value="$PROJECT_DIR$/env_test.py" />
         <option value="$PROJECT_DIR$/model_pkg/models.py" />
-        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
+        <option value="$PROJECT_DIR$/format_york_videos.py" />
+        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
       </list>
     </option>
   </component>
@@ -500,13 +523,6 @@
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
     </task>
-    <task id="LOCAL-00041" summary="Fix Issues with TestVideoStream Module">
-      <created>1527792007736</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1527792007736</updated>
-    </task>
     <task id="LOCAL-00042" summary="add TestVideoStream to import">
       <created>1527792059144</created>
       <option name="number" value="00042" />
@@ -843,7 +859,14 @@
       <option name="project" value="LOCAL" />
       <updated>1532527330929</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="fix for godiva">
+      <created>1532532393242</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1532532393245</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -1111,13 +1134,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/format_york_videos.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="31" lean-forward="false" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1800">
@@ -1214,14 +1230,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21834">
-          <caret line="1238" column="19" lean-forward="false" selection-start-line="1238" selection-start-column="19" selection-end-line="1238" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
@@ -1239,8 +1247,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="92" column="98" lean-forward="false" selection-start-line="92" selection-start-column="98" selection-end-line="92" selection-end-column="98" />
+        <state relative-caret-position="408">
+          <caret line="93" column="29" lean-forward="false" selection-start-line="93" selection-start-column="9" selection-end-line="93" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/format_york_videos.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="59" lean-forward="true" selection-start-line="9" selection-start-column="59" selection-end-line="9" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="1917" column="0" lean-forward="true" selection-start-line="1917" selection-start-column="0" selection-end-line="1917" selection-end-column="0" />
           <folding />
         </state>
       </provider>
