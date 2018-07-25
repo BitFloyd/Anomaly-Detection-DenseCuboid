@@ -90,7 +90,7 @@ ae_model.create_recons(20)
 ae_model.mean_and_samples(n_per_mean=8)
 ae_model.generate_assignment_graph('assignment_graph.png')
 ae_model.decode_means('means_decoded')
-ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
+ae_model.save_gifs_per_cluster_ids(n_samples_per_id=20,total_chaps_trained_on=n_chapters,max_try=2)
 ae_model.perform_gmm_training(guill=guill,n_comp=nclusters)
 ae_model.create_tsne_plot(graph_name='tsne_plot.png')
 
