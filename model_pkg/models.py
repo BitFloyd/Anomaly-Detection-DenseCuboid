@@ -39,7 +39,13 @@ import seaborn as sns
 import itertools
 import multiprocessing
 sns.set(color_codes=True)
+import thread
 
+
+def input_thread(a_list):
+    string = raw_input()
+    if(string == 'stop'):
+        a_list.append(True)
 
 
 class CustomClusterLayer(Layer):
@@ -540,6 +546,9 @@ class Super_autoencoder:
 
         if(n_train > 1):
 
+            a_list = []
+            thread.start_new_thread(input_thread, (a_list,))
+
             it_time_mins = 0
             for i in range(1,n_train+1):
 
@@ -622,6 +631,10 @@ class Super_autoencoder:
 
                 message_print("TIME_TAKEN : " + str(it_time_mins) + " MINUTES")
                 message_print("TIME_LEFT : " + str((it_time_mins)*(n_train-i)/60) + "HOURS")
+
+                if a_list:
+                    message_print("STOP DETECTED.... STOPPING THE TRAINING")
+                    break
 
         print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
         print "PICKLING LISTS AND SAVING WEIGHTS"

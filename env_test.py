@@ -4,6 +4,13 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
+import thread
+
+
+def input_thread(a_list):
+    string = raw_input()
+    if(string == 'stop'):
+        a_list.append(True)
 
 batch_size = 128
 num_classes = 10
@@ -52,11 +59,16 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
-model.fit(x_train, y_train,
+a_list = []
+thread.start_new_thread(input_thread, (a_list,))
+
+while not a_list:
+    model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
           validation_data=(x_test, y_test))
+
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
