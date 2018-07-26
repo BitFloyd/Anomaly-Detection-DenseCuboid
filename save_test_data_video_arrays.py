@@ -13,6 +13,7 @@ metric = af.getopts(argv)
 
 dataset = metric['-dataset']
 bkgsub = False
+anompth = 0.2
 
 if ('godiva' in socket.gethostname() or 'soma' in socket.gethostname() or 'richart' in socket.gethostname()):
     an_path = "/usr/local/data/sejacob/"
@@ -36,22 +37,27 @@ elif(dataset=='ucsd1'):
 elif(dataset=='boat_holborn'):
     path_videos = os.path.join(an_path,'data/york/Boat-Holborn/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/BOAT-HOLBORN/TEST')
+    anompth = 0.80
 
 elif(dataset=='boat_sea'):
     path_videos = os.path.join(an_path,'data/york/Boat-Sea/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/BOAT-SEA/TEST')
+    anompth = 0.80
 
 elif(dataset=='camouflage'):
     path_videos = os.path.join(an_path,'data/york/Camouflage/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/CAMOUFLAGE/TEST')
+    anompth = 0.80
 
 elif(dataset=='canoe'):
     path_videos = os.path.join(an_path,'data/york/Canoe/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/CANOE/TEST')
+    anompth = 0.80
 
 elif(dataset=='traffic_train'):
     path_videos = os.path.join(an_path,'data/york/Traffic-Train/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/TRAFFIC-TRAIN/TEST')
+    anompth = 0.80
 
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
@@ -82,7 +88,7 @@ video_id = 0
 
 while True:
     vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
-                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=0.20,
+                                timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=anompth,
                                 bkgsub=bkgsub)
 
 
