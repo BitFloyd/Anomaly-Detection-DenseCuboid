@@ -107,6 +107,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     elif(dataset=='TRIANGLE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/art_videos_triangle/Test'
         tstrides = 4
         sp_strides = 7
         greyscale = False
@@ -114,6 +116,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     elif(dataset=='BOAT-HOLBORN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/york/Boat-Holborn/Test'
         tstrides = 2
         sp_strides = 12
         greyscale = False
@@ -123,6 +127,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     elif(dataset=='BOAT-SEA'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/york/Boat-Sea/Test'
         tstrides = 4
         sp_strides = 12
         greyscale = False
@@ -132,6 +138,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     elif(dataset=='CAMOUFLAGE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/york/Camouflage/Test'
         tstrides = 1
         sp_strides = 12
         greyscale = False
@@ -141,6 +149,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     elif(dataset=='CANOE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/york/Canoe/Test'
         tstrides = 2
         sp_strides = 12
         greyscale = False
@@ -150,6 +160,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     elif(dataset=='TRAFFIC-TRAIN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Test'
+        if(godiva):
+            path_to_videos_test = '/usr/local/data/sejacob/data/york/Traffic-Train/Test'
         tstrides = 4
         sp_strides = 12
         greyscale = False
