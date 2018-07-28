@@ -1003,10 +1003,10 @@ class TestDictionary:
         ax3 = ax[1,1]
 
         im1 = ax1.scatter(range(0,len(array_to_consider)),array_to_consider,c=y_true_arr, cmap=ListedColormap(colors),alpha=0.5)
-        ax1.set_title('ANOMS:Red, N-ANOMS:Green')
+        ax1.set_title('ANOMS:Red, N-ANOMS:Green', fontsize=30)
         ax1.axhline(y=threshold, label='best threshold', color='b')
-        ax1.set_ylabel(metric_name)
-        ax1.set_xlabel('Cuboid index')
+        ax1.set_ylabel(metric_name, fontsize=30)
+        ax1.set_xlabel('Cuboid index', fontsize=30)
         ax1.grid(True)
         cb1 = f.colorbar(im1,ax=ax1)
         loc = np.arange(0, max(y_true), max(y_true) / float(len(colors)))
@@ -1017,17 +1017,17 @@ class TestDictionary:
 
         im2 = ax2.scatter(range(0,len(arr_anoms)),arr_anoms,c='red',alpha=0.5)
         ax2.axhline(y=threshold, label='best threshold', color='b')
-        ax2.set_title('ANOMS:Red')
-        ax2.set_ylabel(metric_name)
-        ax2.set_xlabel('Cuboid index')
+        ax2.set_title('ANOMS:Red', fontsize=30)
+        ax2.set_ylabel(metric_name, fontsize=30)
+        ax2.set_xlabel('Cuboid index', fontsize=30)
         ax2.grid(True)
 
         arr_perc = y_perc_arr[y_true_arr==1]
 
         im3 = ax3.scatter(range(0, len(arr_perc)), arr_perc, c='blue', alpha=0.5)
-        ax3.set_title('ANOMPERC')
-        ax3.set_ylabel('percent of anomaly pixels in cuboid')
-        ax3.set_xlabel('Cuboid index')
+        ax3.set_title('ANOMPERC', fontsize=30)
+        ax3.set_ylabel('percent of anomaly pixels in cuboid', fontsize=30)
+        ax3.set_xlabel('Cuboid index', fontsize=30)
         ax3.grid(True)
 
 
