@@ -980,7 +980,7 @@ class TestDictionary:
 
         array_to_consider = array_to_consider[args_arr_sort]
 
-        pdf_name = graph_name.split('.')[0] + '.pdf'
+        pdf_name = os.path.join(self.image_store, graph_name.split('.')[0] + '.pdf')
 
         with PdfPages(pdf_name) as pdf:
 
