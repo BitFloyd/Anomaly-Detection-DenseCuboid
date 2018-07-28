@@ -9,7 +9,7 @@ import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric,set_mem=True,set_mem_value=0.65,ucsd2=True,greyscale=True)
+rdict = af.parse_run_variables(metric,set_mem=False)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']
