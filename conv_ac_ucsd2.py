@@ -2,7 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream,TrainDataGenerator
+from data_pkg.data_fns import TestDictionary,TestVideoStream
 from sys import argv
 import os
 import h5py
@@ -32,12 +32,14 @@ nc=rdict['nc']
 large = rdict['large']
 tlm = rdict['tlm']
 reverse = rdict['reverse']
-model_store = 'ucsd2_'+rdict['model_store']
+model_store = rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
 path_to_videos_test = rdict['path_to_videos_test']
 sp_strides = rdict['sp_strides']
+size  = rdict['size']
+min_data_threshold = rdict['min_data_threshold']
+patience = rdict['patience']
 
-size = 48
 do_silhouette = True
 
 
@@ -49,16 +51,10 @@ print "#############################"
 
 notrain = False
 
-if(h_units>0):
-    ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size, n_channels=1,h_units=h_units,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
-                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
-else:
-    ae_model = models.Conv_autoencoder_nostream_UCSD_noh(model_store=model_store, size_y=size, size_x=size, n_channels=1,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
-                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
+ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size, n_channels=1,h_units=h_units,
+                                        n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
+                                        lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
+                                        reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
 
 print "############################"
 print "START TRAINING AND STUFF"
@@ -71,13 +67,13 @@ if(guill and '-ngpu' in metric.keys()):
     ae_model.make_ae_model_multi_gpu(n_gpus)
 
 if(nocl):
-    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=100, n_chapters=n_chapters,
-                                        n_train=ntrain, reduce_lr=True, patience_lr=30, factor=1.25)
+    ae_model.fit_model_ae_chaps_nocloss(verbose=1, earlystopping=True, patience=patience, n_chapters=n_chapters,
+                                        n_train=ntrain, reduce_lr=True, patience_lr=int(patience*0.66), factor=1.25)
 
 
 else:
-    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=100,n_chapters=n_chapters,
-                            n_train=ntrain, reduce_lr = True, patience_lr=30 , factor=1.25)
+    ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=patience,n_chapters=n_chapters,
+                            n_train=ntrain, reduce_lr = True, patience_lr=int(patience*0.66), factor=1.25)
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
 ae_model.perform_dict_learn(guill,n_comp=0)
@@ -109,23 +105,13 @@ print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 if(notest):
     ae_model = None
 else:
-    if (h_units > 0):
-        ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size,
-                                                           n_channels=1, h_units=h_units,
-                                                           n_timesteps=8, loss=loss, batch_size=batch_size,
-                                                           n_clusters=nclusters,
-                                                           lr_model=1e-3, lamda=lamda, gs=gs, notrain=True,
-                                                           reverse=reverse, data_folder=train_folder, dat_h5=train_dset,
-                                                           large=large)
-    else:
-        ae_model = models.Conv_autoencoder_nostream_UCSD_noh(model_store=model_store, size_y=size, size_x=size,
-                                                             n_channels=1,
-                                                             n_timesteps=8, loss=loss, batch_size=batch_size,
-                                                             n_clusters=nclusters,
-                                                             lr_model=1e-3, lamda=lamda, gs=gs, notrain=True,
-                                                             reverse=reverse, data_folder=train_folder,
-                                                             dat_h5=train_dset, large=large)
-
+    ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size,
+                                                    n_channels=1, h_units=h_units,
+                                                    n_timesteps=8, loss=loss, batch_size=batch_size,
+                                                    n_clusters=nclusters,
+                                                    lr_model=1e-3, lamda=lamda, gs=gs, notrain=True,
+                                                    reverse=reverse, data_folder=train_folder, dat_h5=train_dset,
+                                                    large=large)
     ae_model.set_cl_loss(0.0)
 
 

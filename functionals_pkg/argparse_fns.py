@@ -93,6 +93,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 1
         sp_strides = 12
         greyscale=True
+        patience = 10
+        ntrain = 100
 
     if(dataset=='UCSD1'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
@@ -104,6 +106,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         tstrides = 1
         sp_strides = 12
         greyscale = True
+        patience = 10
+        ntrain = 100
 
     elif(dataset=='TRIANGLE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'

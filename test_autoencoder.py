@@ -174,7 +174,7 @@ data_h5_va.close()
 data_h5_vp.close()
 data_h5_ap.close()
 
-threshold = score_dict['max_acc_th']
+threshold = score_dict['max_f1_th']
 
 ae_model.load_gmm_model()
 
