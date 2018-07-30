@@ -2,7 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream,TrainDataGenerator
+from data_pkg.data_fns import TestDictionary,TestVideoStream
 from sys import argv
 import os
 import h5py

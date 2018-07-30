@@ -1614,7 +1614,7 @@ class TestVideoStream:
         encodings_of_cuboids = self.Encoder.predict(array_cuboids_present)
         score_samples = self.return_maha_dist(encodings_of_cuboids)
 
-        thresholded = (score_samples>self.ThresholdGMM)
+        thresholded = (score_samples>=self.ThresholdGMM)
 
         for idx,rows_cols_map_cuboid in enumerate(array_relevant_rows_cols_map_cuboids):
 
