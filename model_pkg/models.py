@@ -1625,7 +1625,7 @@ class Conv_autoencoder_nostream(Super_autoencoder):
 
         else:
             resize_factor = 8
-            avgpool_3 = False
+            avgpool_4 = False
 
         # MODEL CREATION
         inp = Input(shape=(size_y, size_x, n_channels * n_timesteps)) #24,24 #48,48
