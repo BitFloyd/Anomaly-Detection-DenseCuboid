@@ -39,6 +39,7 @@ sp_strides = rdict['sp_strides']
 size  = rdict['size']
 min_data_threshold = rdict['min_data_threshold']
 patience = rdict['patience']
+bkgsub = rdict['bkgsub']
 
 do_silhouette = True
 
@@ -189,7 +190,7 @@ tvs = TestVideoStream(PathToVideos=path_to_videos_test,
                       StridesTime=tstrides,
                       StridesSpace=sp_strides,
                       GrayScale=gs,
-                      BkgSub=True)
+                      BkgSub=bkgsub)
 
 tvs.set_GMMThreshold(threshold=threshold)
 

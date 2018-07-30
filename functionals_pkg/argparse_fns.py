@@ -82,6 +82,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     min_data_threshold = 20000
     ntrain = 200
     patience = 15
+    bkgsub = False
 
     if(dataset=='UCSD2'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
@@ -117,6 +118,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         sp_strides = 7
         greyscale = False
         size = 24
+        bkgsub = True
 
     elif(dataset=='BOAT-HOLBORN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Test'
@@ -195,6 +197,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     return_parse_dict['size']=size
     return_parse_dict['min_data_threshold']=min_data_threshold
     return_parse_dict['patience']=patience
+    return_parse_dict['bkgsub']=bkgsub
 
     if (nocl):
         suffix = 'nocl_tstrd_' + str(tstrides) + '_clusters_' + str(nclusters)
