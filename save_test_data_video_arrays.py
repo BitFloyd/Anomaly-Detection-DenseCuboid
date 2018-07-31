@@ -23,6 +23,7 @@ else:
 if(dataset =='ucsd2'):
     path_videos = os.path.join(an_path,'data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/UCSD2/TEST')
+    bkgsub = True
 
 
 elif(dataset=='triangle'):
@@ -33,6 +34,7 @@ elif(dataset=='triangle'):
 elif(dataset=='ucsd1'):
     path_videos = os.path.join(an_path,'data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/UCSD1/TEST')
+    bkgsub = True
 
 elif(dataset=='boat_holborn'):
     path_videos = os.path.join(an_path,'data/york/Boat-Holborn/Test')

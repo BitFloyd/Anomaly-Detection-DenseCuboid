@@ -96,6 +96,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale=True
         patience = 10
         ntrain = 100
+        bkgsub = True
 
     if(dataset=='UCSD1'):
         path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
@@ -109,6 +110,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale = True
         patience = 10
         ntrain = 100
+        bkgsub = True
 
     elif(dataset=='TRIANGLE'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'

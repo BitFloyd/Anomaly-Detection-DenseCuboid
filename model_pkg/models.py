@@ -1985,8 +1985,8 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
 
 
     def __init__(self, model_store, size_y=32, size_x=32, n_channels=3, h_units=256, n_timesteps=5,
-                 loss='mse', batch_size=64, n_clusters=10, clustering_lr=1e-2, lr_model=1e-4, lamda=0.01,
-                 lamda_assign=0.01, gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
+                 loss='mse', batch_size=64, n_clusters=10, lr_model=1e-4, lamda=0.01,
+                 gs=False,notrain=False,reverse=False,data_folder='data_store',dat_h5=None,
                  large=True, means_tol = 1e-5,means_patience=200,max_fit_tries=500000):
 
         Super_autoencoder.__init__(self, model_store, size_y=size_y, size_x=size_x, n_channels=n_channels,
@@ -2019,7 +2019,7 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
         # MODEL CREATION
         inp = Input(shape=(size_y, size_x, n_channels * n_timesteps))
         x1 = GaussianNoise(0.05)(inp)
-        x1 = Conv2D(f1, (4, 4), padding='same')(x1)
+        x1 = Conv2D(f1, (3, 3), padding='same')(x1)
         x1 = SpatialDropout2D(0.3)(x1)
         x1 = LeakyReLU(alpha=0.2)(x1)
         x1 = BatchNormalization()(x1)
@@ -2072,7 +2072,7 @@ class Conv_autoencoder_nostream_UCSD_h(Super_autoencoder):
         dec15 = BatchNormalization()  #24x24
 
         dec16 = UpSampling2D(size=(2, 2))
-        dec17 = Conv2D(f7, (4, 4), padding='same')
+        dec17 = Conv2D(f7, (3, 3), padding='same')
         dec18 = LeakyReLU(alpha=0.2)
         dec19 = BatchNormalization()  #48x48
 
