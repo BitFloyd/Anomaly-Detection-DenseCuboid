@@ -3,12 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conv_ac_ucsd2.py" afterPath="$PROJECT_DIR$/conv_ac_ucsd2.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_data_chapters.py" afterPath="$PROJECT_DIR$/save_data_chapters.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_test_data_video_arrays.py" afterPath="$PROJECT_DIR$/save_test_data_video_arrays.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_train_data_video_arrays.py" afterPath="$PROJECT_DIR$/save_train_data_video_arrays.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -35,11 +30,56 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="78">
-              <caret line="165" column="36" lean-forward="true" selection-start-line="165" selection-start-column="36" selection-end-line="165" selection-end-column="36" />
+            <state relative-caret-position="36">
+              <caret line="11" column="30" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="97" column="19" lean-forward="false" selection-start-line="97" selection-start-column="19" selection-end-line="97" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="252">
+              <caret line="634" column="25" lean-forward="false" selection-start-line="634" selection-start-column="19" selection-end-line="634" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#1837#3498#0" expanded="false" />
+                <element signature="e#3543#5708#0" expanded="false" />
+                <element signature="e#7558#7713#0" expanded="false" />
+                <element signature="e#7753#7886#0" expanded="false" />
+                <element signature="e#7930#8067#0" expanded="false" />
+                <element signature="e#8108#8185#0" expanded="false" />
+                <element signature="e#8232#8613#0" expanded="false" />
+                <element signature="e#8670#9119#0" expanded="false" />
+                <element signature="e#9169#9454#0" expanded="false" />
+                <element signature="e#9698#14800#0" expanded="false" />
+                <element signature="e#60305#67182#0" expanded="false" />
+                <element signature="e#67251#74212#0" expanded="false" />
+                <element signature="e#74279#81475#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1440">
+              <caret line="80" column="0" lean-forward="false" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -148,13 +188,13 @@
         <option value="$PROJECT_DIR$/format_york_videos.py" />
         <option value="$PROJECT_DIR$/env_test.py" />
         <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
-        <option value="$PROJECT_DIR$/model_pkg/models.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
         <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
-        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
+        <option value="$PROJECT_DIR$/model_pkg/models.py" />
+        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
       </list>
     </option>
   </component>
@@ -188,6 +228,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -200,38 +242,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="densecub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="densecub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="functionals_pkg" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="densecub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="densecub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="data_pkg" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -522,13 +534,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
-    </task>
-    <task id="LOCAL-00057" summary="create and make changes for datagenerator">
-      <created>1529508752172</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1529508752173</updated>
     </task>
     <task id="LOCAL-00058" summary="fix gmm function">
       <created>1529552407161</created>
@@ -866,7 +871,14 @@
       <option name="project" value="LOCAL" />
       <updated>1532974746316</updated>
     </task>
-    <option name="localTasksCounter" value="106" />
+    <task id="LOCAL-00106" summary="add threading for stop training">
+      <created>1533009783350</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1533009783351</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -883,13 +895,13 @@
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5504587" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.10611735" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48813984" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25586137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.47298676" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.168125" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17875" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41573033" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -976,7 +988,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="163" />
+      <option name="time" value="165" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1104,13 +1116,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/batch_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="11" column="21" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/visualize_model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="818">
@@ -1156,93 +1161,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-720">
-          <caret line="11" column="30" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="1983" column="58" lean-forward="false" selection-start-line="1983" selection-start-column="58" selection-end-line="1983" selection-end-column="58" />
-          <folding>
-            <element signature="e#1837#3498#0" expanded="false" />
-            <element signature="e#3543#5708#0" expanded="false" />
-            <element signature="e#5740#60246#0" expanded="false" />
-            <element signature="e#60305#67182#0" expanded="false" />
-            <element signature="e#67251#74212#0" expanded="false" />
-            <element signature="e#74279#81475#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="590" column="0" lean-forward="false" selection-start-line="590" selection-start-column="0" selection-end-line="590" selection-end-column="0" />
-          <folding>
-            <element signature="e#890#2549#0" expanded="false" />
-            <element signature="e#2576#2852#0" expanded="false" />
-            <element signature="e#2882#10823#0" expanded="false" />
-            <element signature="e#11033#13967#0" expanded="false" />
-            <element signature="e#14003#15032#0" expanded="false" />
-            <element signature="e#15083#15294#0" expanded="false" />
-            <element signature="e#15336#15484#0" expanded="false" />
-            <element signature="e#15538#16368#0" expanded="false" />
-            <element signature="e#16493#20731#0" expanded="false" />
-            <element signature="e#20810#21029#0" expanded="false" />
-            <element signature="e#21128#21720#0" expanded="false" />
-            <element signature="e#21786#21989#0" expanded="false" />
-            <element signature="e#22028#22621#0" expanded="false" />
-            <element signature="e#22661#23873#0" expanded="false" />
-            <element signature="e#23953#25453#0" expanded="false" />
-            <element signature="e#25518#26894#0" expanded="false" />
-            <element signature="e#27057#32190#0" expanded="false" />
-            <element signature="e#32250#32461#0" expanded="false" />
-            <element signature="e#32522#35925#0" expanded="false" />
-            <element signature="e#36007#39485#0" expanded="false" />
-            <element signature="e#39573#40293#0" expanded="false" />
-            <element signature="e#40396#43762#0" expanded="false" />
-            <element signature="e#43842#44027#0" expanded="false" />
-            <element signature="e#44096#44282#0" expanded="false" />
-            <element signature="e#44393#45199#0" expanded="false" />
-            <element signature="e#45310#45640#0" expanded="false" />
-            <element signature="e#45723#46299#0" expanded="false" />
-            <element signature="e#46371#47297#0" expanded="false" />
-            <element signature="e#47341#47608#0" expanded="false" />
-            <element signature="e#47661#49113#0" expanded="false" />
-            <element signature="e#49213#49962#0" expanded="false" />
-            <element signature="e#50021#50930#0" expanded="false" />
-            <element signature="e#50977#51494#0" expanded="false" />
-            <element signature="e#51548#53587#0" expanded="false" />
-            <element signature="e#53634#53688#0" expanded="false" />
-            <element signature="e#53737#54252#0" expanded="false" />
-            <element signature="e#54291#58605#0" expanded="false" />
-            <element signature="e#58666#59975#0" expanded="false" />
-            <element signature="e#60089#60799#0" expanded="false" />
-            <element signature="e#60908#69518#0" expanded="false" />
-            <element signature="e#69551#74226#0" expanded="false" />
-            <element signature="e#74259#79409#0" expanded="false" />
-            <element signature="e#79484#79973#0" expanded="false" />
-            <element signature="e#80149#87525#0" expanded="false" />
-            <element signature="e#87582#87745#0" expanded="false" />
-            <element signature="e#87846#91353#0" expanded="false" />
-            <element signature="e#91461#92626#0" expanded="false" />
-            <element signature="e#92714#93659#0" expanded="false" />
-            <element signature="e#93747#94458#0" expanded="false" />
-            <element signature="e#94549#95093#0" expanded="false" />
-            <element signature="e#95182#95953#0" expanded="false" />
-            <element signature="e#95993#96307#0" expanded="false" />
-            <element signature="e#96418#96794#0" expanded="false" />
-            <element signature="e#96902#98774#0" expanded="false" />
-            <element signature="e#98845#100091#0" expanded="false" />
-            <element signature="e#100185#100724#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/save_train_data_video_arrays.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="294">
@@ -1250,34 +1168,77 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-661">
+          <caret line="1701" column="8" lean-forward="false" selection-start-line="1701" selection-start-column="8" selection-end-line="1701" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/batch_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="142" column="62" lean-forward="false" selection-start-line="142" selection-start-column="56" selection-end-line="142" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-561">
-          <caret line="36" column="17" lean-forward="false" selection-start-line="36" selection-start-column="17" selection-end-line="36" selection-end-column="17" />
+        <state relative-caret-position="244">
+          <caret line="123" column="115" lean-forward="false" selection-start-line="123" selection-start-column="97" selection-end-line="123" selection-end-column="115" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1260">
-          <caret line="94" column="118" lean-forward="false" selection-start-line="94" selection-start-column="112" selection-end-line="94" selection-end-column="118" />
+        <state relative-caret-position="978">
+          <caret line="147" column="45" lean-forward="false" selection-start-line="147" selection-start-column="35" selection-end-line="147" selection-end-column="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+    <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2034">
-          <caret line="122" column="21" lean-forward="true" selection-start-line="122" selection-start-column="21" selection-end-line="122" selection-end-column="21" />
+        <state relative-caret-position="1440">
+          <caret line="80" column="0" lean-forward="false" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="634" column="25" lean-forward="false" selection-start-line="634" selection-start-column="19" selection-end-line="634" selection-end-column="25" />
           <folding>
-            <element signature="e#84#443#0" expanded="false" />
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#1837#3498#0" expanded="false" />
+            <element signature="e#3543#5708#0" expanded="false" />
+            <element signature="e#7558#7713#0" expanded="false" />
+            <element signature="e#7753#7886#0" expanded="false" />
+            <element signature="e#7930#8067#0" expanded="false" />
+            <element signature="e#8108#8185#0" expanded="false" />
+            <element signature="e#8232#8613#0" expanded="false" />
+            <element signature="e#8670#9119#0" expanded="false" />
+            <element signature="e#9169#9454#0" expanded="false" />
+            <element signature="e#9698#14800#0" expanded="false" />
+            <element signature="e#60305#67182#0" expanded="false" />
+            <element signature="e#67251#74212#0" expanded="false" />
+            <element signature="e#74279#81475#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="165" column="36" lean-forward="true" selection-start-line="165" selection-start-column="36" selection-end-line="165" selection-end-column="36" />
+        <state relative-caret-position="36">
+          <caret line="11" column="30" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="97" column="19" lean-forward="false" selection-start-line="97" selection-start-column="19" selection-end-line="97" selection-end-column="19" />
           <folding />
         </state>
       </provider>

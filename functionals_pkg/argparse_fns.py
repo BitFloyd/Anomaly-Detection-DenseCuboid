@@ -95,7 +95,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         sp_strides = 12
         greyscale=True
         patience = 10
-        ntrain = 100
+        ntrain = 25
         bkgsub = True
 
     if(dataset=='UCSD1'):
@@ -109,7 +109,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         sp_strides = 12
         greyscale = True
         patience = 10
-        ntrain = 100
+        ntrain = 25
         bkgsub = True
 
     elif(dataset=='TRIANGLE'):
