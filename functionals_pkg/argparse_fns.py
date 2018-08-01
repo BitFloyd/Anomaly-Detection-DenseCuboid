@@ -39,6 +39,15 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         print "############################################"
         print "DETECTED RUN ON HELIOS: Probably"
         print "############################################"
+
+        if (set_mem):
+            import tensorflow as tf
+            from keras.backend.tensorflow_backend import set_session
+
+            config = tf.ConfigProto()
+            config.gpu_options.per_process_gpu_memory_fraction = set_mem_value
+            set_session(tf.Session(config=config))
+
         verbose = 1
         os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
         data_store_suffix = '/scratch/suu-621-aa/ANOMALY/densecub'
