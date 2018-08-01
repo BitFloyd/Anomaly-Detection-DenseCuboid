@@ -433,17 +433,6 @@ class Super_autoencoder:
         if(n_chapters<20):
             max_fit_tries = n_chapters*5e3
 
-        for i in range(0,n_chapters):
-            self.set_x_train(i)
-            feats = self.encoder.predict(self.x_train)
-            name = 'chapter_' + str(i)
-            with h5py.File(os.path.join(self.model_store, 'features_pre.h5'), "a") as f:
-                if(name in f.keys()):
-                    del f[name]
-                dset = f.create_dataset(name, data=np.array(feats))
-                print(dset.shape)
-            del feats
-
         self.features_h5_pre = h5py.File(os.path.join(self.model_store, 'features_pre.h5'), 'r')
 
         while (disp_track < means_patience and fit_tries <= max_fit_tries):
