@@ -449,23 +449,26 @@ class Super_autoencoder:
                 else:
                     bef_fit = np.copy(self.km.cluster_centers_).astype('float64')
 
-                for k in range(0, len(feats), self.means_batch):
-                    if (k + self.means_batch < len(feats)):
-                        self.km.partial_fit(feats[k:k + self.means_batch])
+                try:
+                    for k in range(0, len(feats), self.means_batch):
+                        if (k + self.means_batch < len(feats)):
+                            self.km.partial_fit(feats[k:k + self.means_batch])
+                        else:
+                            self.km.partial_fit(feats[k:])
+
+                    aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
+
+                    fit_tries += 1
+
+                    disp_means = np.sum(np.linalg.norm(bef_fit - aft_fit, axis=1))
+
+                    if (disp_means < self.means_tol):
+                        disp_track += 1
                     else:
-                        self.km.partial_fit(feats[k:])
-
-                aft_fit = np.copy(self.km.cluster_centers_).astype('float64')
-
-                fit_tries += 1
-
-                disp_means = np.sum(np.linalg.norm(bef_fit - aft_fit, axis=1))
-
-                if (disp_means < self.means_tol):
-                    disp_track += 1
-                else:
-                    disp_track = 0
-
+                        disp_track = 0
+                except:
+                    fit_tries += 1
+                    message_print("MEANS FIT TRY FAILED. EXCEPTING")
 
                 print "-------------------------"
                 print "DISP:", disp_means
