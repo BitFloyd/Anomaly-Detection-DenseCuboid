@@ -128,6 +128,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         greyscale = False
         size = 24
         bkgsub = True
+        ntrain = 50
+        patience = 10
 
     elif(dataset=='BOAT-HOLBORN'):
         path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Test'
