@@ -110,7 +110,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         if(guill):
             path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
         if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+            path_to_videos_test = '/usr/local/data/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
 
         tstrides = 1
         sp_strides = 12
