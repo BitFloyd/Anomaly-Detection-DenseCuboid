@@ -430,7 +430,7 @@ class Super_autoencoder:
         means_patience = self.means_patience
         max_fit_tries = n_chapters*500
 
-        if(n_chapters<20):
+        if(n_chapters<5):
             max_fit_tries = n_chapters*5e3
 
         self.features_h5_pre = h5py.File(os.path.join(self.model_store, 'features_pre.h5'), 'r')
