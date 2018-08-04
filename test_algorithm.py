@@ -2,14 +2,14 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary,TrainDictionary,TestVideoStream,TrainDataGenerator
+from data_pkg.data_fns import TestDictionary,TestVideoStream
 from sys import argv
 import os
 import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric,set_mem=True,set_mem_value=0.5)
+rdict = af.parse_run_variables(metric,set_mem=True,set_mem_value=0.65)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']
@@ -36,16 +36,39 @@ model_store = rdict['model_store']
 use_basis_dict = rdict['use_basis_dict']
 path_to_videos_test = rdict['path_to_videos_test']
 sp_strides = rdict['sp_strides']
-
-size = 24
+size  = rdict['size']
+min_data_threshold = rdict['min_data_threshold']
+patience = rdict['patience']
+bkgsub = rdict['bkgsub']
 
 do_silhouette = True
+
+train_dset = h5py.File(os.path.join(train_folder, 'data_train.h5'), 'r')
+
+print "#############################"
+print "LOAD MODEL"
+print "#############################"
+
+notrain = True
+
+ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=nc, h_units=h_units,
+                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
+                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
+                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
+
+
+print "############################"
+print "START TRAINING AND STUFF"
+print "############################"
+
+ae_model.perform_gmm_training(guill=guill,n_comp=nclusters)
+train_dset.close()
 
 print "################################"
 print "START TESTING"
 print "################################"
 
-notest = True
+notest = False
 udiw = False
 
 print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -56,7 +79,7 @@ print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 if(notest):
     ae_model = None
 else:
-    ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
+    ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=nc, h_units=h_units,
                                             n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                             lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
                                             reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
@@ -76,6 +99,12 @@ data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5
 tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
                         use_basis_dict=use_basis_dict)
+
+
+print "############################"
+print "UPDATING DICT FROM DATA"
+print "############################"
+tclass.process_data()
 
 print "############################"
 print "MAKE LOSS SAMPLES PLOT"
@@ -98,49 +127,14 @@ tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot
 tclass.plot_distance_measure_of_samples('distance_target_samples_plot.png','distance')
 tclass.plot_distance_measure_of_samples('distancexloss_'+tlm+'_samples_plot.png','distancexloss')
 
+print "########################################################"
+print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
+print "########################################################"
+tclass.feature_analysis_normvsanom()
 
-data_h5_vc.close()
-data_h5_va.close()
-data_h5_vp.close()
-data_h5_ap.close()
-
-
-print "################################"
-print "START TESTING"
-print "################################"
-
-notest = False
-udiw = False
-
-print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-print train_folder
-print test_data_store
-print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-
-if(notest):
-    ae_model = None
-else:
-    ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=24, size_x=24, n_channels=3, h_units=h_units,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
-                                            reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
-
-    ae_model.set_cl_loss(0.0)
-
-    if(do_silhouette):
-        ae_model.set_clusters_to_optimum()
-
-#Get Test class
-data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
-data_h5_va = h5py.File(os.path.join(test_data_store,'data_test_video_anomgt.h5'))
-data_h5_vp = h5py.File(os.path.join(test_data_store,'data_test_video_pixmap.h5'))
-data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5'))
-
-
-tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
-                        notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
-                        use_basis_dict=use_basis_dict)
-
+print "########################################################"
+print "PERFORM GMM_ANALYSIS"
+print "########################################################"
 score_dict = tclass.gmm_analysis()
 
 data_h5_vc.close()
@@ -163,7 +157,7 @@ tvs = TestVideoStream(PathToVideos=path_to_videos_test,
                       StridesTime=tstrides,
                       StridesSpace=sp_strides,
                       GrayScale=gs,
-                      BkgSub=True)
+                      BkgSub=bkgsub)
 
 tvs.set_GMMThreshold(threshold=threshold)
 
