@@ -79,10 +79,10 @@ else:
 
 ae_model.perform_dict_learn(guill,n_comp=0)
 ae_model.perform_kmeans(partial=True)
-ae_model.create_recons(20)
 ae_model.perform_gmm_training(guill=guill,n_comp=nclusters)
 ae_model.create_tsne_plot(graph_name='tsne_plot.png')
 
+# ae_model.create_recons(20)
 # ae_model.generate_loss_graph('loss_graph.png')
 # ae_model.decode_means('means_decoded')
 # ae_model.perform_feature_space_analysis()
