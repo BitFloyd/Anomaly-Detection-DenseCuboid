@@ -1355,7 +1355,7 @@ class TestDictionary:
 
             print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(40, 40), sharex='col', sharey='row')
-            plt.suptitle('Distribution of log-probability scores from the dataset. Green:Scores of Normal Cuboids, Red:Scores of Anomaly Cuboids', fontsize=30)
+            plt.suptitle('Distribution of mahalanobis distance scores from the dataset. Green:Scores of Normal Cuboids, Red:Scores of Anomaly Cuboids', fontsize=30)
             plt.setp(ax.get_xticklabels(), visible=True)
             sns.distplot(full_list_scores_normal, kde=False, rug=False, hist=True, ax=ax,color='green')
             sns.distplot(full_list_scores_anomaly, kde=False, rug=False, hist=True, ax=ax,color='red')
@@ -1387,7 +1387,7 @@ class TestDictionary:
         ax1 = ax[0]
         ax2 = ax[1]
 
-        plt.suptitle('Log probability Score plots of anomaly vs normal cuboids', fontsize=30)
+        plt.suptitle('Mahalanobis distance score of anomaly vs normal cuboids', fontsize=30)
 
         im1 = ax1.scatter(range(0, len(list_all_scores)), list_all_scores, c=list_all_gt,
                           cmap=ListedColormap(colors), alpha=0.5)
