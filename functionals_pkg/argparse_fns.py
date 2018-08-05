@@ -45,7 +45,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     elif ('godiva' in socket.gethostname() or 'soma' in socket.gethostname() or 'richart' in socket.gethostname()):
         print "############################################"
-        print "DETECTED RUN ON GODIVA"
+        print "DETECTED RUN ON GODIVA", socket.gethostname()
         print "############################################"
         if (set_mem):
             import tensorflow as tf
@@ -56,6 +56,10 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
             set_session(tf.Session(config=config))
         verbose = 1
         data_store_suffix = '/usr/local/data/sejacob/densecub'
+
+        if('soma' in socket.gethostname()):
+            data_store_suffix = '/usr/local/data2/sejacob/densecub'
+
         use_basis_dict = False
         godiva = True
 

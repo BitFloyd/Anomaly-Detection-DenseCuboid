@@ -1373,7 +1373,7 @@ class TestDictionary:
         list_all_gt.extend(np.ones(len(full_list_scores_anomaly)).tolist())
         list_all_gt = np.array(list_all_gt)
 
-        args_arr_sort = np.argsort(-list_all_scores)
+        args_arr_sort = np.argsort(list_all_scores)
 
         list_all_gt = list_all_gt[args_arr_sort]
         list_all_scores = list_all_scores[args_arr_sort]
