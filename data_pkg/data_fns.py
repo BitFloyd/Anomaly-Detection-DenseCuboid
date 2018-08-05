@@ -1413,7 +1413,7 @@ class TestDictionary:
 
         self.write_prf_details_to_file(filename='prf_details.txt', score_dict=score_dict, metric_name='GMM probability score')
 
-        self.plot_roc_curve(plot_title='Reciever Operating Characteristic when using Gaussian Mixture Model',
+        self.plot_roc_curve(plot_title='Reciever Operating Characteristic when using Gaussian Mixture Model (Mahalanobis distance)',
                             array_scores=(list_all_scores),
                             array_gt=list_all_gt,
                             plot_filename = 'roc_for_gmm.png')
