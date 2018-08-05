@@ -9,7 +9,7 @@ import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric,set_mem=True,set_mem_value=0.65)
+rdict = af.parse_run_variables(metric,set_mem=False)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']
@@ -43,6 +43,7 @@ bkgsub = rdict['bkgsub']
 
 do_silhouette = True
 
+
 train_dset = h5py.File(os.path.join(train_folder, 'data_train.h5'), 'r')
 
 print "#############################"
@@ -51,17 +52,21 @@ print "#############################"
 
 notrain = True
 
-ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=nc, h_units=h_units,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
-                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
-
+ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size, n_channels=1,h_units=h_units,
+                                        n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
+                                        lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
+                                        reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
 
 print "############################"
 print "START TRAINING AND STUFF"
 print "############################"
 
+
+ae_model.perform_dict_learn(guill,n_comp=0)
+ae_model.perform_kmeans(partial=True)
 ae_model.perform_gmm_training(guill=guill,n_comp=nclusters)
+ae_model.create_tsne_plot(graph_name='tsne_plot.png')
+
 train_dset.close()
 
 print "################################"
@@ -79,15 +84,15 @@ print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 if(notest):
     ae_model = None
 else:
-    ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=nc, h_units=h_units,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda,gs=gs,notrain=True,
-                                            reverse=reverse, data_folder=train_folder,dat_h5=None,large=large)
-
+    ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size,
+                                                    n_channels=1, h_units=h_units,
+                                                    n_timesteps=8, loss=loss, batch_size=batch_size,
+                                                    n_clusters=nclusters,
+                                                    lr_model=1e-3, lamda=lamda, gs=gs, notrain=True,
+                                                    reverse=reverse, data_folder=train_folder, dat_h5=train_dset,
+                                                    large=large)
     ae_model.set_cl_loss(0.0)
 
-    if(do_silhouette):
-        ae_model.set_clusters_to_optimum()
 
 #Get Test class
 data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
@@ -133,7 +138,7 @@ print "########################################################"
 tclass.feature_analysis_normvsanom()
 
 print "########################################################"
-print "PERFORM GMM_ANALYSIS"
+print "PERFORM GMM ANALYSIS ON ANOMALY VS NORMAL FEATURES"
 print "########################################################"
 score_dict = tclass.gmm_analysis()
 
@@ -143,6 +148,10 @@ data_h5_vp.close()
 data_h5_ap.close()
 
 threshold = score_dict['max_f1_th']
+
+print "########################################################"
+print "THRESHOLD: ", threshold
+print "########################################################"
 
 ae_model.load_gmm_model()
 
