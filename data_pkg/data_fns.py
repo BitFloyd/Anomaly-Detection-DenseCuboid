@@ -1387,14 +1387,14 @@ class TestDictionary:
         ax1 = ax[0]
         ax2 = ax[1]
 
-        plt.suptitle('Mahalanobis distance score of anomaly vs normal cuboids', fontsize=30)
+        plt.suptitle('Mahalanobis distance score of anomaly vs normal cuboids', fontsize=45)
 
         im1 = ax1.scatter(range(0, len(list_all_scores)), list_all_scores, c=list_all_gt,
                           cmap=ListedColormap(colors), alpha=0.5)
         ax1.axhline(y=threshold,label='best threshold',color='b')
-        ax1.set_title('ANOMS:Red, N-ANOMS:Green')
-        ax1.set_ylabel('Log-probability score')
-        ax1.set_xlabel('Cuboid index')
+        ax1.set_title('Mahalanobis distance score of anomaly vs normal cuboids', fontsize=45)
+        ax1.set_ylabel('Mahalanobis distance', fontsize=40)
+        ax1.set_xlabel('Cuboid index',fontsize=40)
         ax1.grid(True)
         cb1 = fig.colorbar(im1, ax=ax1)
         loc = np.arange(0, max(list_all_gt), max(list_all_gt) / float(len(colors)))
