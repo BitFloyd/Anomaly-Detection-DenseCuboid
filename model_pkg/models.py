@@ -931,14 +931,14 @@ class Super_autoencoder:
 
         return True
 
-    def perform_gmm_training(self,guill=False,n_comp=-1,covariance_type='full'):
+    def perform_gmm_training(self,guill=False,n_comp=-1,covariance_type='full',n_init=10):
 
         list_feats = shuffle(self.return_all_encodings())
 
         if(n_comp == -1):
             n_comp = self.n_clusters
 
-        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=10,verbose=1,verbose_interval=100,covariance_type=covariance_type)
+        self.gm = GaussianMixture(n_components=n_comp,max_iter=int(1e3),n_init=n_init,verbose=1,verbose_interval=100,covariance_type=covariance_type)
 
         print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         print "START GMM FITTING: NUMBER OF COMPONENTS = ", n_comp

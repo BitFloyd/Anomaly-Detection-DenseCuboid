@@ -106,7 +106,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         sp_strides = 12
         greyscale=True
         patience = 10
-        ntrain = 25
+        ntrain = 100
         bkgsub = True
 
     if(dataset=='UCSD1'):
@@ -120,7 +120,7 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         sp_strides = 12
         greyscale = True
         patience = 10
-        ntrain = 25
+        ntrain = 100
         bkgsub = True
 
     elif(dataset=='TRIANGLE'):
@@ -191,6 +191,11 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
         patience = 15
 
     n_chapters = 0
+
+    if('-n_chaps' in metric.keys()):
+        n_chapters = int(metric['-n_chaps'])
+
+
     gs = greyscale
     nic = 0
     lassign = 0.0
@@ -223,6 +228,8 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
 
     return_parse_dict['lamda'] = lamda
 
+    if ('-n_chaps' in metric.keys()):
+        suffix+='_nchapters_'+str(n_chapters)
 
     suffix += '_hunits_' + str(h_units)
 

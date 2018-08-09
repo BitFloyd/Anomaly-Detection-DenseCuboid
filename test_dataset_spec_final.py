@@ -2,7 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import model_pkg.models as models
 from functionals_pkg import argparse_fns as af
-from data_pkg.data_fns import TestDictionary
+from data_pkg.data_fns import TestDictionary,TestVideoStream
 from sys import argv
 import os
 import h5py
@@ -41,40 +41,10 @@ min_data_threshold = rdict['min_data_threshold']
 patience = rdict['patience']
 bkgsub = rdict['bkgsub']
 
-do_silhouette = False
+do_silhouette = True
 
 train_dset = h5py.File(os.path.join(train_folder, 'data_train.h5'), 'r')
 
-print "#############################"
-print "LOAD MODEL"
-print "#############################"
-
-notrain = False
-
-ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size, size_x=size, n_channels=nc, h_units=h_units,
-                                            n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
-                                            lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
-                                            reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
-
-
-print "############################"
-print "START TRAINING AND STUFF"
-print "############################"
-
-if(guill and '-ngpu' in metric.keys()):
-    print "############################"
-    print "TRYING TO PARALLELISE TO MULTIPLE GPUS"
-    print "############################"
-    ae_model.make_ae_model_multi_gpu(n_gpus)
-
-ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,patience=patience,n_chapters=n_chapters,
-                                n_train=ntrain, reduce_lr = True, patience_lr=int(patience*0.66),
-                                factor=1.25)
-
-ae_model.perform_gmm_training(guill=guill,n_comp=nclusters,n_init=1)
-ae_model.perform_kmeans(partial=True)
-
-train_dset.close()
 
 print "################################"
 print "START TESTING"
@@ -98,6 +68,8 @@ else:
 
     ae_model.set_cl_loss(0.0)
 
+    if(do_silhouette):
+        ae_model.set_clusters_to_optimum()
 
 #Get Test class
 data_h5_vc = h5py.File(os.path.join(test_data_store,'data_test_video_cuboids.h5'))
@@ -120,4 +92,3 @@ data_h5_vc.close()
 data_h5_va.close()
 data_h5_vp.close()
 data_h5_ap.close()
-

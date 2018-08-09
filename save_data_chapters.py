@@ -19,6 +19,8 @@ bkgsub = False
 
 if ('godiva' in socket.gethostname() or 'soma' in socket.gethostname() or 'richart' in socket.gethostname()):
     an_path = "/usr/local/data/sejacob/"
+    if('soma' in socket.gethostname()):
+        an_path = "/usr/local/data2/sejacob"
 else:
     an_path = "/usr/local/data/sejacob/ANOMALY/"
 

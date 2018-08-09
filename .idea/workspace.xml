@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="166f2705-3549-4c58-9ef2-aac3757a5e8c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test_dataset_spec_final.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_pkg/data_fns.py" afterPath="$PROJECT_DIR$/data_pkg/data_fns.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" afterPath="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_pkg/models.py" afterPath="$PROJECT_DIR$/model_pkg/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_data_chapters.py" afterPath="$PROJECT_DIR$/save_data_chapters.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/save_test_data_video_arrays.py" afterPath="$PROJECT_DIR$/save_test_data_video_arrays.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_algorithm.py" afterPath="$PROJECT_DIR$/test_algorithm.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,39 +35,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="conv_ac_ucsd2.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
+      <file leaf-file-name="test_algorithm.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test_algorithm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="11" column="30" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="30" />
+            <state relative-caret-position="873">
+              <caret line="116" column="32" lean-forward="false" selection-start-line="116" selection-start-column="20" selection-end-line="116" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="argparse_fns.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
+      <file leaf-file-name="save_test_data_video_arrays.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-684">
-              <caret line="56" column="19" lean-forward="false" selection-start-line="56" selection-start-column="19" selection-end-line="56" selection-end-column="19" />
-              <folding>
-                <element signature="e#3401#3903#0" expanded="false" />
-                <element signature="e#3939#4443#0" expanded="false" />
-                <element signature="e#4876#5215#0" expanded="false" />
-                <element signature="e#5256#5587#0" expanded="false" />
-                <element signature="e#5630#5965#0" expanded="false" />
-                <element signature="e#6003#6328#0" expanded="false" />
-                <element signature="e#6374#6715#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="450">
+              <caret line="31" column="71" lean-forward="true" selection-start-line="31" selection-start-column="71" selection-end-line="31" selection-end-column="71" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_algorithm.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test_algorithm.py">
+      <file leaf-file-name="save_data_chapters.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2700">
-              <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+            <state relative-caret-position="720">
+              <caret line="40" column="17" lean-forward="true" selection-start-line="40" selection-start-column="17" selection-end-line="40" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -74,9 +68,11 @@
       <file leaf-file-name="data_fns.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="569">
-              <caret line="1402" column="53" lean-forward="true" selection-start-line="1402" selection-start-column="53" selection-end-line="1402" selection-end-column="53" />
-              <folding />
+            <state relative-caret-position="854">
+              <caret line="880" column="66" lean-forward="false" selection-start-line="880" selection-start-column="66" selection-end-line="880" selection-end-column="66" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -94,7 +90,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>ucsd</find>
       <find>suffix</find>
       <find>anompth</find>
       <find>features.h5</find>
@@ -124,6 +119,7 @@
       <find>ntrain</find>
       <find>self.mu_arra</find>
       <find>as_grey</find>
+      <find>model+stp</find>
     </findStrings>
     <replaceStrings>
       <replace>PREFACE</replace>
@@ -140,7 +136,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/analyze_frequencies_plot.py" />
         <option value="$PROJECT_DIR$/mnist-annvselm.py" />
         <option value="$PROJECT_DIR$/generate_analysis_plots.py" />
         <option value="$PROJECT_DIR$/create_sampling_vids.py" />
@@ -182,15 +177,16 @@
         <option value="$PROJECT_DIR$/rand.py" />
         <option value="$PROJECT_DIR$/format_york_videos.py" />
         <option value="$PROJECT_DIR$/env_test.py" />
+        <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
+        <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
+        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
+        <option value="$PROJECT_DIR$/model_pkg/models.py" />
         <option value="$PROJECT_DIR$/save_data_chapters.py" />
         <option value="$PROJECT_DIR$/save_test_data_video_arrays.py" />
-        <option value="$PROJECT_DIR$/save_train_data_video_arrays.py" />
-        <option value="$PROJECT_DIR$/model_pkg/models.py" />
-        <option value="$PROJECT_DIR$/conv_ac_ucsd2.py" />
+        <option value="$PROJECT_DIR$/test_dataset_spec_final.py" />
         <option value="$PROJECT_DIR$/test_autoencoder.py" />
-        <option value="$PROJECT_DIR$/functionals_pkg/argparse_fns.py" />
-        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
         <option value="$PROJECT_DIR$/test_algorithm.py" />
+        <option value="$PROJECT_DIR$/data_pkg/data_fns.py" />
       </list>
     </option>
   </component>
@@ -201,10 +197,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1599" />
+    <option name="x" value="-1" />
     <option name="y" value="-11" />
-    <option name="width" value="1922" />
-    <option name="height" value="1092" />
+    <option name="width" value="1602" />
+    <option name="height" value="912" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -224,6 +220,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -239,7 +236,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -530,34 +526,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1510062433083</updated>
-    </task>
-    <task id="LOCAL-00071" summary="fix test_autoencoder for all datasets">
-      <created>1531935503686</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1531935503686</updated>
-    </task>
-    <task id="LOCAL-00072" summary="fix test_autoencoder for all datasets">
-      <created>1531936480507</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1531936480507</updated>
-    </task>
-    <task id="LOCAL-00073" summary="fix test_autoencoder for all datasets">
-      <created>1531937830315</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1531937830315</updated>
-    </task>
-    <task id="LOCAL-00074" summary="fix test_autoencoder for all datasets">
-      <created>1531938572438</created>
-      <option name="number" value="00074" />
-      <option name="presentableId" value="LOCAL-00074" />
-      <option name="project" value="LOCAL" />
-      <updated>1531938572438</updated>
     </task>
     <task id="LOCAL-00075" summary="fix test_autoencoder for all datasets">
       <created>1531970967985</created>
@@ -874,7 +842,35 @@
       <option name="project" value="LOCAL" />
       <updated>1533511001512</updated>
     </task>
-    <option name="localTasksCounter" value="120" />
+    <task id="LOCAL-00120" summary="remove extra feature set save">
+      <created>1533511012782</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1533511012786</updated>
+    </task>
+    <task id="LOCAL-00121" summary="remove extra feature set save">
+      <created>1533511183046</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1533511183046</updated>
+    </task>
+    <task id="LOCAL-00122" summary="remove extra feature set save">
+      <created>1533511319969</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1533511319969</updated>
+    </task>
+    <task id="LOCAL-00123" summary="remove extra feature set save">
+      <created>1533530549464</created>
+      <option name="number" value="00123" />
+      <option name="presentableId" value="LOCAL-00123" />
+      <option name="project" value="LOCAL" />
+      <updated>1533530549464</updated>
+    </task>
+    <option name="localTasksCounter" value="124" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -887,17 +883,17 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1599" y="-11" width="1922" height="1092" extended-state="6" />
+    <frame x="-1" y="-11" width="1602" height="912" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5504587" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.018726591" sideWeight="0.49583334" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.47298676" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5792759" sideWeight="0.49583334" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25586137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12291667" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.146875" sideWeight="0.49256507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15125" sideWeight="0.50743496" order="2" side_tool="true" content_ui="tabs" />
@@ -989,7 +985,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/analyze_data_chapters_ap.py" />
     <entry file="file://$PROJECT_DIR$/analyze_ucsd.py" />
     <entry file="file://$PROJECT_DIR$/test_mbdl.py" />
     <entry file="file://$PROJECT_DIR$/generate_analysis_plots.py" />
@@ -1164,119 +1159,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="123" column="115" lean-forward="false" selection-start-line="123" selection-start-column="97" selection-end-line="123" selection-end-column="115" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="978">
-          <caret line="147" column="45" lean-forward="false" selection-start-line="147" selection-start-column="35" selection-end-line="147" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1658">
-          <caret line="156" column="0" lean-forward="false" selection-start-line="156" selection-start-column="0" selection-end-line="156" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#18#0" expanded="false" />
-            <element signature="e#1837#3498#0" expanded="false" />
-            <element signature="e#3543#5708#0" expanded="false" />
-            <element signature="e#7558#7713#0" expanded="false" />
-            <element signature="e#7753#7886#0" expanded="false" />
-            <element signature="e#7930#8067#0" expanded="false" />
-            <element signature="e#8108#8185#0" expanded="false" />
-            <element signature="e#8232#8613#0" expanded="false" />
-            <element signature="e#8670#9119#0" expanded="false" />
-            <element signature="e#9169#9454#0" expanded="false" />
-            <element signature="e#9698#14800#0" expanded="false" />
-            <element signature="e#15028#24189#0" expanded="false" />
-            <element signature="e#24411#28348#0" expanded="false" />
-            <element signature="e#28405#29970#0" expanded="false" />
-            <element signature="e#30015#31582#0" expanded="false" />
-            <element signature="e#31633#32434#0" expanded="false" />
-            <element signature="e#32489#33484#0" expanded="false" />
-            <element signature="e#33551#34691#0" expanded="false" />
-            <element signature="e#34783#35586#0" expanded="false" />
-            <element signature="e#35658#38148#0" expanded="false" />
-            <element signature="e#38189#38431#0" expanded="false" />
-            <element signature="e#38483#38588#0" expanded="false" />
-            <element signature="e#38651#38776#0" expanded="false" />
-            <element signature="e#38839#39142#0" expanded="false" />
-            <element signature="e#39192#39672#0" expanded="false" />
-            <element signature="e#39731#41250#0" expanded="false" />
-            <element signature="e#40081#40970#0" expanded="false" />
-            <element signature="e#41334#42405#0" expanded="false" />
-            <element signature="e#42444#42867#0" expanded="false" />
-            <element signature="e#42925#43329#0" expanded="false" />
-            <element signature="e#43402#44360#0" expanded="false" />
-            <element signature="e#44448#45000#0" expanded="false" />
-            <element signature="e#45105#47251#0" expanded="false" />
-            <element signature="e#47306#48810#0" expanded="false" />
-            <element signature="e#48863#49527#0" expanded="false" />
-            <element signature="e#49598#50418#0" expanded="false" />
-            <element signature="e#50481#51269#0" expanded="false" />
-            <element signature="e#51320#51764#0" expanded="false" />
-            <element signature="e#51818#52611#0" expanded="false" />
-            <element signature="e#52674#54183#0" expanded="false" />
-            <element signature="e#54246#54926#0" expanded="false" />
-            <element signature="e#55026#57822#0" expanded="false" />
-            <element signature="e#57878#59912#0" expanded="false" />
-            <element signature="e#60052#66929#0" expanded="false" />
-            <element signature="e#66998#73959#0" expanded="false" />
-            <element signature="e#74026#81222#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="569">
-          <caret line="1402" column="53" lean-forward="true" selection-start-line="1402" selection-start-column="53" selection-end-line="1402" selection-end-column="53" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conv_ac_ucsd2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
+        <state relative-caret-position="198">
           <caret line="11" column="30" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1140">
-          <caret line="109" column="44" lean-forward="true" selection-start-line="109" selection-start-column="44" selection-end-line="109" selection-end-column="44" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/functionals_pkg/argparse_fns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-684">
-          <caret line="56" column="19" lean-forward="false" selection-start-line="56" selection-start-column="19" selection-end-line="56" selection-end-column="19" />
+        <state relative-caret-position="0">
+          <caret line="201" column="31" lean-forward="true" selection-start-line="201" selection-start-column="31" selection-end-line="201" selection-end-column="31" />
           <folding>
-            <element signature="e#3401#3903#0" expanded="false" />
-            <element signature="e#3939#4443#0" expanded="false" />
-            <element signature="e#4876#5215#0" expanded="false" />
-            <element signature="e#5256#5587#0" expanded="false" />
-            <element signature="e#5630#5965#0" expanded="false" />
-            <element signature="e#6003#6328#0" expanded="false" />
-            <element signature="e#6374#6715#0" expanded="false" />
+            <element signature="e#4878#5217#0" expanded="false" />
+            <element signature="e#5258#5589#0" expanded="false" />
+            <element signature="e#5632#5967#0" expanded="false" />
+            <element signature="e#6005#6330#0" expanded="false" />
+            <element signature="e#6376#6717#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_dataset_spec_final.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="62" column="5" lean-forward="true" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1530">
+          <caret line="85" column="37" lean-forward="true" selection-start-line="85" selection-start-column="37" selection-end-line="85" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model_pkg/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7092">
+          <caret line="433" column="42" lean-forward="true" selection-start-line="433" selection-start-column="42" selection-end-line="433" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_pkg/data_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="854">
+          <caret line="880" column="66" lean-forward="false" selection-start-line="880" selection-start-column="66" selection-end-line="880" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_algorithm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2700">
-          <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+        <state relative-caret-position="873">
+          <caret line="116" column="32" lean-forward="false" selection-start-line="116" selection-start-column="20" selection-end-line="116" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_test_data_video_arrays.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="31" column="71" lean-forward="true" selection-start-line="31" selection-start-column="71" selection-end-line="31" selection-end-column="71" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_data_chapters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="40" column="17" lean-forward="true" selection-start-line="40" selection-start-column="17" selection-end-line="40" selection-end-column="17" />
           <folding />
         </state>
       </provider>
