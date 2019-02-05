@@ -18,34 +18,19 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     n_gpus = 1
     guill = False
     godiva = False
+    soma = False
     use_basis_dict = True
 
     if (socket.gethostname() == 'puck'):
         print "############################################"
         print "DETECTED RUN ON PUCK"
         print "############################################"
-        if(set_mem):
-            import tensorflow as tf
-            from keras.backend.tensorflow_backend import set_session
-
-            config = tf.ConfigProto()
-            config.gpu_options.per_process_gpu_memory_fraction = set_mem_value
-            set_session(tf.Session(config=config))
-
-        data_store_suffix = '/usr/local/data/sejacob/ANOMALY/densecub'
+        data_store_suffix = '/usr/local/data/sejacob/FINISHED_WORK/ANOMALY/densecub'
         use_basis_dict = False
 
-    elif ('gpu' in socket.gethostname()):
+    elif (os.environ.get('DOCKER_ENV')):
         print "############################################"
-        print "DETECTED RUN ON HELIOS: Probably"
-        print "############################################"
-        verbose = 1
-        os.chdir('/scratch/suu-621-aa/ANOMALY/densecub')
-        data_store_suffix = '/scratch/suu-621-aa/ANOMALY/densecub'
-
-    elif ('godiva' in socket.gethostname() or 'soma' in socket.gethostname() or 'richart' in socket.gethostname()):
-        print "############################################"
-        print "DETECTED RUN ON GODIVA", socket.gethostname()
+        print "DETECTED RUN ON SOMA"
         print "############################################"
         if (set_mem):
             import tensorflow as tf
@@ -54,23 +39,19 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
             config = tf.ConfigProto()
             config.gpu_options.per_process_gpu_memory_fraction = set_mem_value
             set_session(tf.Session(config=config))
-        verbose = 1
-        data_store_suffix = '/usr/local/data/sejacob/densecub'
 
-        if('soma' in socket.gethostname()):
-            data_store_suffix = '/usr/local/data2/sejacob/densecub'
-
-        use_basis_dict = False
-        godiva = True
+        verbose=1
+        data_store_suffix = "/usr/local/data2/sejacob/densecub"
+        soma=True
 
     else:
         print socket.gethostname()
         print "############################################"
-        print "DETECTED RUN ON GUILLIMIN: Probably"
+        print "DETECTED RUN ON CEDAR: Probably"
         print "############################################"
         verbose = 1
-        os.chdir('/gs/project/suu-621-aa/sejacob/densecub')
-        data_store_suffix = '/gs/scratch/sejacob/densecub'
+        os.chdir('/home/sejacob/scratch/densecub')
+        data_store_suffix = '/home/sejacob/scratch/densecub'
         guill = True
 
         if ('-ngpu' in metric.keys()):
@@ -96,99 +77,46 @@ def parse_run_variables(metric,set_mem=False,set_mem_value = 0.50):
     bkgsub = False
 
     if(dataset=='UCSD2'):
-        path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+        path_to_videos_test='/usr/local/data/sejacob/FINISHED_WORK/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
         if(guill):
-            path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
-        if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+            path_to_videos_test = '/home/sejacob/scratch/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
+        if(soma):
+            path_to_videos_test = '/usr/local/data2/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test'
 
         tstrides = 1
         sp_strides = 12
         greyscale=True
-        patience = 10
-        ntrain = 100
+        patience = 20
+        ntrain = 200
         bkgsub = True
 
     if(dataset=='UCSD1'):
-        path_to_videos_test='/usr/local/data/sejacob/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+        path_to_videos_test='/usr/local/data/sejacob/FINISHED_WORK/ANOMALY/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
         if(guill):
-            path_to_videos_test = '/gs/project/suu-621-aa/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
-        if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+            path_to_videos_test = '/home/sejacob/scratch/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
+        if(soma):
+            path_to_videos_test = '/usr/local/data2/sejacob/data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test'
 
         tstrides = 1
         sp_strides = 12
         greyscale = True
-        patience = 10
-        ntrain = 100
+        patience = 20
+        ntrain = 200
         bkgsub = True
 
     elif(dataset=='TRIANGLE'):
-        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/art_videos_triangle/Test'
-        if(godiva):
+        path_to_videos_test = '/usr/local/data/sejacob/FINISHED_WORK/ANOMALY/data/art_videos_triangle/Test'
+        if(soma):
             path_to_videos_test = '/usr/local/data/sejacob/data/art_videos_triangle/Test'
+        if(guill):
+            path_to_videos_test = '/home/sejacob/scratch/data/art_videos_triangle/Test'
         tstrides = 4
         sp_strides = 7
         greyscale = False
         size = 24
         bkgsub = True
-        ntrain = 50
-        patience = 10
-
-    elif(dataset=='BOAT-HOLBORN'):
-        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Holborn/Test'
-        if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/york/Boat-Holborn/Test'
-        tstrides = 2
-        sp_strides = 12
-        greyscale = False
-        min_data_threshold = 3000
         ntrain = 300
-        patience = 15
-
-    elif(dataset=='BOAT-SEA'):
-        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Boat-Sea/Test'
-        if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/york/Boat-Sea/Test'
-        tstrides = 4
-        sp_strides = 12
-        greyscale = False
-        min_data_threshold = 3000
-        ntrain = 300
-        patience = 15
-
-    elif(dataset=='CAMOUFLAGE'):
-        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Camouflage/Test'
-        if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/york/Camouflage/Test'
-        tstrides = 1
-        sp_strides = 12
-        greyscale = False
-        min_data_threshold = 3000
-        ntrain = 300
-        patience = 15
-
-    elif(dataset=='CANOE'):
-        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Canoe/Test'
-        if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/york/Canoe/Test'
-        tstrides = 2
-        sp_strides = 12
-        greyscale = False
-        min_data_threshold = 3000
-        ntrain = 300
-        patience = 15
-
-    elif(dataset=='TRAFFIC-TRAIN'):
-        path_to_videos_test = '/usr/local/data/sejacob/ANOMALY/data/york/Traffic-Train/Test'
-        if(godiva):
-            path_to_videos_test = '/usr/local/data/sejacob/data/york/Traffic-Train/Test'
-        tstrides = 4
-        sp_strides = 12
-        greyscale = False
-        min_data_threshold = 3000
-        ntrain = 300
-        patience = 15
+        patience = 20
 
     n_chapters = 0
 

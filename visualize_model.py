@@ -65,6 +65,17 @@ ae_model = models.Conv_autoencoder_nostream(model_store=model_store, size_y=size
                                             reverse=reverse, data_folder=train_folder,dat_h5=train_dset,large=large)
 
 
+print "#############################"
+print "ENCODER MODEL:"
+print "#############################"
+ae_model.encoder.summary()
+print "#############################"
+print "DECODER MODEL:"
+print "#############################"
+ae_model.decoder.summary()
+print "#############################"
+
+
 plot_model(ae_model.ae,to_file=os.path.join(model_store,'ae_model.pdf'),show_layer_names=False)
 plot_model(ae_model.encoder,to_file=os.path.join(model_store,'encoder.pdf'),show_layer_names=False)
 plot_model(ae_model.decoder,to_file=os.path.join(model_store,'decoder.pdf'),show_layer_names=False)

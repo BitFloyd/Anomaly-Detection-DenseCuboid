@@ -14,6 +14,7 @@ from matplotlib.colors import ListedColormap
 from matplotlib.backends.backend_pdf import PdfPages
 from functionals_pkg import save_objects as so
 from functionals_pkg.logging import debug_print,message_print
+from functionals_pkg.save_objects import save_obj,load_obj
 import seaborn as sns
 import copy
 import sys
@@ -308,11 +309,15 @@ class TrainDictionary:
 
 class TestDictionary:
 
-    def __init__(self,model,data_store,data_test_h5=None,notest=False,model_store=None,test_loss_metric='dssim',use_dist_in_word=False, nc=3, round_to=1,use_basis_dict=False):
+    def __init__(self,model,data_store,data_test_h5=None,notest=False,model_store=None,test_loss_metric='dssim',
+                 use_dist_in_word=False, nc=3, round_to=1,use_basis_dict=False,hyperparams=None,global_result_file=None):
 
         self.model = None
         self.dictionary_words = {}
         self.means = None
+
+        self.hyperparams = hyperparams
+        self.global_result_file = global_result_file
 
         self.data_store = None          # Where the test data is stored
 
@@ -878,7 +883,7 @@ class TestDictionary:
         accuracy_score_list = []
         cm_list = []
 
-        lspace = np.linspace(min(array_to_th), max(array_to_th), 4000)
+        lspace = np.linspace(min(array_to_th), max(array_to_th), 1000)
         total_num_tp = np.sum(gt_array)
 
         print "#################################################################################"
@@ -949,7 +954,7 @@ class TestDictionary:
 
         plt.figure()
         lw = 2
-        plt.plot(fpr, tpr, color='darkorange',lw=lw, label='ROC curve (area = %0.2f)' % auc_score)
+        plt.plot(fpr, tpr, color='darkorange',lw=lw, label='ROC curve (area = %0.5f)' % auc_score)
         plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
@@ -958,6 +963,28 @@ class TestDictionary:
         plt.title(plot_title)
         plt.legend(loc="lower right")
         plt.savefig(os.path.join(self.image_store,plot_filename),bbox_inches='tight')
+        plt.close()
+
+        return True
+
+    def plot_roc_curve_into_pdf(self,pdf_handle,plot_title,array_scores,array_gt):
+
+        message_print("START PLOTTING ROC CURVE")
+        message_print(plot_title)
+        fpr,tpr,_ = roc_curve(y_true=array_gt,y_score=array_scores)
+        auc_score = auc(fpr,tpr)
+
+        plt.figure(figsize=(40,40))
+        lw = 2
+        plt.plot(fpr, tpr, color='darkorange',lw=lw, label='ROC curve (area = %0.5f)' % auc_score)
+        plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title(plot_title)
+        plt.legend(loc="lower right")
+        pdf_handle.savefig(bbox_inches='tight')
         plt.close()
 
         return True
@@ -1297,6 +1324,7 @@ class TestDictionary:
     def return_maha_dist(self,feats):
 
         distances = []
+        memberships = []
 
         if(len(feats) == 0):
             return distances
@@ -1314,8 +1342,9 @@ class TestDictionary:
             d = d[0][0][0]
 
             distances.append(d)
+            memberships.append(predicted_class[0])
 
-        return distances
+        return distances, memberships
 
     def gmm_analysis(self):
 
@@ -1413,11 +1442,115 @@ class TestDictionary:
 
         self.write_prf_details_to_file(filename='prf_details.txt', score_dict=score_dict, metric_name='GMM probability score')
 
+        self.write_prf_details_to_global_file(filename=self.global_result_file, hyperparams=self.hyperparams,
+                                              score_dict=score_dict)
+
         self.plot_roc_curve(plot_title='Reciever Operating Characteristic when using Gaussian Mixture Model (Mahalanobis distance)',
                             array_scores=(list_all_scores),
                             array_gt=list_all_gt,
                             plot_filename = 'roc_for_gmm.png')
         return score_dict
+
+
+    def gmm_analysis_per_cluster(self):
+
+        self.vid=1 #Reset vid
+        self.gm = so.load_obj(os.path.join(self.model_store,'gmm.pkl'))
+
+        self.mu_array = self.gm.means_
+        self.cov_array = self.gm.covariances_
+        self.cov_inv = np.zeros((self.cov_array.shape))
+
+        n_means = self.mu_array.shape[0]
+
+        for idx, i in enumerate(self.cov_array):
+            self.cov_inv[idx] = np.linalg.inv(i)
+
+        # full_list_scores_normal = []
+        # full_list_scores_anomaly = []
+        # full_list_memberships_normal = []
+        # full_list_memberships_anomaly = []
+        #
+        # while (self.load_data()):
+        #
+        #     feats_normal, feats_anomaly = self.create_feats_to_analyze_from_video()
+        #
+        #     message_print('Number of anomalies: '+str(len(feats_anomaly)))
+        #
+        #     scores_normal, memberships_normal = self.return_maha_dist(feats_normal)
+        #     full_list_scores_normal.extend(scores_normal)
+        #     full_list_memberships_normal.extend(memberships_normal)
+        #
+        #     scores_anomaly, memberships_anomaly = self.return_maha_dist(feats_anomaly)
+        #     full_list_scores_anomaly.extend(scores_anomaly)
+        #     full_list_memberships_anomaly.extend(memberships_anomaly)
+        #
+        #
+        #
+        # full_list_scores_normal=np.array(full_list_scores_normal)
+        # full_list_scores_anomaly = np.array(full_list_scores_anomaly)
+        #
+        # full_list_memberships_normal = np.array(full_list_memberships_normal)
+        # full_list_memberships_anomaly = np.array(full_list_memberships_anomaly)
+        #
+        # save_obj(full_list_scores_normal,os.path.join(self.image_store,'full_list_scores_normal.pkl'))
+        # save_obj(full_list_scores_anomaly, os.path.join(self.image_store, 'full_list_scores_anomaly.pkl'))
+        # save_obj(full_list_memberships_normal, os.path.join(self.image_store, 'full_list_memberships_normal.pkl'))
+        # save_obj(full_list_memberships_anomaly, os.path.join(self.image_store, 'full_list_memberships_anomaly.pkl'))
+
+        full_list_scores_normal = load_obj(os.path.join(self.image_store,'full_list_scores_normal.pkl'))
+        full_list_scores_anomaly = load_obj(os.path.join(self.image_store, 'full_list_scores_anomaly.pkl'))
+        full_list_memberships_normal = load_obj(os.path.join(self.image_store, 'full_list_memberships_normal.pkl'))
+        full_list_memberships_anomaly = load_obj(os.path.join(self.image_store, 'full_list_memberships_anomaly.pkl'))
+
+        print "NORMAL MEMBERSHIPS ARE ONLY IN:", np.unique(full_list_memberships_normal)
+        print "ANOMALOUS MEMBERSHIPS ARE ONLY IN:", np.unique(full_list_memberships_anomaly)
+
+        print "SAVED THE LISTS"
+        pdf_name = os.path.join(self.image_store, 'gmm_analysis.pdf')
+
+        if (os.path.exists(pdf_name)):
+            os.remove(pdf_name)
+
+
+        with PdfPages(pdf_name) as pdf:
+            for i in range(0,n_means):
+
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                print "WORKING ON GAUSSIAN:"+str(i)
+                list_scores_normal_gauss_i = full_list_scores_normal[full_list_memberships_normal==i]
+                list_scores_anomaly_gauss_i = full_list_scores_anomaly[full_list_memberships_anomaly==i]
+
+                print "NUMBER OF NORMAL CUBOIDS:",len(list_scores_normal_gauss_i)
+                print "NUMBER OF ANOMALOUS CUBOIDS:",len(list_scores_anomaly_gauss_i)
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+                if(not len(list_scores_normal_gauss_i) or not len(list_scores_anomaly_gauss_i)):
+                    continue
+
+                fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(40, 40), sharex='col', sharey='row')
+                plt.suptitle('Distribution of mahalanobis distance scores from Gaussian'+str(i)+'. Green:Scores of Normal Cuboids, Red:Scores of Anomaly Cuboids', fontsize=30)
+                plt.setp(ax.get_xticklabels(), visible=True)
+                sns.distplot(list_scores_normal_gauss_i, kde=False, rug=False, hist=True, ax=ax,color='green')
+                sns.distplot(list_scores_anomaly_gauss_i, kde=False, rug=False, hist=True, ax=ax,color='red')
+                pdf.savefig()  # saves the current figure into a pdf page
+                plt.close()
+
+                list_scores_i = []
+                list_scores_i.extend(list_scores_normal_gauss_i.tolist())
+                list_scores_i.extend(list_scores_anomaly_gauss_i.tolist())
+                list_scores_i = np.array(list_scores_i)
+
+                list_gt_i = []
+                list_gt_i.extend(np.zeros(len(list_scores_normal_gauss_i)).tolist())
+                list_gt_i.extend(np.ones(len(list_scores_anomaly_gauss_i)).tolist())
+                list_gt_i = np.array(list_gt_i)
+
+                self.plot_roc_curve_into_pdf(pdf_handle=pdf,plot_title="ROC curve for Gaussian:"+str(i)+'.',
+                                             array_scores=list_scores_i,array_gt=list_gt_i)
+
+
+        return True
 
     def create_feats_to_analyze_from_video(self):
 
@@ -1451,6 +1584,7 @@ class TestDictionary:
 
         s_acc = 'max_acc:' + str(format(score_dict['max_acc'], '.5f'))
         s_f1 = 'max_f1:' + str(format(score_dict['max_f1'], '.5f'))
+        s_f1_th = 'max_f1_th:' + str(format(score_dict['max_f1_th'], '.5f'))
         s_pr = 'max_pr:' + str(format(score_dict['max_pre'], '.5f'))
         s_re = 'max_re:' + str(format(score_dict['max_rec'], '.5f'))
 
@@ -1460,12 +1594,39 @@ class TestDictionary:
         f.write('--------------------------------' + '\n')
         f.write(s_acc +  '\n')
         f.write(s_f1  +  '\n')
+        f.write(s_f1_th + '\n')
         f.write(s_pr  +  '\n')
         f.write(s_re  +  '\n')
         f.write('--------------------------------' + '\n')
         f.close()
 
         return True
+
+    def write_prf_details_to_global_file(self,filename,hyperparams,score_dict):
+
+
+        s_hyperparams = "Clusters:"  + str(hyperparams['clusters'])+\
+                        "  Lamda:"   + str(hyperparams['lamda'])   +\
+                        "  H_units:" + str(hyperparams['h_units'])
+
+
+        s_acc = 'max_acc:' + str(format(score_dict['max_acc'], '.5f'))
+        s_f1 = 'max_f1:' + str(format(score_dict['max_f1'], '.5f'))
+        s_f1_th = 'max_f1_th:' + str(format(score_dict['max_f1_th'], '.5f'))
+        s_pr = 'max_pr:' + str(format(score_dict['max_pre'], '.5f'))
+        s_re = 'max_re:' + str(format(score_dict['max_rec'], '.5f'))
+
+        f = open(filename, 'a+')
+
+        f.write('--------------------------------' + '\n')
+        f.write(s_hyperparams+'\n')
+        f.write(s_acc +  '\n')
+        f.write(s_f1  +  '\n')
+        f.write(s_f1_th + '\n')
+        f.write(s_pr  +  '\n')
+        f.write(s_re  +  '\n')
+        f.write('--------------------------------' + '\n')
+        f.close()
 
     def __del__(self):
         print ("Destructor called for TestDictionary")
@@ -1699,7 +1860,7 @@ class TestVideoStream:
 
 class Video_Stream_ARTIF:
 
-    def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1,tstrides=1,anompth=0.0,bkgsub=False):
+    def __init__(self, video_path,video_train_test, size_y,size_x,timesteps,num=-1,ts_first_or_last='first',strides=1,tstrides=1,anompth=0.0,bkgsub=False,bkgimage=None):
 
         # Initialize-video-params
         self.video_path = 'INIT_PATH_TO_UCSD'
@@ -1732,6 +1893,7 @@ class Video_Stream_ARTIF:
         self.strides = strides
         self.anompth = anompth
         self.bkgsub = bkgsub
+        self.bkgimage = bkgimage
         i = 0
         j = 0
         k = 0
@@ -1795,7 +1957,7 @@ class Video_Stream_ARTIF:
             list_cuboids, list_cuboids_pixmap, list_cuboids_anomaly, list_all_cuboids, list_all_cuboids_gt,list_cuboids_anompercentage = \
             make_cuboids_for_stream(self,self.seek_dict[self.seek], self.seek_dict_gt[self.seek], self.size_x, self.size_y,
                                     test_or_train=self.video_train_test, ts_first_last = self.ts_first_or_last,strides=self.strides,gs=gs,anompth=self.anompth,
-                                    bkgsub=self.bkgsub)
+                                    bkgsub=self.bkgsub,bkgimage=self.bkgimage)
 
             del (self.list_cuboids[:])
             self.list_cuboids = copy.copy(list_cuboids)
@@ -1996,7 +2158,7 @@ def strip_sth(list_to_be_stripped, strip_tag,strip_if_present=True):
 
     return list_relevant
 
-def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test_or_train='Train', ts_first_last = 'first',strides=1,gs=True,anompth=0.0,bkgsub=False):
+def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test_or_train='Train', ts_first_last = 'first',strides=1,gs=True,anompth=0.0,bkgsub=False,bkgimage=None):
 
 
     list_cuboids = deque(stream.list_cuboids)
@@ -2031,14 +2193,7 @@ def make_cuboids_for_stream(stream,list_images,list_images_gt,size_x,size_y,test
 
         if(bkgsub):
             #Subtract mean
-            local_collection = local_collection - np.mean(local_collection,axis=0)
-
-            #Rescale data to 0-1 if gs and 0-255 if not-gs
-            local_collection = (local_collection - np.min(local_collection))
-            local_collection = local_collection/np.max(local_collection)
-
-            if(not gs):
-                local_collection = np.uint8(local_collection*255.0)
+            local_collection = local_collection - bkgimage
 
         frame_size_y = frame_size[0]
         frame_size_x = frame_size[1]

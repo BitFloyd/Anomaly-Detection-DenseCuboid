@@ -2,6 +2,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 from functionals_pkg import argparse_fns as af
 from functionals_pkg import batch_fns as bf
+from skimage.io import imread
 from sys import argv
 from data_pkg import data_fns as df
 import os
@@ -17,51 +18,35 @@ anompth = 0.2
 
 if ('godiva' in socket.gethostname() or 'soma' in socket.gethostname() or 'richart' in socket.gethostname()):
     an_path = "/usr/local/data/sejacob/"
-    if('soma' in socket.gethostname()):
-        an_path = "/usr/local/data2/sejacob"
-else:
-    an_path = "/usr/local/data/sejacob/ANOMALY/"
 
-if(dataset =='ucsd2'):
+elif (os.environ.get('DOCKER_ENV')):
+    an_path = "/usr/local/data2/sejacob/"
+
+elif('puck' in socket.gethostname()):
+    an_path = "/usr/local/data/sejacob/FINISHED_WORK/ANOMALY/"
+
+else:
+    an_path = '/home/sejacob/scratch'
+    os.chdir(os.path.join(an_path,'densecub'))
+
+if(dataset =='UCSD2'):
     path_videos = os.path.join(an_path,'data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped2/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/UCSD2/TEST')
     bkgsub = True
+    bkgimg = imread('bkg_imageUCSD2.tif')
 
-
-elif(dataset=='triangle'):
+elif(dataset=='TRIANGLE'):
     path_videos = os.path.join(an_path,'data/art_videos_triangle/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/TRIANGLE/TEST')
     bkgsub = True
+    bkgimg = imread('bkg_imageTRIANGLE.png')
 
-elif(dataset=='ucsd1'):
+elif(dataset=='UCSD1'):
     path_videos = os.path.join(an_path,'data/UCSD/UCSD_Anomaly_Dataset.v1p2/UCSDped1/Test')
     save_folder = os.path.join(an_path,'densecub/DATA/UCSD1/TEST')
     bkgsub = True
+    bkgimg = imread('bkg_imageUCSD1.tif')
 
-elif(dataset=='boat_holborn'):
-    path_videos = os.path.join(an_path,'data/york/Boat-Holborn/Test')
-    save_folder = os.path.join(an_path,'densecub/DATA/BOAT-HOLBORN/TEST')
-    anompth = 0.80
-
-elif(dataset=='boat_sea'):
-    path_videos = os.path.join(an_path,'data/york/Boat-Sea/Test')
-    save_folder = os.path.join(an_path,'densecub/DATA/BOAT-SEA/TEST')
-    anompth = 0.80
-
-elif(dataset=='camouflage'):
-    path_videos = os.path.join(an_path,'data/york/Camouflage/Test')
-    save_folder = os.path.join(an_path,'densecub/DATA/CAMOUFLAGE/TEST')
-    anompth = 0.80
-
-elif(dataset=='canoe'):
-    path_videos = os.path.join(an_path,'data/york/Canoe/Test')
-    save_folder = os.path.join(an_path,'densecub/DATA/CANOE/TEST')
-    anompth = 0.80
-
-elif(dataset=='traffic_train'):
-    path_videos = os.path.join(an_path,'data/york/Traffic-Train/Test')
-    save_folder = os.path.join(an_path,'densecub/DATA/TRAFFIC-TRAIN/TEST')
-    anompth = 0.80
 
 strides = int(metric['-strd'])
 gs = bool(int(metric['-gs']))
@@ -93,15 +78,12 @@ video_id = 0
 while True:
     vstream = df.Video_Stream_ARTIF(video_path=path_videos, video_train_test=train_test, size_y=size_axis, size_x=size_axis,
                                 timesteps=n_frames,ts_first_or_last=ts,strides=strides,tstrides=tstrides,anompth=anompth,
-                                bkgsub=bkgsub)
+                                bkgsub=bkgsub,bkgimage=bkgimg)
 
 
     print "############################"
     print "ASSEMBLE AND SAVE DATASET"
     print "############################"
-
-
-
 
     print "SAVING FOR VIDEO ID:"
     print video_id

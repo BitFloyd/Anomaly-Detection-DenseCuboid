@@ -131,9 +131,7 @@ def do_recon(model,vstream,thresh_variance,num_recons,ts_pos=0):
 def return_relevant_cubs(vstream,thresh_variance,gs=False,ts_pos=0):
 
     cuboids_batch = get_next_relevant_cuboids(vstream,gs)
-
-    if(gs==0):
-        cuboids_batch = norm_batch(cuboids_batch)
+    cuboids_batch = norm_batch(cuboids_batch)
 
     cuboids_batch = get_batch_with_motion(cuboids_batch,thresh_variance,ts_pos,gs)
 

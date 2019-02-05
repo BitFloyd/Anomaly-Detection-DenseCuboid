@@ -2,31 +2,24 @@
 <project version="4">
   <component name="PublishConfigData" serverName="puck">
     <serverData>
-      <paths name="godiva">
+      <paths name="cedar">
         <serverdata>
           <mappings>
-            <mapping deploy="/usr/local/data/sejacob/densecub" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/sejacob/scratch/densecub" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="guillimin">
+      <paths name="graham">
         <serverdata>
           <mappings>
-            <mapping deploy="/gs/project/suu-621-aa/sejacob/densecub/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/sejacob/scratch/densecub" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
       <paths name="puck">
         <serverdata>
           <mappings>
-            <mapping deploy="/usr/local/data/sejacob/ANOMALY/densecub" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="richart">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/usr/local/data/sejacob/densecub" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/usr/local/data/sejacob/FINISHED_WORK/ANOMALY/densecub" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

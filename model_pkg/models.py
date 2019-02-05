@@ -20,7 +20,7 @@ from keras.models import Model
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from keras.losses import mean_squared_error,binary_crossentropy
-from keras.utils import multi_gpu_model
+# from keras.utils import multi_gpu_model
 from keras_contrib.losses import DSSIMObjective
 import os
 import time
@@ -38,6 +38,7 @@ from sklearn.mixture import GaussianMixture
 import seaborn as sns
 import itertools
 import multiprocessing
+from keras.models import clone_model
 sns.set(color_codes=True)
 import thread
 
@@ -47,6 +48,12 @@ def input_thread(a_list):
     if(string == 'stop'):
         a_list.append(True)
 
+def clone_a_model(model):
+
+    clone = clone_model(model)
+    clone.set_weights(model.get_weights())
+
+    return clone
 
 class CustomClusterLayer(Layer):
 

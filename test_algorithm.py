@@ -71,7 +71,7 @@ ae_model.fit_model_ae_chaps(verbose=1,n_initial_chapters=nic,earlystopping=True,
                                 n_train=ntrain, reduce_lr = True, patience_lr=int(patience*0.66),
                                 factor=1.25)
 
-ae_model.perform_gmm_training(guill=guill,n_comp=nclusters,n_init=1)
+ae_model.perform_gmm_training(guill=guill,n_comp=nclusters,n_init=10)
 ae_model.perform_kmeans(partial=True)
 
 train_dset.close()

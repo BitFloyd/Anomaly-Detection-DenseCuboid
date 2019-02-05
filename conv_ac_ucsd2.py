@@ -9,7 +9,7 @@ import h5py
 
 metric = af.getopts(argv)
 
-rdict = af.parse_run_variables(metric,set_mem=False)
+rdict = af.parse_run_variables(metric,set_mem=True)
 
 n_gpus = rdict['n_gpus']
 guill = rdict['guill']
@@ -51,7 +51,6 @@ print "LOAD MODEL"
 print "#############################"
 
 notrain = False
-
 ae_model = models.Conv_autoencoder_nostream_UCSD_h(model_store=model_store, size_y=size, size_x=size, n_channels=1,h_units=h_units,
                                         n_timesteps=8, loss=loss, batch_size=batch_size, n_clusters=nclusters,
                                         lr_model=1e-3, lamda=lamda, gs=gs,notrain=notrain,
@@ -77,18 +76,17 @@ else:
                             n_train=ntrain, reduce_lr = True, patience_lr=int(patience*0.66), factor=1.25)
     ae_model.generate_mean_displacement_graph('mean_displacements.png')
 
-ae_model.perform_dict_learn(guill,n_comp=0)
+# ae_model.perform_dict_learn(guill,n_comp=0)
 ae_model.perform_kmeans(partial=True)
 ae_model.perform_gmm_training(guill=guill,n_comp=nclusters)
-ae_model.create_tsne_plot(graph_name='tsne_plot.png')
 
-# ae_model.create_recons(20)
-# ae_model.generate_loss_graph('loss_graph.png')
-# ae_model.decode_means('means_decoded')
-# ae_model.perform_feature_space_analysis()
-# ae_model.mean_and_samples(n_per_mean=8)
-# ae_model.generate_assignment_graph('assignment_graph.png')
-# ae_model.save_gifs_per_cluster_ids(n_samples_per_id=100,total_chaps_trained_on=n_chapters,max_try=10)
+
+ae_model.create_recons(20)
+ae_model.generate_loss_graph('loss_graph.png')
+ae_model.decode_means('means_decoded')
+ae_model.perform_feature_space_analysis()
+ae_model.mean_and_samples(n_per_mean=8)
+ae_model.generate_assignment_graph('assignment_graph.png')
 
 train_dset.close()
 
@@ -123,73 +121,46 @@ data_h5_va = h5py.File(os.path.join(test_data_store,'data_test_video_anomgt.h5')
 data_h5_vp = h5py.File(os.path.join(test_data_store,'data_test_video_pixmap.h5'))
 data_h5_ap = h5py.File(os.path.join(test_data_store,'data_test_video_anomperc.h5'))
 
+hyperparams = {'clusters':nclusters,'lamda':lamda,'h_units':h_units}
+model_store_root = os.path.split(model_store)[0]
+result_folder_root = os.path.split(model_store_root)[0]
+global_result_file = os.path.join(result_folder_root,'global_best_results.txt')
 
 tclass = TestDictionary(ae_model,data_store=test_data_store,data_test_h5=[data_h5_vc,data_h5_va,data_h5_vp,data_h5_ap],
                         notest=notest,model_store=model_store,test_loss_metric=tlm,use_dist_in_word=udiw,
-                        use_basis_dict=use_basis_dict)
+                        use_basis_dict=use_basis_dict,hyperparams=hyperparams,global_result_file=global_result_file)
 
-
-print "############################"
-print "UPDATING DICT FROM DATA"
-print "############################"
-tclass.process_data()
-
-print "############################"
-print "MAKE LOSS SAMPLES PLOT"
-print "############################"
-tclass.plot_loss_of_samples('loss_'+tlm+'_samples_plot.png')
-
-
-if(use_basis_dict):
-
-    print "############################"
-    print "MAKE BASIS_DICT_RECON SAMPLES PLOT"
-    print "############################"
-    tclass.plot_basis_dict_recon_measure_of_samples('basis_dict_recon_error_samples_plot.png')
-
-print "############################"
-print "MAKE DISTANCE METRIC PLOT"
-print "############################"
-tclass.plot_distance_measure_of_samples('distance_mean_samples_plot.png','mean')
-tclass.plot_distance_measure_of_samples('distance_meanxloss_'+tlm+'_samples_plot.png','meanxloss')
-tclass.plot_distance_measure_of_samples('distance_target_samples_plot.png','distance')
-tclass.plot_distance_measure_of_samples('distancexloss_'+tlm+'_samples_plot.png','distancexloss')
-
-print "########################################################"
-print "PERFORM FEATURE ANALYSIS ON ANOMALY VS NORMAL FEATURES"
-print "########################################################"
-tclass.feature_analysis_normvsanom()
 
 print "########################################################"
 print "PERFORM GMM ANALYSIS ON ANOMALY VS NORMAL FEATURES"
 print "########################################################"
-score_dict = tclass.gmm_analysis()
+score_dict = tclass.gmm_analysis_per_cluster()
 
 data_h5_vc.close()
 data_h5_va.close()
 data_h5_vp.close()
 data_h5_ap.close()
 
-threshold = score_dict['max_f1_th']
-print "########################################################"
-print "THRESHOLD: ", threshold
-print "########################################################"
-
-ae_model.load_gmm_model()
-
-tvs = TestVideoStream(PathToVideos=path_to_videos_test,
-                      CubSizeY=size,
-                      CubSizeX=size,
-                      CubTimesteps=8,
-                      ModelStore=model_store,
-                      Encoder=ae_model.encoder,
-                      GMM=ae_model.gm,
-                      LSTM=False,
-                      StridesTime=tstrides,
-                      StridesSpace=sp_strides,
-                      GrayScale=gs,
-                      BkgSub=bkgsub)
-
-tvs.set_GMMThreshold(threshold=threshold)
-
-tvs.process_data()
+# threshold = score_dict['max_f1_th']
+# print "########################################################"
+# print "THRESHOLD: ", threshold
+# print "########################################################"
+#
+# ae_model.load_gmm_model()
+#
+# tvs = TestVideoStream(PathToVideos=path_to_videos_test,
+#                       CubSizeY=size,
+#                       CubSizeX=size,
+#                       CubTimesteps=8,
+#                       ModelStore=model_store,
+#                       Encoder=ae_model.encoder,
+#                       GMM=ae_model.gm,
+#                       LSTM=False,
+#                       StridesTime=tstrides,
+#                       StridesSpace=sp_strides,
+#                       GrayScale=gs,
+#                       BkgSub=bkgsub)
+#
+# tvs.set_GMMThreshold(threshold=threshold)
+#
+# tvs.process_data()
